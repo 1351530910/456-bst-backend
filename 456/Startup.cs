@@ -16,6 +16,8 @@ namespace bst
 {
     public class Startup
     {
+        public static string userdbstr = "";
+        public static string bstdbstr = "";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -27,8 +29,9 @@ namespace bst
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
             services.AddDbContext<Model.UserDB>();
+
 
         }
 
@@ -45,12 +48,21 @@ namespace bst
             }
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute
+                (
+                    name: "default",
+                    template: "{controller}/{action}/"
+                );
+            });
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<Model.UserDB>();
                 context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
+
+                userdbstr = Configuration.GetConnectionString("userdb");
             }
         }
     }
