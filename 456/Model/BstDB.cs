@@ -76,25 +76,42 @@ namespace bst.Model
             public virtual Protocol Protocol { get; set; }
         }
 
-        //TODO change later 
-        public enum FileType
+       public class History
         {
-            channel, timefreq, stat, headmodel
+            [Key]
+            public int HistoryID { get; set; }
+            //metadata
+            public DateTime TimeStamp { get; set; }
+            public string Type { get; set; }  //what does type mean here?
+            public string HistoryEvent { get; set; }
+            //FK
+            public Guid FunctioncalFileID { get; set; }
+            public virtual FunctionalFile FunctionalFile { get; set; }
+            public Guid AnatomicalFileID { get; set; }
+            public virtual AnatomicalFile AnatomicalFile { get; set; }
+        }
+
+        #region Functional File and its subclasses 
+
+        public enum FunctionalFileType
+        {
+            channel, timefreq, stat, headmodel, result, recording, matrix,
+            dipole, covariance, image
         }
 
         public abstract class FunctionalFile
         {
             [Key]
-            public int FunctionalFileID { get; set; }
+            public Guid FunctionalFileID { get; set; }
             //metadata
             public string Comment { get; set; }
             public string FileName { get; set; }
-            public FileType FileType { get; set; }
+            public FunctionalFileType FileType { get; set; }
             //FK 
             public int StudyID { get; set; }
-            public Study Study { get; set; }          
+            public Study Study { get; set; }
             //summary info
-            public FunctionalFile DbDataFile { get; set; }
+            public virtual ICollection<FunctionalFile> Files { get; set; }
         }
 
         public class Channel: FunctionalFile
@@ -164,10 +181,115 @@ namespace bst.Model
             public int DbAtlas { get; set; }
             public virtual ICollection<FunctionalFile> Files { get; set; }
 
+        }
+
+        public class Recording: FunctionalFile
+        {
+            //metadata 
+            public string Format { get; set; }
+            public string Device { get; set; }
+            public char Byteorder { get; set; }
+            public string DataType { get; set; }
+            public int NAvg { get; set; }
+            public int SFreq { get; set; }
+            public double TimeStart { get; set; }
+            public double TimeEnd { get; set; }
+            public int SamplesStart { get; set; }
+            public int SamplesEnd { get; set; }
+            public int CurrCrfComp { get; set; }
+            public int DestCtfComp { get; set; }
+            public DateTime Acq_Date { get; set; }
+            public string ColormapType { get; set; }
+            public string DisplayUnits { get; set; }
+            public bool IsBids { get; set; }
+
+            //summary info
+            public int DbEvents { get; set; }
+            public int DbEpoch { get; set; }
+            public int DbChannelFlag { get; set; }
+            
+        }
+
+        public class Matrix: FunctionalFile
+        {
+            //metadata
+            public int NAvg { get; set; }
+            public string DisplayUnits { get; set; }
+            //summary info
+            public int DbChannelFlag { get; set; }
+            public int DbEvents { get; set; }
+            public int DbAtlas { get; set; }
+            public virtual ICollection<FunctionalFile> Files { get; set; }
 
         }
 
+        public class Dipole : FunctionalFile
+        {
+            //summary info 
+            public int DbDipole { get; set; }
+    }
 
+        public class Covariance: FunctionalFile
+        {
+
+        }
+
+        public class Image: FunctionalFile
+        {
+
+        }
+
+        #endregion
+
+        #region Anatomical File and its subclasses 
+
+        public enum AnatomicalFileType
+        {
+            Fiber, Volume, Surface
+        }
+
+        public abstract class AnatomicalFile
+        {
+            [Key]
+            public Guid AnatomicalFileID { get; set; }
+            //metadata
+            public string Comment { get; set; }
+            public string FileName { get; set; }
+            public AnatomicalFileType FileType { get; set; }
+            //FK
+            public int SubjectID { get; set; }
+            public virtual Subject Subject { get; set; }
+        }
+
+        public class Fiber: AnatomicalFile
+        {
+
+        }
+
+        public class Volume: AnatomicalFile
+        {
+            //summary info
+            public int DbCubeX { get; set; }
+            public int DbCubeY { get; set; }
+            public int DbCubeZ { get; set; }
+            public double DbVoxsizeX { get; set; }
+            public double DbVoxsizeY { get; set; }
+            public double DbVoxsizeZ { get; set; }
+            public bool DbSCS { get; set; }
+            public bool DbNCS { get; set; }
+        }
+
+        public class Surface: AnatomicalFile
+        {
+            //metadata
+            public int IAtlas { get; set; }
+            //summary info
+            public int DbVertices { get; set; }
+            public int DbFaces { get; set; }
+            public int DbAtlas { get; set; }
+        }
+
+        #endregion
 
 
 
