@@ -58,9 +58,9 @@ namespace bst
             });
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
-                var context = serviceScope.ServiceProvider.GetRequiredService<Model.UserDB>();
-                context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
+                var usercontext = serviceScope.ServiceProvider.GetRequiredService<Model.UserDB>();
+                usercontext.Database.EnsureDeleted();
+                usercontext.Database.EnsureCreated();
 
                 userdbstr = Configuration.GetConnectionString("userdb");
             }

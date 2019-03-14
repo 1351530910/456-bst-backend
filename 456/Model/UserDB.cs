@@ -10,16 +10,30 @@ namespace bst.Model
         {
             
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<User>()
+                .HasIndex(x => x.email)
+                .IsUnique();
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
             if (optionsBuilder != null)
             {
-                optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=bst;password=asd45214", null);
+                optionsBuilder.UseSqlServer("server=.;database=bstusers;Integrated Security=SSPI;user=sa;password=asd45214", null);
+                //optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=bst;password=asd45214", null);
             }
         }
 
+        public DbSet<User> users { get; set; }
+        public DbSet<ParticipateProject> participateProjects { get; set; }
+        public DbSet<Role> roles { get; set; }
+        public DbSet<Group> group { get; set; }
+        public DbSet<Project> projects { get; set; }
+        public DbSet<Invitation> invitations { get; set; }
     }
     public partial class User
     {
@@ -37,6 +51,7 @@ namespace bst.Model
 
     public partial class ParticipateProject
     {
+        [Key]
         public Guid id { get; set; }
         [Required]
         public virtual User user { get; set; }
@@ -48,6 +63,7 @@ namespace bst.Model
 
     public partial class Role
     {
+        [Key]
         public Guid id { get; set; }
         [Required]
         public virtual User user { get; set; }
