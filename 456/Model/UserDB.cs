@@ -52,6 +52,13 @@ namespace bst.Model
         public DbSet<Fiber> fibers { get; set; }
         public DbSet<Volume> volumes { get; set; }
         public DbSet<Surface> surfaces { get; set; }
+        public DbSet<Session> sessions { get; set; }
+    }
+    public class Session
+    {
+        [Key]
+        public Guid id { get; set; }
+        public virtual User user { get; set; }
     }
     public partial class User
     {
