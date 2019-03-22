@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Compile Remove="Model\Anatomy.cs" />
+    <Compile Remove="Model\BstDB.cs" />
     <Compile Remove="Model\Channel.cs" />
     <Compile Remove="Model\Surface.cs" />
     <Compile Remove="Model\User.cs" />

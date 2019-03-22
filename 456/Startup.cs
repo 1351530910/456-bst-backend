@@ -31,8 +31,6 @@ namespace bst
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
             services.AddDbContext<Model.UserDB>();
-            services.AddDbContext<Model.BstDB>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,9 +59,6 @@ namespace bst
                 var usercontext = serviceScope.ServiceProvider.GetRequiredService<Model.UserDB>();
                 usercontext.Database.EnsureDeleted();
                 usercontext.Database.EnsureCreated();
-                var bstcontext = serviceScope.ServiceProvider.GetRequiredService<Model.BstDB>();
-                bstcontext.Database.EnsureDeleted();
-                bstcontext.Database.EnsureCreated();
 
                 userdbstr = Configuration.GetConnectionString("userdb");
             }
