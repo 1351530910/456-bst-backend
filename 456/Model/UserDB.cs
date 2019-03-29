@@ -21,8 +21,8 @@ namespace bst.Model
             base.OnConfiguring(optionsBuilder);
             if (optionsBuilder != null)
             {
-                optionsBuilder.UseSqlServer("server=.;database=bstusers;Integrated Security=SSPI;user=sa;password=asd45214", null);
-                //optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=bst;password=asd45214", null);
+                //optionsBuilder.UseSqlServer("server=.;database=bstusers;Integrated Security=SSPI;user=sa;password=asd45214", null);
+                optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=root;password=Qwe12345", null);
             }
         }
 
