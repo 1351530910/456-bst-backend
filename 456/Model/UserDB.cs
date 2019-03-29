@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace bst.Model
 {
-    public class UserDB:DbContext
+    public class UserDB : DbContext
     {
-        public UserDB():base()
+        public UserDB() : base()
         {
-            
+
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -73,7 +73,7 @@ namespace bst.Model
         public DbSet<Volume> volumes { get; set; }
         public DbSet<Surface> surfaces { get; set; }
 
-
+    }
 
     public class BoolToIntConverter : ValueConverter<bool, int>
     {
