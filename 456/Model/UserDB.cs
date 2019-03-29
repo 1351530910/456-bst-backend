@@ -69,9 +69,6 @@ namespace bst.Model
         public DbSet<Volume> Volumes { get; set; }
         public DbSet<Surface> Surfaces { get; set; }
         public DbSet<AnatomicalFile> anatomicalFiles { get; set; }
-        public DbSet<Fiber> fibers { get; set; }
-        public DbSet<Volume> volumes { get; set; }
-        public DbSet<Surface> surfaces { get; set; }
 
     }
 
