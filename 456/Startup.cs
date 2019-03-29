@@ -18,9 +18,11 @@ namespace bst
     {
         public static string userdbstr = "";
         public static string bstdbstr = "";
+        public static bool devenv = false;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            
         }
 
         public IConfiguration Configuration { get; }
@@ -39,6 +41,7 @@ namespace bst
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                devenv = true;
             }
             else
             {
@@ -57,10 +60,8 @@ namespace bst
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var usercontext = serviceScope.ServiceProvider.GetRequiredService<Model.UserDB>();
-                usercontext.Database.EnsureDeleted();
-                usercontext.Database.EnsureCreated();
+                usercontext.Database.Migrate();
 
-                userdbstr = Configuration.GetConnectionString("userdb");
             }
         }
     }

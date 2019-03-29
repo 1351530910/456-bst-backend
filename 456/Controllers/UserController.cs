@@ -8,50 +8,84 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using bst.Model;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace bst.Controllers
 {
-    public class Session
-    {
-        public Guid guid { get; set; }
-        public Guid userid { get; set; }
-        public Timer timer { get; set; }
-    }
     public class UserController : Controller
     {
         private UserDB context = new UserDB();
-        private List<Session> sessions = new List<Session>();
+
+        [HttpGet,Route("")]
+        public object Index()
+        {
+            return "success";
+        }
+
+
         [HttpGet,Route("listuser")]
         public async Task<List<User>> List()
         {
             return await context.users.ToListAsync();
         }
+
+        [HttpPost,Route("login")]
+        [ProducesResponseType(typeof(LoginOut),200)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<object> login([FromBody]LoginIn data)
+        {
+            var user = await context.users.Where(x => x.email == data.email && x.password == data.password).FirstOrDefaultAsync();
+            if (user==null)
+            {
+                HttpContext.Response.StatusCode = 401;
+                return "login failed";
+            }
+            user.sessionid = Guid.NewGuid();
+            user.deviceid = data.deviceid;
+            context.Entry(user).State = EntityState.Modified;
+            await context.SaveChangesAsync();
+            return new LoginOut
+            {
+                sessionid = user.sessionid
+            };
+            
+        }
+
+
         [HttpPost,Route("createuser")]
+        [ProducesResponseType(typeof(CreateUserOut),200)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<object> Create([FromBody]CreateUserIn user)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid||user==null)
             {
-                return BadRequest();
+                if (user==null)
+                {
+                    return BadRequest("received no package,, recheck frontend");
+                }
+                else
+                {
+                    return BadRequest(ModelState);
+                }
+                
             }
 
             var u = new User
             {
-                FirstName = user.firstname,
-                LastName = user.lastname,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 email = user.email,
-                password = user.password
+                password = user.password,
+                sessionid = Guid.NewGuid(),
+                deviceid = user.deviceid
             };
-
-            var session = new bst.Model.Session
-            {
-                user = u
-            };
+            
             context.users.Add(u);
-            context.sessions.Add(session);
             await context.SaveChangesAsync();
             return new CreateUserOut
             {
-                sessionid = session.id,
+                sessionid = u.sessionid,
                 firstname = u.FirstName,
                 lastname = u.LastName,
                 email = u.email
