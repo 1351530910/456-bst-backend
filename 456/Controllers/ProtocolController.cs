@@ -27,6 +27,7 @@ namespace bst.Controllers
             {
                 HttpContext.Response.StatusCode = 400;
             }
+            
             if ((string)HttpContext.Request.Headers["deviceid"]!=null)
             {
                 var sessionid = Guid.Parse((string)HttpContext.Request.Headers["sessionid"]);
@@ -38,7 +39,7 @@ namespace bst.Controllers
             base.OnActionExecuting(context);
         }
 
-        [AuthFilter]
+        [AuthFilter,HttpPost,Route("test")]
         public Task<object> getprotocol()
         {
             throw new NotImplementedException();
