@@ -33,11 +33,11 @@ namespace bst.Model
         }
 
         public DbSet<User> users { get; set; }
-        public DbSet<ParticipateProject> participateProjects { get; set; }
+        public DbSet<ParticipateProtocol> participateProtocols { get; set; }
         public DbSet<Role> roles { get; set; }
         public DbSet<Group> group { get; set; }
-        public DbSet<Project> projects { get; set; }
         public DbSet<Invitation> invitations { get; set; }
+
         public DbSet<Protocol> Protocols { get; set; }
         public DbSet<Study> Studies { get; set; }
         public DbSet<Subject> Subjects { get; set; }
@@ -75,14 +75,14 @@ namespace bst.Model
         public string deviceid { get; set; }
     }
 
-    public partial class ParticipateProject
+    public partial class ParticipateProtocol
     {
         [Key]
         public Guid id { get; set; }
         [Required]
         public virtual User user { get; set; }
         [Required]
-        public virtual Project project { get; set; }
+        public virtual Protocol protocol { get; set; }
         [Required]
         public int priviledge { get; set; }
     }

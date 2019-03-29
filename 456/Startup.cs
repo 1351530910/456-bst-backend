@@ -16,8 +16,6 @@ namespace bst
 {
     public class Startup
     {
-        public static string userdbstr = "";
-        public static string bstdbstr = "";
         public static bool devenv = false;
         public Startup(IConfiguration configuration)
         {
