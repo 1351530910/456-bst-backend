@@ -11,7 +11,7 @@ using bst.Model;
 
 namespace bst.Controllers
 {
-    
+
     public class ProtocolController : Controller
     {
 
@@ -32,9 +32,24 @@ namespace bst.Controllers
                 var sessionid = Guid.Parse((string)HttpContext.Request.Headers["sessionid"]);
                 var deviceid = (string)HttpContext.Request.Headers["deviceid"];
                 u = userdb.users.Where(x => x.deviceid == deviceid && x.sessionid.Equals(sessionid)).FirstOrDefault();
+                HttpContext.Items["auth"] = 1;
             }
 
             base.OnActionExecuting(context);
         }
+
+        [AuthFilter]
+        public Task<object> getprotocol()
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+
+
+
     }
+
+
 }
