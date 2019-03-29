@@ -32,7 +32,10 @@
     },
     "iis": {
       "commandName": "IIS",
-      "workingDirectory": "C:\\Users\\Administrator\\source\\repos\\1351530910\\456-bst-backend"
+      "workingDirectory": "C:\\Users\\Administrator\\source\\repos\\1351530910\\456-bst-backend",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }

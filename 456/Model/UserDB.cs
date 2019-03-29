@@ -32,8 +32,16 @@ namespace bst.Model
             base.OnConfiguring(optionsBuilder);
             if (optionsBuilder != null)
             {
-                //optionsBuilder.UseSqlServer("server=.;database=bstusers;Integrated Security=SSPI;user=sa;password=asd45214", null);
-                optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=root;password=Qwe12345", null);
+
+                if (bst.Startup.devenv)
+                {
+                    optionsBuilder.UseSqlServer("server=.;database=bstusers;Integrated Security=SSPI;user=sa;password=asd45214", null);
+                }
+                else
+                {
+                    optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=bst;password=asd45214", null);
+                }
+
             }
         }
 
@@ -64,8 +72,7 @@ namespace bst.Model
         public DbSet<Fiber> fibers { get; set; }
         public DbSet<Volume> volumes { get; set; }
         public DbSet<Surface> surfaces { get; set; }
-        public DbSet<Session> sessions { get; set; }
-    }
+
 
 
     public class BoolToIntConverter : ValueConverter<bool, int>
@@ -82,12 +89,6 @@ namespace bst.Model
     }
 
     #region user-group
-    public class Session
-    {
-        [Key]
-        public Guid id { get; set; }
-        public virtual User user { get; set; }
-    }
     public partial class User
     {
         [Key]
@@ -100,6 +101,8 @@ namespace bst.Model
         public string FirstName { get; set; }
         [MaxLength(30)]
         public string LastName { get; set; }
+        public Guid sessionid { get; set; }
+        public string deviceid { get; set; }
     }
 
     public partial class ParticipateProject
