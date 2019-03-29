@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace bst.Model
 {
@@ -14,6 +15,16 @@ namespace bst.Model
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    if (property.ClrType == typeof(bool))
+                    {
+                        property.SetValueConverter(new BoolToIntConverter());
+                    }
+                }
+            }
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -21,6 +32,7 @@ namespace bst.Model
             base.OnConfiguring(optionsBuilder);
             if (optionsBuilder != null)
             {
+
                 if (bst.Startup.devenv)
                 {
                     optionsBuilder.UseSqlServer("server=.;database=bstusers;Integrated Security=SSPI;user=sa;password=asd45214", null);
@@ -29,6 +41,7 @@ namespace bst.Model
                 {
                     optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=bst;password=asd45214", null);
                 }
+
             }
         }
 
@@ -42,6 +55,7 @@ namespace bst.Model
         public DbSet<Study> Studies { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<History> Histories { get; set; }
+        public DbSet<FunctionalFile> FunctionalFiles { get; set; }
         public DbSet<Channel> Channels { get; set; }
         public DbSet<TimeFreq> TimeFreqs { get; set; }
         public DbSet<Stat> Stats { get; set; }
@@ -58,7 +72,23 @@ namespace bst.Model
         public DbSet<Fiber> fibers { get; set; }
         public DbSet<Volume> volumes { get; set; }
         public DbSet<Surface> surfaces { get; set; }
+
+
+
+    public class BoolToIntConverter : ValueConverter<bool, int>
+    {
+        public BoolToIntConverter(ConverterMappingHints mappingHints = null)
+            : base(
+                  v => Convert.ToInt32(v),
+                  v => Convert.ToBoolean(v),
+                  mappingHints)
+        {
+        }
+        public static ValueConverterInfo DefaultInfo { get; }
+            = new ValueConverterInfo(typeof(bool), typeof(int), i => new BoolToIntConverter(i.MappingHints));
     }
+
+    #region user-group
     public partial class User
     {
         [Key]
@@ -133,6 +163,10 @@ namespace bst.Model
 
         public string message { get; set; }
     }
+
+    #endregion
+
+
     public class Protocol
     {
         [Key]
@@ -145,23 +179,6 @@ namespace bst.Model
         public bool IsLocked { get; set; }
         
         public virtual User LockedUser { get; set; }
-    }
-
-    public class Study
-    {
-        [Key]
-        public Guid id { get; set; }
-        //metadata
-        public string Filename { get; set; }
-        public string Name { get; set; }
-        public string Condition { get; set; }
-        public DateTime DateOfStudy { get; set; }
-        public int IChannel { get; set; }
-        public int IHeadModel { get; set; }
-        
-        public virtual Protocol Protocol { get; set; }
-        
-        public virtual Subject Subject { get; set; }
     }
 
     public class Subject
@@ -184,6 +201,22 @@ namespace bst.Model
         public virtual Protocol Protocol { get; set; }
     }
 
+    public class Study
+    {
+        [Key]
+        public Guid id { get; set; }
+        //metadata
+        public string Filename { get; set; }
+        public string Name { get; set; }
+        public string Condition { get; set; }
+        public DateTime DateOfStudy { get; set; }
+        public int IChannel { get; set; }
+        public int IHeadModel { get; set; }
+
+        public virtual Protocol Protocol { get; set; }
+        public virtual Subject Subject { get; set; }
+    }
+
     public class History
     {
         [Key]
@@ -200,12 +233,6 @@ namespace bst.Model
 
     #region Functional File and its subclasses 
 
-    public enum FunctionalFileType
-    {
-        channel, timefreq, stat, headmodel, result, recording, matrix,
-        dipole, covariance, image
-    }
-
     public class FunctionalFile
     {
         [Key]
@@ -213,9 +240,9 @@ namespace bst.Model
         //metadata
         public string Comment { get; set; }
         public string FileName { get; set; }
-        public FunctionalFileType FileType { get; set; }
+        public string FileType { get; set; }
         
-        public Study Study { get; set; }
+        public virtual Study Study { get; set; }
 
     }
 
@@ -223,7 +250,6 @@ namespace bst.Model
     {
         [Key]
         public Guid id { get; set; }
-        //public Guid ChannelID { get; set; }
         //metadata
         public int NbChannels { get; set; }
         public string TransfMegLabels { get; set; }
@@ -368,11 +394,6 @@ namespace bst.Model
 
     #region Anatomical File and its subclasses 
 
-    public enum AnatomicalFileType
-    {
-        Fiber, Volume, Surface
-    }
-
     public class AnatomicalFile
     {
         [Key]
@@ -380,7 +401,7 @@ namespace bst.Model
         //metadata
         public string Comment { get; set; }
         public string FileName { get; set; }
-        public int FileType { get; set; }
+        public string FileType { get; set; }
         
         public virtual Subject Subject { get; set; }
     }
