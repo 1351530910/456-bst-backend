@@ -173,9 +173,9 @@ namespace bst.Model
         public int IStudy { get; set; }
         public bool UseDefaultAnat { get; set; }
         public bool UseDefaultChannel { get; set; }
-        public bool IsLocked { get; set; }
         
         public virtual User LockedUser { get; set; }
+        public virtual ICollection<Subject> subjects { get; set; }
     }
 
     public class Subject

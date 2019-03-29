@@ -162,7 +162,6 @@ namespace bst.Controllers
                 IStudy = protocol.IStudy,
                 UseDefaultAnat = protocol.UseDefaultAnat,
                 UseDefaultChannel = protocol.UseDefaultChannel,
-                IsLocked = protocol.IsLocked,
                 LockedUser = context.users.Where(u => u.id.Equals(protocol.LockedUserId)).FirstOrDefault()
             };
         }

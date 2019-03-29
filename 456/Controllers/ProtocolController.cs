@@ -6,23 +6,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Mvc.Filters;
 using bst.Model;
+using Microsoft.EntityFrameworkCore;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace bst.Controllers
 {
-
+    [Route("protocol")]
     public class ProtocolController : Controller
     {
 
-        public UserDB userdb { get; set; }
+        public UserDB db { get; set; }
         public User u { get; set; }
 
 
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            userdb = new UserDB();
+            db = new UserDB();
             if (!ModelState.IsValid)
             {
                 HttpContext.Response.StatusCode = 400;
@@ -32,25 +32,28 @@ namespace bst.Controllers
             {
                 var sessionid = Guid.Parse((string)HttpContext.Request.Headers["sessionid"]);
                 var deviceid = (string)HttpContext.Request.Headers["deviceid"];
-                u = userdb.users.Where(x => x.deviceid == deviceid && x.sessionid.Equals(sessionid)).FirstOrDefault();
+                u = db.users.Where(x => x.deviceid == deviceid && x.sessionid.Equals(sessionid)).FirstOrDefault();
                 HttpContext.Items["auth"] = 1;
             }
 
             base.OnActionExecuting(context);
         }
 
-        [AuthFilter,HttpPost,Route("test")]
-        public Task<object> getprotocol()
+        [AuthFilter,HttpPost,Route("get/{protocolid}")]
+        public async Task<object> getprotocol(Guid protocolid)
         {
-            throw new NotImplementedException();
+            var p = await db.Protocols.FindAsync(protocolid);
+            if (p.LockedUser==null)
+            {
+                p.LockedUser = u;
+                db.Entry(p).State = EntityState.Modified;
+            }
+            if (p.LockedUser!=u)
+            {
+                return Unauthorized("resource locked by other user");
+            }
+
+
         }
-
-
-
-
-
-
     }
-
-
 }
