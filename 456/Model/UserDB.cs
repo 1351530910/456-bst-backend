@@ -27,7 +27,7 @@ namespace bst.Model
                 }
                 else
                 {
-                    optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=che;password=waiterheum", null);
+                    optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=bst;password=asd45214", null);
                 }
             }
         }

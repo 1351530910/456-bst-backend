@@ -60,7 +60,8 @@ namespace bst
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var usercontext = serviceScope.ServiceProvider.GetRequiredService<Model.UserDB>();
-                usercontext.Database.Migrate();
+                usercontext.Database.EnsureDeleted();
+                usercontext.Database.EnsureCreated();
 
             }
         }
