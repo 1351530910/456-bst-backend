@@ -25,12 +25,6 @@ namespace bst.Controllers
         }
 
 
-        [HttpGet,Route("listuser")]
-        public async Task<List<User>> List()
-        {
-            return await context.users.ToListAsync();
-        }
-
         [HttpPost,Route("login")]
         [ProducesResponseType(typeof(LoginOut),200)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -96,8 +90,8 @@ namespace bst.Controllers
 
 
 
-        [HttpGet, Route("getone")]
-        public object GetSingleRow([FromQuery] string type, [FromQuery] Guid id)
+        [HttpGet, Route("getone/{type}/{id}")]
+        public object GetSingleRow(string type,Guid id)
         {
             switch (type)
             {

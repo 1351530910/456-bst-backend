@@ -1,19 +1,18 @@
 ﻿using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
 namespace bst.Controllers
 {
-    public class AuthFilter : IActionFilter
+    public class AuthFilter : ActionFilterAttribute
     {
-        public void OnActionExecuted(ActionExecutedContext context)
-        {
-
-        }
-
-        public void OnActionExecuting(ActionExecutingContext context)
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
             if (context.HttpContext.Items["auth"] == null)
             {
                 context.Result = new UnauthorizedResult();
             }
+            base.OnActionExecuting(context);
         }
 
     }
