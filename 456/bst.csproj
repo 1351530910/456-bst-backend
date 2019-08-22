@@ -10,7 +10,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>true</Optimize>
     <DefineConstants></DefineConstants>
-    <DocumentationFile>C:\Users\Administrator\Source\Repos\1351530910\456-bst-backend\456\bst.xml</DocumentationFile>
+    <DocumentationFile>C:\Users\esther\Desktop\456-bst-backend\456\bin\Debug\netcoreapp2.2\bst.xml</DocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
@@ -23,6 +23,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
     <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.15" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
+    <PackageReference Include="System.Web.Http.Common" Version="4.0.20126.16343" />
   </ItemGroup>
 
   <ItemGroup>

@@ -34,6 +34,8 @@ namespace bst
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
             services.AddDbContext<Model.UserDB>();
+
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info
@@ -47,6 +49,8 @@ namespace bst
                 var xmlFile = Path.ChangeExtension(typeof(Startup).Assembly.Location, ".xml");
                 c.IncludeXmlComments(xmlFile);
             });
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,10 +70,13 @@ namespace bst
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
             // specifying the Swagger JSON endpoint.
+
+            
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute
@@ -78,6 +85,7 @@ namespace bst
                     template: "{controller}/{action}/"
                 );
             });
+            /* databse
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var usercontext = serviceScope.ServiceProvider.GetRequiredService<Model.UserDB>();
@@ -85,6 +93,7 @@ namespace bst
                 usercontext.Database.EnsureCreated();
 
             }
+            */
         }
     }
 }
