@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>bst</name>
+    </assembly>
+    <members>
+        <member name="P:bst.Controllers.ListCount.start">
+            <summary>
+            start index
+            </summary>
+        </member>
+        <member name="P:bst.Controllers.ListCount.count">
+            <summary>
+            how many results(max)
+            </summary>
+        </member>
+        <member name="P:bst.Controllers.ListCount.order">
+            <summary>
+            ordering
+            </summary>
+        </member>
+    </members>
+</doc>

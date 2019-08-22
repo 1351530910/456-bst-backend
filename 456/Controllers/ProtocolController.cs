@@ -12,48 +12,33 @@ using Microsoft.EntityFrameworkCore;
 namespace bst.Controllers
 {
     [Route("protocol")]
-    public class ProtocolController : Controller
+    public class ProtocolController : AuthController
     {
-
-        public UserDB db { get; set; }
-        public User u { get; set; }
-
-
-
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            db = new UserDB();
-            if (!ModelState.IsValid)
-            {
-                HttpContext.Response.StatusCode = 400;
-            }
-            
-            if ((string)HttpContext.Request.Headers["deviceid"]!=null)
-            {
-                var sessionid = Guid.Parse((string)HttpContext.Request.Headers["sessionid"]);
-                var deviceid = (string)HttpContext.Request.Headers["deviceid"];
-                u = db.users.Where(x => x.deviceid == deviceid && x.sessionid.Equals(sessionid)).FirstOrDefault();
-                HttpContext.Items["auth"] = 1;
-            }
-
-            base.OnActionExecuting(context);
-        }
-
-        [AuthFilter,HttpPost,Route("get/{protocolid}")]
+        [AuthFilter,HttpGet,Route("get/{protocolid}"),ProducesResponseType(typeof(ProtocolPreview),200)]
         public async Task<object> getprotocol(Guid protocolid)
         {
-            var p = await db.Protocols.FindAsync(protocolid);
+            var p = await context.Protocols.FindAsync(protocolid);
             if (p.LockedUser==null)
             {
                 p.LockedUser = u;
-                db.Entry(p).State = EntityState.Modified;
+                context.Entry(p).State = EntityState.Modified;
             }
             if (p.LockedUser!=u)
             {
                 return Unauthorized("resource locked by other user");
             }
 
-
+            throw new NotImplementedException();
         }
+
+
+        [HttpPost, Route("create"), ProducesResponseType(typeof(Guid), 200)]
+        public async Task<object> create([FromBody]CreateProtocol data)
+        {
+
+            throw new NotImplementedException();
+        }
+
+
     }
 }

@@ -98,8 +98,9 @@ namespace bst.Model
         public string FirstName { get; set; }
         [MaxLength(30)]
         public string LastName { get; set; }
-        public Guid sessionid { get; set; }
-        public string deviceid { get; set; }
+
+        public ICollection<ParticipateProtocol> protocols { get; set; }
+        public ICollection<Role> roles { get; set; }
     }
 
     public partial class ParticipateProtocol
@@ -133,19 +134,12 @@ namespace bst.Model
         [MaxLength(100),Required]
         public string name { get; set; }
         public string description { get; set; }
+
+        public ICollection<Role> users { get; set; }
+        public ICollection<Protocol> protocols { get; set; }
+
     }
 
-    public partial class Project
-    {
-        [Key]
-        public Guid id { get; set; }
-        [MaxLength(100),Required]
-        public string name { get; set; }
-        public bool isprivate { get; set; }
-
-        [Required]
-        public virtual Group group { get; set; }
-    }
 
     public partial class Invitation
     {
@@ -168,12 +162,16 @@ namespace bst.Model
     {
         [Key]
         public Guid id { get; set; }
+        [MaxLength(100), Required]
+        public string name { get; set; }
+        public bool isprivate { get; set; }
         //metadata
         public string Comment { get; set; }
         public int IStudy { get; set; }
         public bool UseDefaultAnat { get; set; }
         public bool UseDefaultChannel { get; set; }
-        
+        [Required]
+        public virtual Group group { get; set; }
         public virtual User LockedUser { get; set; }
         public virtual ICollection<Subject> subjects { get; set; }
     }

@@ -14,6 +14,5 @@ namespace bst.Controllers
             }
             base.OnActionExecuting(context);
         }
-
     }
 }
