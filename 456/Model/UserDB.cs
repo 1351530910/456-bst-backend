@@ -257,7 +257,7 @@ namespace bst.Model
         public int DbTransfMeg { get; set; }
         public int DbTransfEeg { get; set; }
         public int DbIntraElectrodes { get; set; }
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class TimeFreq 
@@ -271,7 +271,7 @@ namespace bst.Model
         public string ColormapType { get; set; }
         public string DisplayUnits { get; set; }
         //summary info 
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class Stat
@@ -284,7 +284,7 @@ namespace bst.Model
         public string Type { get; set; }
         //summary info
         public int DbChannelFlag { get; set; }
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class HeadModel
@@ -298,7 +298,7 @@ namespace bst.Model
         public string ECOGMethod { get; set; }
         public string SEEGMethod { get; set; }
         //summary info
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class Result
@@ -317,7 +317,7 @@ namespace bst.Model
         public bool DbImagingKernel { get; set; }
         public int DbChannelFlag { get; set; }
         public int DbAtlas { get; set; }
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class Recording
@@ -346,7 +346,7 @@ namespace bst.Model
         public int DbEvents { get; set; }
         public int DbEpoch { get; set; }
         public int DbChannelFlag { get; set; }
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class Matrix
@@ -360,7 +360,7 @@ namespace bst.Model
         public int DbChannelFlag { get; set; }
         public int DbEvents { get; set; }
         public int DbAtlas { get; set; }
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class Dipole 
@@ -369,21 +369,21 @@ namespace bst.Model
         public Guid Id { get; set; }
         //summary info 
         public int DbDipole { get; set; }
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class Covariance 
     {
         [Key]
         public Guid Id { get; set; }
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class Image
     {
         [Key]
         public Guid Id { get; set; }
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     #endregion
@@ -407,7 +407,7 @@ namespace bst.Model
         [Key]
         public Guid Id { get; set; }
 
-        public virtual AnatomicalFile parent { get; set; }
+        public virtual AnatomicalFile Parent { get; set; }
     }
 
     public class Volume
@@ -424,7 +424,7 @@ namespace bst.Model
         public bool DbSCS { get; set; }
         public bool DbNCS { get; set; }
 
-        public virtual AnatomicalFile parent { get; set; }
+        public virtual AnatomicalFile Parent { get; set; }
     }
 
     public class Surface
@@ -438,7 +438,7 @@ namespace bst.Model
         public int DbFaces { get; set; }
         public int DbAtlas { get; set; }
 
-        public virtual AnatomicalFile parent { get; set; }
+        public virtual AnatomicalFile Parent { get; set; }
     }
     #endregion
 }
