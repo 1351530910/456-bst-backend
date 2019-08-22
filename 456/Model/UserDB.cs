@@ -125,7 +125,7 @@ namespace bst.Model
         public virtual Group group { get; set; }
         //1 -> administrator
         [Required]
-        public int priviledge { get; set; }
+        public int privilege { get; set; }
     }
 
     public partial class Group

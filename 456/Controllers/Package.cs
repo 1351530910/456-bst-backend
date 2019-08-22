@@ -14,9 +14,9 @@ namespace bst.Controllers
         [MinLength(8), MaxLength(15), Required]
         public string password { get; set; }
         [MaxLength(30),Required]
-        public string FirstName { get; set; }
+        public string firstName { get; set; }
         [MaxLength(30),Required]
-        public string LastName { get; set; }
+        public string lastName { get; set; }
         [Required]
         public string deviceid { get; set; }
     }
@@ -62,7 +62,7 @@ namespace bst.Controllers
             description = group.description;
             
             projects = group.protocols.Select(x => new ProtocolPreview(x));
-            users = group.users.Select(x => new UserPreview(x.user, x.priviledge));
+            users = group.users.Select(x => new UserPreview(x.user, x.privilege));
         }
     }
     public class UserPreview
@@ -113,6 +113,7 @@ namespace bst.Controllers
         [Required]
         public Guid userid { get; set; }
         [Required]
+        //the privilege of the added person in the group
         public int permission { get; set; }
     }
     public class RemoveUserIn

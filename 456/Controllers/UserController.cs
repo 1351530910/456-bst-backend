@@ -69,8 +69,8 @@ namespace bst.Controllers
             var u = new User
             {
                 id = Guid.NewGuid(),
-                FirstName = user.FirstName,
-                LastName = user.LastName,
+                FirstName = user.firstName,
+                LastName = user.lastName,
                 email = user.email,
                 password = user.password
             };

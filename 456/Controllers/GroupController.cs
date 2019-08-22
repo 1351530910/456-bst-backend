@@ -29,7 +29,8 @@ namespace bst.Controllers
                 id = Guid.NewGuid(),
                 user = user,
                 group = group,
-                priviledge = 1
+                //add administrator
+                privilege = 1
             };
             context.group.Add(group);
             context.roles.Add(role);
@@ -41,44 +42,76 @@ namespace bst.Controllers
         [HttpPost, Route("modify"), ProducesResponseType(typeof(GroupPreview), 200)]
         public async Task<object> Modify([FromBody]ModifyGroupIn data)
         {
-
-            throw new NotImplementedException();
+            var group = await context.group.FindAsync(data.id);
+            group.name = data.name;
+            group.description = data.description;
+            await context.SaveChangesAsync();
+            return new GroupPreview(group);
         }
 
-        [HttpPost, Route("detail"), ProducesResponseType(typeof(ProtocolPreview), 200)]
+        [HttpPost, Route("detail"), ProducesResponseType(typeof(Group), 200)]
         public async Task<object> Detail([FromBody]GroupDetailIn data)
         {
-
-            throw new NotImplementedException();
-        }
+            var group = await context.group.FindAsync(data.groupid);
+            return group;
+        }        
 
         [HttpPost, Route("listGroup"), ProducesResponseType(typeof(IEnumerable<GroupPreview>), 200)]
         public async Task<object> ListGroup([FromBody]ListCount data)
         {
-
-            throw new NotImplementedException();
+            var user = await context.users.FindAsync(HttpContext.Items["user"]);
+            var groups = user.roles.Select(r => r.group);
+            return groups.Select(g => new GroupPreview(g));
         }
 
         [HttpPost, Route("invite"), ProducesResponseType(200)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<object> Invite([FromBody]GroupInviteIn data)
         {
-
-            throw new NotImplementedException();
+            var user = await context.users.FindAsync(HttpContext.Items["user"]);
+            var userPrivilege = user.roles.FirstOrDefault(r => r.group.id.Equals(data.groupid));
+            if (userPrivilege == null || userPrivilege.privilege != 1)
+                return BadRequest("User must be group admin to add people.");
+            var group = context.group.FirstOrDefault(g => g.id.Equals(data.groupid));
+            var addeduser = context.users.FirstOrDefault(u => u.id.Equals(data.userid));
+            if (group == null || addeduser == null) return NotFound("Group or added user not found.");
+            var newrole = new Role
+            {
+                id = Guid.NewGuid(),
+                user = addeduser,
+                group = group,
+                //add administrator
+                privilege = data.permission
+            };
+            context.roles.Add(newrole);
+            await context.SaveChangesAsync();
+            return Ok("Add member successfully!");
         }
 
 
         [HttpPost, Route("changePriviledge"), ProducesResponseType(typeof(string), 200)]
-        public async Task<object> ChangePriviledge([FromBody]GroupInviteIn data)
+        public async Task<object> ChangePrivilege([FromBody]GroupInviteIn data)
         {
-
-            throw new NotImplementedException();
+            var user = await context.users.FindAsync(HttpContext.Items["user"]);
+            var userPrivilege = user.roles.FirstOrDefault(r => r.group.id.Equals(data.groupid));
+            if (userPrivilege == null || userPrivilege.privilege != 1)
+                return BadRequest("User must be group admin to change privilege.");
+            var roletochange = context.roles.FirstOrDefault(r => r.group.id.Equals(data.groupid) && r.user.id.Equals(data.userid));
+            if (roletochange == null) return NotFound($"User {data.userid} is not a group member.");
+            roletochange.privilege = data.permission;
+            return Ok("Change privilege successfully!");
         }
 
         [HttpPost, Route("removeUser"), ProducesResponseType(typeof(string), 200)]
         public async Task<object> RemoveUser([FromBody]RemoveUserIn data)
         {
-
-            throw new NotImplementedException();
+            var user = await context.users.FindAsync(HttpContext.Items["user"]);
+            var userPrivilege = user.roles.FirstOrDefault(r => r.group.id.Equals(data.groupid));
+            if (userPrivilege == null || (userPrivilege.privilege != 1 && !user.id.Equals(data.userid)))
+                return BadRequest("User must be group admin or himself/herself to remove user.");
+            context.roles.Remove(context.roles.FirstOrDefault(r => r.group.id.Equals(data.groupid) && r.user.id.Equals(data.userid)));
+            await context.SaveChangesAsync();
+            return Ok("Remove user successfully!");       
         }
 
         
