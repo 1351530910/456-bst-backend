@@ -60,6 +60,7 @@ namespace bst.Controllers
             id = group.id;
             name = group.name;
             description = group.description;
+            
             projects = group.protocols.Select(x => new ProtocolPreview(x));
             users = group.users.Select(x => new UserPreview(x.user, x.priviledge));
         }

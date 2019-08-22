@@ -86,26 +86,16 @@ namespace bst.Controllers
         }
 
         [ProducesResponseType(200),AuthFilter]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest), ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost, Route("logout")]
         
         public async Task<object> logout()
         {
-            try
-            {
-                //check for active session
-                if (HttpContext.Items["user"]==null)
-                {
-                    return Unauthorized();
-                }
+            //var session = (Session)HttpContext.Items["session"];
+            //var user = await context.users.FindAsync(HttpContext.Items["user"]);
 
-                AuthFilter.sessions.Remove((Session)HttpContext.Items["session"]);
-                return Ok();
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
+            AuthFilter.sessions.Remove((Session)HttpContext.Items["session"]);
+            return Ok();
         }
 
 
