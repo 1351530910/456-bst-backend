@@ -10,28 +10,12 @@ namespace bst.Controllers
 {
     [Route("group")]
     [ApiController,AuthFilter]
-    public class GroupController : AuthController
+    public class GroupController
     {
         [HttpPost,Route("create"),ProducesResponseType(typeof(GroupPreview),200)]
         public async Task<object> createGroup([FromBody]CreateGroupIn data)
         {
-            var group = new Group
-            {
-                id = Guid.NewGuid(),
-                name = data.name,
-                description = data.description
-            };
-            var role = new Role
-            {
-                id = Guid.NewGuid(),
-                user = u,
-                group = group,
-                priviledge = 0
-            };
-            context.group.Add(group);
-            context.roles.Add(role);
-            await context.SaveChangesAsync();
-            return Ok(new GroupPreview(group));
+            throw new NotImplementedException();
         }
 
 
