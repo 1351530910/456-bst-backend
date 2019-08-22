@@ -16,24 +16,24 @@ namespace bst.Controllers
         [HttpPost,Route("create"),ProducesResponseType(typeof(GroupPreview),200)]
         public async Task<object> CreateGroup([FromBody]CreateGroupIn data)
         {
-            var user = await context.users.FindAsync(HttpContext.Items["user"]);
+            var user = await context.Users.FindAsync(HttpContext.Items["user"]);
             var group = new Group
             {
-                id = Guid.NewGuid(),
-                name = data.name,
-                description = data.description,
+                Id = Guid.NewGuid(),
+                Name = data.Name,
+                Description = data.Description,
 
             };
             var role = new Role
             {
-                id = Guid.NewGuid(),
-                user = user,
-                group = group,
+                Id = Guid.NewGuid(),
+                User = user,
+                Group = group,
                 //add administrator
-                privilege = 1
+                Privilege = 1
             };
-            context.group.Add(group);
-            context.roles.Add(role);
+            context.Group.Add(group);
+            context.Roles.Add(role);
             await context.SaveChangesAsync();
             return new GroupPreview(group);
         }
@@ -42,9 +42,9 @@ namespace bst.Controllers
         [HttpPost, Route("modify"), ProducesResponseType(typeof(GroupPreview), 200)]
         public async Task<object> Modify([FromBody]ModifyGroupIn data)
         {
-            var group = await context.group.FindAsync(data.id);
-            group.name = data.name;
-            group.description = data.description;
+            var group = await context.Group.FindAsync(data.Id);
+            group.Name = data.Name;
+            group.Description = data.Description;
             await context.SaveChangesAsync();
             return new GroupPreview(group);
         }
@@ -52,15 +52,15 @@ namespace bst.Controllers
         [HttpPost, Route("detail"), ProducesResponseType(typeof(Group), 200)]
         public async Task<object> Detail([FromBody]GroupDetailIn data)
         {
-            var group = await context.group.FindAsync(data.groupid);
+            var group = await context.Group.FindAsync(data.Groupid);
             return group;
         }        
 
         [HttpPost, Route("listGroup"), ProducesResponseType(typeof(IEnumerable<GroupPreview>), 200)]
         public async Task<object> ListGroup([FromBody]ListCount data)
         {
-            var user = await context.users.FindAsync(HttpContext.Items["user"]);
-            var groups = user.roles.Select(r => r.group);
+            var user = await context.Users.FindAsync(HttpContext.Items["user"]);
+            var groups = user.Roles.Select(r => r.Group);
             return groups.Select(g => new GroupPreview(g));
         }
 
@@ -68,22 +68,22 @@ namespace bst.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<object> Invite([FromBody]GroupInviteIn data)
         {
-            var user = await context.users.FindAsync(HttpContext.Items["user"]);
-            var userPrivilege = user.roles.FirstOrDefault(r => r.group.id.Equals(data.groupid));
-            if (userPrivilege == null || userPrivilege.privilege != 1)
+            var user = await context.Users.FindAsync(HttpContext.Items["user"]);
+            var userPrivilege = user.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid));
+            if (userPrivilege == null || userPrivilege.Privilege != 1)
                 return BadRequest("User must be group admin to add people.");
-            var group = context.group.FirstOrDefault(g => g.id.Equals(data.groupid));
-            var addeduser = context.users.FirstOrDefault(u => u.id.Equals(data.userid));
+            var group = context.Group.FirstOrDefault(g => g.Id.Equals(data.Groupid));
+            var addeduser = context.Users.FirstOrDefault(u => u.Id.Equals(data.Userid));
             if (group == null || addeduser == null) return NotFound("Group or added user not found.");
             var newrole = new Role
             {
-                id = Guid.NewGuid(),
-                user = addeduser,
-                group = group,
+                Id = Guid.NewGuid(),
+                User = addeduser,
+                Group = group,
                 //add administrator
-                privilege = data.permission
+                Privilege = data.Permission
             };
-            context.roles.Add(newrole);
+            context.Roles.Add(newrole);
             await context.SaveChangesAsync();
             return Ok("Add member successfully!");
         }
@@ -92,24 +92,24 @@ namespace bst.Controllers
         [HttpPost, Route("changePriviledge"), ProducesResponseType(typeof(string), 200)]
         public async Task<object> ChangePrivilege([FromBody]GroupInviteIn data)
         {
-            var user = await context.users.FindAsync(HttpContext.Items["user"]);
-            var userPrivilege = user.roles.FirstOrDefault(r => r.group.id.Equals(data.groupid));
-            if (userPrivilege == null || userPrivilege.privilege != 1)
+            var user = await context.Users.FindAsync(HttpContext.Items["user"]);
+            var userPrivilege = user.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid));
+            if (userPrivilege == null || userPrivilege.Privilege != 1)
                 return BadRequest("User must be group admin to change privilege.");
-            var roletochange = context.roles.FirstOrDefault(r => r.group.id.Equals(data.groupid) && r.user.id.Equals(data.userid));
-            if (roletochange == null) return NotFound($"User {data.userid} is not a group member.");
-            roletochange.privilege = data.permission;
+            var roletochange = context.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid) && r.User.Id.Equals(data.Userid));
+            if (roletochange == null) return NotFound($"User {data.Userid} is not a group member.");
+            roletochange.Privilege = data.Permission;
             return Ok("Change privilege successfully!");
         }
 
         [HttpPost, Route("removeUser"), ProducesResponseType(typeof(string), 200)]
         public async Task<object> RemoveUser([FromBody]RemoveUserIn data)
         {
-            var user = await context.users.FindAsync(HttpContext.Items["user"]);
-            var userPrivilege = user.roles.FirstOrDefault(r => r.group.id.Equals(data.groupid));
-            if (userPrivilege == null || (userPrivilege.privilege != 1 && !user.id.Equals(data.userid)))
+            var user = await context.Users.FindAsync(HttpContext.Items["user"]);
+            var userPrivilege = user.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid));
+            if (userPrivilege == null || (userPrivilege.Privilege != 1 && !user.Id.Equals(data.Userid)))
                 return BadRequest("User must be group admin or himself/herself to remove user.");
-            context.roles.Remove(context.roles.FirstOrDefault(r => r.group.id.Equals(data.groupid) && r.user.id.Equals(data.userid)));
+            context.Roles.Remove(context.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid) && r.User.Id.Equals(data.Userid)));
             await context.SaveChangesAsync();
             return Ok("Remove user successfully!");       
         }
