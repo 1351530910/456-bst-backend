@@ -45,11 +45,11 @@ namespace bst.Model
             }
         }
 
-        public DbSet<User> users { get; set; }
-        public DbSet<ParticipateProtocol> participateProtocols { get; set; }
-        public DbSet<Role> roles { get; set; }
-        public DbSet<Group> group { get; set; }
-        public DbSet<Invitation> invitations { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<ParticipateProtocol> ParticipateProtocols { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<Group> Group { get; set; }
+        public DbSet<Invitation> Invitations { get; set; }
 
         public DbSet<Protocol> Protocols { get; set; }
         public DbSet<Study> Studies { get; set; }
@@ -68,7 +68,7 @@ namespace bst.Model
         public DbSet<Fiber> Fibers { get; set; }
         public DbSet<Volume> Volumes { get; set; }
         public DbSet<Surface> Surfaces { get; set; }
-        public DbSet<AnatomicalFile> anatomicalFiles { get; set; }
+        public DbSet<AnatomicalFile> AnatomicalFiles { get; set; }
 
     }
 
@@ -89,54 +89,55 @@ namespace bst.Model
     public partial class User
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         [EmailAddress]
-        public string email { get; set; }
+        public string Email { get; set; }
         [MinLength(8), MaxLength(15), Required]
-        public string password { get; set; }
+        public string Password { get; set; }
         [MaxLength(30)]
         public string FirstName { get; set; }
         [MaxLength(30)]
         public string LastName { get; set; }
 
-        public ICollection<ParticipateProtocol> protocols { get; set; }
-        public ICollection<Role> roles { get; set; }
+        public ICollection<ParticipateProtocol> Protocols { get; set; }
+        public ICollection<Role> Roles { get; set; }
     }
 
     public partial class ParticipateProtocol
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         [Required]
-        public virtual User user { get; set; }
+        public virtual User User { get; set; }
         [Required]
-        public virtual Protocol protocol { get; set; }
+        public virtual Protocol Protocol { get; set; }
         [Required]
-        public int priviledge { get; set; }
+        public int Privilege { get; set; }
     }
 
     public partial class Role
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         [Required]
-        public virtual User user { get; set; }
+        public virtual User User { get; set; }
         [Required]
-        public virtual Group group { get; set; }
+        public virtual Group Group { get; set; }
+        //1 -> administrator
         [Required]
-        public int priviledge { get; set; }
+        public int Privilege { get; set; }
     }
 
     public partial class Group
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         [MaxLength(100),Required]
-        public string name { get; set; }
-        public string description { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
 
-        public ICollection<Role> users { get; set; }
-        public ICollection<Protocol> protocols { get; set; }
+        public ICollection<Role> Users { get; set; }
+        public ICollection<Protocol> Protocols { get; set; }
 
     }
 
@@ -144,15 +145,15 @@ namespace bst.Model
     public partial class Invitation
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         [Required]
-        public int type { get; set; }
+        public int Type { get; set; }
         [Required]
-        public Guid otherid { get; set; }
+        public Guid Otherid { get; set; }
         [Required]
-        public DateTime expiration { get; set; }
+        public DateTime Expiration { get; set; }
 
-        public string message { get; set; }
+        public string Message { get; set; }
     }
 
     #endregion
@@ -161,25 +162,25 @@ namespace bst.Model
     public class Protocol
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         [MaxLength(100), Required]
-        public string name { get; set; }
-        public bool isprivate { get; set; }
+        public string Name { get; set; }
+        public bool Isprivate { get; set; }
         //metadata
         public string Comment { get; set; }
         public int IStudy { get; set; }
         public bool UseDefaultAnat { get; set; }
         public bool UseDefaultChannel { get; set; }
         [Required]
-        public virtual Group group { get; set; }
+        public virtual Group Group { get; set; }
         public virtual User LockedUser { get; set; }
-        public virtual ICollection<Subject> subjects { get; set; }
+        public virtual ICollection<Subject> Subjects { get; set; }
     }
 
     public class Subject
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         //metadata
         public string Comment { get; set; }
         public string Filename { get; set; }
@@ -199,7 +200,7 @@ namespace bst.Model
     public class Study
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         //metadata
         public string Filename { get; set; }
         public string Name { get; set; }
@@ -215,7 +216,7 @@ namespace bst.Model
     public class History
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         //metadata
         public DateTime TimeStamp { get; set; }
         public string Type { get; set; }  //what does type mean here?
@@ -231,7 +232,7 @@ namespace bst.Model
     public class FunctionalFile
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         //metadata
         public string Comment { get; set; }
         public string FileName { get; set; }
@@ -244,7 +245,7 @@ namespace bst.Model
     public class Channel
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         //metadata
         public int NbChannels { get; set; }
         public string TransfMegLabels { get; set; }
@@ -256,13 +257,13 @@ namespace bst.Model
         public int DbTransfMeg { get; set; }
         public int DbTransfEeg { get; set; }
         public int DbIntraElectrodes { get; set; }
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class TimeFreq 
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         //metadata
         public string Measure { get; set; }
         public string Method { get; set; }
@@ -270,26 +271,26 @@ namespace bst.Model
         public string ColormapType { get; set; }
         public string DisplayUnits { get; set; }
         //summary info 
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class Stat
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         //metadata 
         public int Df { get; set; }
         public bool Correction { get; set; }
         public string Type { get; set; }
         //summary info
         public int DbChannelFlag { get; set; }
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class HeadModel
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         //metadata
         public string Type { get; set; }
         public string MEGMethod { get; set; }
@@ -297,13 +298,13 @@ namespace bst.Model
         public string ECOGMethod { get; set; }
         public string SEEGMethod { get; set; }
         //summary info
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class Result
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         //metadata 
         public bool IsLink { get; set; }
         public int NComponents { get; set; }
@@ -316,13 +317,13 @@ namespace bst.Model
         public bool DbImagingKernel { get; set; }
         public int DbChannelFlag { get; set; }
         public int DbAtlas { get; set; }
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class Recording
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         //metadata 
         public string Format { get; set; }
         public string Device { get; set; }
@@ -345,13 +346,13 @@ namespace bst.Model
         public int DbEvents { get; set; }
         public int DbEpoch { get; set; }
         public int DbChannelFlag { get; set; }
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class Matrix
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         //metadata
         public int NAvg { get; set; }
         public string DisplayUnits { get; set; }
@@ -359,30 +360,30 @@ namespace bst.Model
         public int DbChannelFlag { get; set; }
         public int DbEvents { get; set; }
         public int DbAtlas { get; set; }
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class Dipole 
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         //summary info 
         public int DbDipole { get; set; }
-        public virtual FunctionalFile parent { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class Covariance 
     {
         [Key]
-        public Guid id { get; set; }
-        public virtual FunctionalFile parent { get; set; }
+        public Guid Id { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     public class Image
     {
         [Key]
-        public Guid id { get; set; }
-        public virtual FunctionalFile parent { get; set; }
+        public Guid Id { get; set; }
+        public virtual FunctionalFile Parent { get; set; }
     }
 
     #endregion
@@ -392,7 +393,7 @@ namespace bst.Model
     public class AnatomicalFile
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         //metadata
         public string Comment { get; set; }
         public string FileName { get; set; }
@@ -404,15 +405,15 @@ namespace bst.Model
     public class Fiber 
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
 
-        public virtual AnatomicalFile parent { get; set; }
+        public virtual AnatomicalFile Parent { get; set; }
     }
 
     public class Volume
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         //summary info
         public int DbCubeX { get; set; }
         public int DbCubeY { get; set; }
@@ -423,13 +424,13 @@ namespace bst.Model
         public bool DbSCS { get; set; }
         public bool DbNCS { get; set; }
 
-        public virtual AnatomicalFile parent { get; set; }
+        public virtual AnatomicalFile Parent { get; set; }
     }
 
     public class Surface
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
         //metadata
         public int IAtlas { get; set; }
         //summary info
@@ -437,7 +438,7 @@ namespace bst.Model
         public int DbFaces { get; set; }
         public int DbAtlas { get; set; }
 
-        public virtual AnatomicalFile parent { get; set; }
+        public virtual AnatomicalFile Parent { get; set; }
     }
     #endregion
 }

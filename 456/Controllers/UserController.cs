@@ -27,9 +27,9 @@ namespace bst.Controllers
         [HttpPost,Route("login")]
         [ProducesResponseType(typeof(LoginOut),200)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<object> login([FromBody]LoginIn data)
+        public async Task<object> Login([FromBody]LoginIn data)
         {
-            var user = await context.users.Where(x => x.email == data.email && x.password == data.password).FirstOrDefaultAsync();
+            var user = await context.Users.Where(x => x.Email == data.Email && x.Password == data.Password).FirstOrDefaultAsync();
             if (user==null)
             {
                 HttpContext.Response.StatusCode = 401;
@@ -38,13 +38,13 @@ namespace bst.Controllers
             var session = new Session
             {
                 sessionid = Guid.NewGuid(),
-                deviceid = data.deviceid
+                deviceid = data.Deviceid
             };
-            AuthFilter.sessions.Add(session, user.id);
+            AuthFilter.sessions.Add(session, user.Id);
             await context.SaveChangesAsync();
             return new LoginOut
             {
-                sessionid = session.sessionid
+                Sessionid = session.sessionid
             };
         }
 
@@ -63,25 +63,26 @@ namespace bst.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                
             }
 
             var u = new User
             {
-                id = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                email = user.email,
-                password = user.password
+                Email = user.Email,
+                Password = user.Password
             };
             
-            context.users.Add(u);
+            context.Users.Add(u);
             await context.SaveChangesAsync();
+            AuthFilter.AddSession(u.Id, user.Deviceid);
+
             return new CreateUserOut
             {
-                firstname = u.FirstName,
-                lastname = u.LastName,
-                email = u.email
+                Firstname = u.FirstName,
+                Lastname = u.LastName,
+                Email = u.Email
             };
         }
 
@@ -89,7 +90,7 @@ namespace bst.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest), ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost, Route("logout")]
         
-        public async Task<object> logout()
+        public async Task<object> Logout()
         {
             //var session = (Session)HttpContext.Items["session"];
             //var user = await context.users.FindAsync(HttpContext.Items["user"]);
@@ -100,10 +101,10 @@ namespace bst.Controllers
 
 
         [HttpPost, Route("listProjects"), ProducesResponseType(typeof(List<ProtocolPreview>), 200)]
-        public async Task<object> listProjects([FromBody]ListCount data)
+        public async Task<object> ListProjects([FromBody]ListCount data)
         {
-
-            throw new NotImplementedException();
+            var user = await context.Users.FindAsync(HttpContext.Items["user"]);
+            return user.Protocols.Skip(data.Start).Take(data.Count).Select(x => new ProtocolPreview(x.Protocol,x.Privilege));
         }
         
     }
