@@ -63,20 +63,21 @@ namespace bst.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                
             }
 
             var u = new User
             {
                 id = Guid.NewGuid(),
-                FirstName = user.FirstName,
-                LastName = user.LastName,
+                FirstName = user.firstName,
+                LastName = user.lastName,
                 email = user.email,
                 password = user.password
             };
             
             context.users.Add(u);
             await context.SaveChangesAsync();
+            AuthFilter.AddSession(u.id, user.deviceid);
+
             return new CreateUserOut
             {
                 firstname = u.FirstName,
@@ -102,8 +103,8 @@ namespace bst.Controllers
         [HttpPost, Route("listProjects"), ProducesResponseType(typeof(List<ProtocolPreview>), 200)]
         public async Task<object> listProjects([FromBody]ListCount data)
         {
-
-            throw new NotImplementedException();
+            var user = await context.users.FindAsync(HttpContext.Items["user"]);
+            return user.protocols.Skip(data.start).Take(data.count).Select(x => new ProtocolPreview(x.protocol,x.priviledge));
         }
         
     }

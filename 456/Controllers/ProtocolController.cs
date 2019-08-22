@@ -15,7 +15,7 @@ namespace bst.Controllers
     public class ProtocolController
     {
         [AuthFilter,HttpGet,Route("get/{protocolid}"),ProducesResponseType(typeof(ProtocolPreview),200)]
-        public async Task<object> getprotocol(Guid protocolid)
+        public async Task<object> Getprotocol(Guid protocolid)
         {
 
             throw new NotImplementedException();
