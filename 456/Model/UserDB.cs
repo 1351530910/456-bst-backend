@@ -123,6 +123,7 @@ namespace bst.Model
         public virtual User user { get; set; }
         [Required]
         public virtual Group group { get; set; }
+        //1 -> administrator
         [Required]
         public int priviledge { get; set; }
     }
