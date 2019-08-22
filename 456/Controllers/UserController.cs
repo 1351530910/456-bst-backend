@@ -35,15 +35,17 @@ namespace bst.Controllers
                 HttpContext.Response.StatusCode = 401;
                 return "login failed";
             }
-            user.sessionid = Guid.NewGuid();
-            user.deviceid = data.deviceid;
-            context.Entry(user).State = EntityState.Modified;
+            var session = new Session
+            {
+                sessionid = Guid.NewGuid(),
+                deviceid = data.deviceid
+            };
+            AuthFilter.sessions.Add(session, user.id);
             await context.SaveChangesAsync();
             return new LoginOut
             {
-                sessionid = user.sessionid
+                sessionid = session.sessionid
             };
-            
         }
 
         [HttpPost,Route("createuser")]
@@ -70,23 +72,20 @@ namespace bst.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 email = user.email,
-                password = user.password,
-                sessionid = Guid.NewGuid(),
-                deviceid = user.deviceid
+                password = user.password
             };
             
             context.users.Add(u);
             await context.SaveChangesAsync();
             return new CreateUserOut
             {
-                sessionid = u.sessionid,
                 firstname = u.FirstName,
                 lastname = u.LastName,
                 email = u.email
             };
         }
 
-        [ProducesResponseType(200)]
+        [ProducesResponseType(200),AuthFilter]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost, Route("logout")]
         
@@ -94,23 +93,13 @@ namespace bst.Controllers
         {
             try
             {
-                if ((string)HttpContext.Request.Headers["deviceid"] == null)
-                {
-                    return BadRequest("device id not found");
-                }
-                var sessionid = Guid.Parse((string)HttpContext.Request.Headers["sessionid"]);
-                var deviceid = (string)HttpContext.Request.Headers["deviceid"];
-                var u = this.context.users.Where(x => x.deviceid == deviceid && x.sessionid.Equals(sessionid)).FirstOrDefault();
-                if (u != null)
-                {
-                    u.deviceid = "";
-                }
-                else
+                //check for active session
+                if (HttpContext.Items["user"]==null)
                 {
                     return Unauthorized();
                 }
-                context.Entry(u).State = EntityState.Modified;
-                await context.SaveChangesAsync();
+
+                AuthFilter.sessions.Remove((Session)HttpContext.Items["session"]);
                 return Ok();
             }
             catch (Exception)
