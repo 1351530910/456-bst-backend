@@ -60,8 +60,11 @@ namespace bst.Controllers
         public async Task<object> ListGroup([FromBody]ListCount data)
         {
             var user = await context.Users.FindAsync(HttpContext.Items["user"]);
-            var groups = user.Roles.Select(r => r.Group);
-            return groups.Select(g => new GroupPreview(g));
+            var result = user.Roles.Select(r => r.Group).Select(g => new GroupPreview(g));
+            if (data.Order == 0) result.OrderBy(r => r.Name);
+            else if (data.Order == 1) result.OrderByDescending(r => r.Name);
+            result.Skip(data.Start).Take(data.Count);
+            return result;           
         }
 
         [HttpPost, Route("invite"), ProducesResponseType(200)]
@@ -89,7 +92,7 @@ namespace bst.Controllers
         }
 
 
-        [HttpPost, Route("changePriviledge"), ProducesResponseType(typeof(string), 200)]
+        [HttpPost, Route("changePrivilege"), ProducesResponseType(typeof(string), 200)]
         public async Task<object> ChangePrivilege([FromBody]GroupInviteIn data)
         {
             var user = await context.Users.FindAsync(HttpContext.Items["user"]);
