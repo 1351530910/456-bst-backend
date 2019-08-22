@@ -43,8 +43,8 @@ namespace bst.Controllers
                 var session = sessions.Where(x => x.Key.deviceid.Equals(deviceid) && x.Key.sessionid.Equals(sessionid)).FirstOrDefault();
                 if (session.Key!=null)
                 {
-                    actioncontext.HttpContext.Items["user"] = context.users.Find(session.Value);
-                    actioncontext.HttpContext.Items["session"] = context.users.Find(session.Key);
+                    actioncontext.HttpContext.Items["user"] = context.Users.Find(session.Value);
+                    actioncontext.HttpContext.Items["session"] = context.Users.Find(session.Key);
                 }
                 else
                 {
