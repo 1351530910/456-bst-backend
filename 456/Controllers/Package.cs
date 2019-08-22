@@ -95,7 +95,8 @@ namespace bst.Controllers
         public int IStudy { get; set; }
         public bool UseDefaultAnat { get; set; }
         public bool UseDefaultChannel { get; set; }
-        public ProtocolPreview(Protocol protocol)
+        public int priviledge { get; set; }
+        public ProtocolPreview(Protocol protocol,int priviledge)
         {
             id = protocol.id;
             name = protocol.name;
@@ -104,6 +105,7 @@ namespace bst.Controllers
             IStudy = protocol.IStudy;
             UseDefaultAnat = protocol.UseDefaultAnat;
             UseDefaultChannel = protocol.UseDefaultChannel;
+            this.priviledge = priviledge;
         }
     }
     public class GroupInviteIn

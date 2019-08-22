@@ -58,5 +58,16 @@ namespace bst.Controllers
 
             base.OnActionExecuting(actioncontext);
         }
+
+        public static Guid AddSession(Guid userid,string deviceid)
+        {
+            var session = new Session
+            {
+                sessionid = Guid.NewGuid(),
+                deviceid = deviceid
+            };
+            sessions.Add(session, userid);
+            return session.sessionid;
+        }
     }
 }
