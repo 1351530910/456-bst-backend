@@ -4,6 +4,15 @@
         <name>bst</name>
     </assembly>
     <members>
+        <member name="T:bst.Controllers.AuthFilter">
+            <summary>
+            
+            sessions will keep the current active sessions
+            if a session can be paired, the user can be found in context.items["user"]
+            otherwise session expired
+            
+            </summary>
+        </member>
         <member name="P:bst.Controllers.ListCount.start">
             <summary>
             start index
