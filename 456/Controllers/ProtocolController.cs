@@ -33,7 +33,7 @@ namespace bst.Controllers
 
 
         [HttpPost, Route("create"), ProducesResponseType(typeof(Guid), 200)]
-        public async Task<object> create([FromBody]CreateProtocol data)
+        public async Task<object> Create([FromBody]CreateProtocol data)
         {
 
             throw new NotImplementedException();

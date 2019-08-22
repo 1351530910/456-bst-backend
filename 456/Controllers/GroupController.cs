@@ -36,28 +36,28 @@ namespace bst.Controllers
 
 
         [HttpPost, Route("modify"), ProducesResponseType(typeof(GroupPreview), 200)]
-        public async Task<object> modify([FromBody]ModifyGroupIn data)
+        public async Task<object> Modify([FromBody]ModifyGroupIn data)
         {
 
             throw new NotImplementedException();
         }
 
         [HttpPost, Route("detail"), ProducesResponseType(typeof(ProtocolPreview), 200)]
-        public async Task<object> detail([FromBody]GroupDetailIn data)
+        public async Task<object> Detail([FromBody]GroupDetailIn data)
         {
 
             throw new NotImplementedException();
         }
 
         [HttpPost, Route("listGroup"), ProducesResponseType(typeof(IEnumerable<GroupPreview>), 200)]
-        public async Task<object> listGroup([FromBody]ListCount data)
+        public async Task<object> ListGroup([FromBody]ListCount data)
         {
 
             throw new NotImplementedException();
         }
 
         [HttpPost, Route("invite"), ProducesResponseType(200)]
-        public async Task<object> invite([FromBody]GroupInviteIn data)
+        public async Task<object> Invite([FromBody]GroupInviteIn data)
         {
 
             throw new NotImplementedException();
@@ -65,14 +65,14 @@ namespace bst.Controllers
 
 
         [HttpPost, Route("changePriviledge"), ProducesResponseType(typeof(string), 200)]
-        public async Task<object> changePriviledge([FromBody]GroupInviteIn data)
+        public async Task<object> ChangePriviledge([FromBody]GroupInviteIn data)
         {
 
             throw new NotImplementedException();
         }
 
         [HttpPost, Route("removeUser"), ProducesResponseType(typeof(string), 200)]
-        public async Task<object> removeUser([FromBody]RemoveUserIn data)
+        public async Task<object> RemoveUser([FromBody]RemoveUserIn data)
         {
 
             throw new NotImplementedException();
