@@ -158,7 +158,10 @@ namespace bst.Model
 
     #endregion
 
+    public enum Priviledge
+    {
 
+    }
     public class Protocol
     {
         [Key]

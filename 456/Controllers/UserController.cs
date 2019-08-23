@@ -6,9 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
 using bst.Model;
-using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 
 namespace bst.Controllers
