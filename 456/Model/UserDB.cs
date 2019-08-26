@@ -123,7 +123,11 @@ namespace bst.Model
         public virtual User User { get; set; }
         [Required]
         public virtual Group Group { get; set; }
-        //1 -> administrator
+        /// <summary>
+        /// 1 -> administrator
+        /// 2 -> has write access
+        /// 3 -> has read access
+        /// </summary>
         [Required]
         public int Privilege { get; set; }
     }
@@ -158,7 +162,7 @@ namespace bst.Model
 
     #endregion
 
-    public enum Priviledge
+    public enum Privilege
     {
 
     }
