@@ -168,4 +168,10 @@ namespace bst.Controllers
         public string Name { get; set; }
         public string Description { get; set; }
     }
+
+    public class FileTransferIn
+    {
+        public Guid Protocolid { get; set; }
+        public string Filelocation { get; set; }
+    }
 }

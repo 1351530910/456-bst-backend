@@ -15,7 +15,7 @@ namespace bst.Controllers
     {
         public UserDB context = new UserDB();
 
-        // Get home directory based on if os is Windows or Unix - add guac directory Ex: "/home/user/guac"
+        // Get home directory based on if os is Windows or Unix - add bst directory Ex: "/home/user/bst"
         readonly string bstHomePath = (Environment.OSVersion.Platform == PlatformID.Unix ||
                    Environment.OSVersion.Platform == PlatformID.MacOSX)
     ? Path.Combine(Environment.GetEnvironmentVariable("HOME"), "bst")
@@ -23,19 +23,17 @@ namespace bst.Controllers
 
         // GET file/upload
         /// <summary>
-        /// Receive form data containing a file, save file locally with a unique id as the name, and return the unique id
+        /// Receive form data containing a file, save file on server, and return the file path
         /// </summary>
         /// <param name="file">Received IFormFile file</param>
-        /// <param name="protocolid"></param>
-        /// <param name="protocollocation"></param>
-        /// <param name=""></param>
+        /// <param name="fileTransferIn"></param>
         /// <returns></returns>
         [HttpPost("upload")]
         [EnableCors("MyPolicy")]
-        public async Task<IActionResult> Upload(IFormFile file, [FromBody] Guid protocolid, [FromBody] string protocollocation)
+        public async Task<IActionResult> Upload(IFormFile file, [FromBody] FileTransferIn fileTransferIn)
         {
             var user = await context.Users.FindAsync(HttpContext.Items["user"]);
-            var protocol = await context.Protocols.FindAsync(protocolid);
+            var protocol = await context.Protocols.FindAsync(fileTransferIn.Protocolid);
             if (protocol == null) return new NotFoundResult();
             var role = user.Roles.FirstOrDefault(r => r.Group.Id.Equals(protocol.Group.Id));
             if (role == null) return new NotFoundResult();
@@ -43,7 +41,7 @@ namespace bst.Controllers
 
             // Verify the home-bst directory exists, and combine the home-bst directory with the new file name
             Directory.CreateDirectory(bstHomePath);
-            var filePath = Path.Combine(bstHomePath, protocol.Group.Name, protocol.Name, protocollocation);
+            var filePath = Path.Combine(bstHomePath, protocol.Group.Name, protocol.Name, fileTransferIn.Filelocation);
 
             // If exists old version, delete
             if (System.IO.File.Exists(filePath))
@@ -63,22 +61,20 @@ namespace bst.Controllers
 
         // GET file/downlaod
         /// <summary>
-        /// Return a locally stored image based on id to the requesting client
+        /// Return a file stored on server based on file info provided
         /// </summary>
-        /// <param name="protocolid"></param>
-        /// <param name="protocollocation"></param>
-        /// <param name="id">unique identifier for the requested file</param>
+        /// <param name="fileTransferIn"></param>
         /// <returns></returns>
-        [HttpGet("download/{id}")]
-        public async Task<IActionResult> Download([FromBody] Guid protocolid, [FromBody] string protocollocation)
+        [HttpGet("download")]
+        public async Task<IActionResult> Download([FromBody] FileTransferIn fileTransferIn)
         {
             var user = await context.Users.FindAsync(HttpContext.Items["user"]);
-            var protocol = await context.Protocols.FindAsync(protocolid);
+            var protocol = await context.Protocols.FindAsync(fileTransferIn.Protocolid);
             if (protocol == null) return new NotFoundResult();
             var role = user.Roles.FirstOrDefault(r => r.Group.Id.Equals(protocol.Group.Id));
             if (role == null) return new NotFoundResult();
             if (role.Privilege > 3) throw new UnauthorizedAccessException("User doesn't have access to this protocol.");
-            var path = Path.Combine(bstHomePath, protocol.Group.Name, protocol.Name, protocollocation);
+            var path = Path.Combine(bstHomePath, protocol.Group.Name, protocol.Name, fileTransferIn.Filelocation);
 
             if (System.IO.File.Exists(path))
             {
