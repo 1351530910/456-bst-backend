@@ -30,6 +30,8 @@ namespace bst.Model
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=root;password=Qwe12345", null);
+            /*
             if (optionsBuilder != null)
             {
 
@@ -43,6 +45,7 @@ namespace bst.Model
                 }
 
             }
+            */
         }
 
         public DbSet<User> Users { get; set; }

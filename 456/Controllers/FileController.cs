@@ -35,6 +35,7 @@ namespace bst.Controllers
         /// <param name="file">Received IFormFile file</param>
         /// <param name="fileTransferIn"></param>
         /// <returns></returns>
+        /*
         [HttpPost("upload")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> Upload()
@@ -75,7 +76,7 @@ namespace bst.Controllers
             // return the file name for the locally stored file
             return Ok(filePath);
         }
-
+        */
 
         /*
         // GET file/downlaod
