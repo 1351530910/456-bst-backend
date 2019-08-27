@@ -3,24 +3,31 @@ using System.Threading.Tasks;
 using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Cors;
 using bst.Model;
 using System.Linq;
+using Microsoft.AspNetCore.Hosting;
 
 namespace bst.Controllers
 {
     [Route("file")]
-    [ApiController,AuthFilter]
+    [ApiController]
     public class FileController : Controller
     {
         public UserDB context = new UserDB();
 
+        private IHostingEnvironment env;
+
+        public FileController(IHostingEnvironment env)
+        {
+            this.env = env;
+        }
+        /*
         // Get home directory based on if os is Windows or Unix - add bst directory Ex: "/home/user/bst"
         readonly string bstHomePath = (Environment.OSVersion.Platform == PlatformID.Unix ||
                    Environment.OSVersion.Platform == PlatformID.MacOSX)
     ? Path.Combine(Environment.GetEnvironmentVariable("HOME"), "bst")
     : Path.Combine(Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%"), "bst");
-
+    */
         // GET file/upload
         /// <summary>
         /// Receive form data containing a file, save file on server, and return the file path
@@ -29,9 +36,16 @@ namespace bst.Controllers
         /// <param name="fileTransferIn"></param>
         /// <returns></returns>
         [HttpPost("upload")]
-        [EnableCors("MyPolicy")]
-        public async Task<IActionResult> Upload(IFormFile file, [FromBody] FileTransferIn fileTransferIn)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Upload()
         {
+            if (HttpContext.Request.Form.Files.Count < 1)
+            {
+                return BadRequest();
+            }
+
+            var file = HttpContext.Request.Form.Files[0];
+            
             var user = await context.Users.FindAsync(HttpContext.Items["user"]);
             var protocol = await context.Protocols.FindAsync(fileTransferIn.Protocolid);
             if (protocol == null) return new NotFoundResult();
@@ -41,7 +55,10 @@ namespace bst.Controllers
 
             // Verify the home-bst directory exists, and combine the home-bst directory with the new file name
             Directory.CreateDirectory(bstHomePath);
+            
             var filePath = Path.Combine(bstHomePath, protocol.Group.Name, protocol.Name, fileTransferIn.Filelocation);
+            
+
 
             // If exists old version, delete
             if (System.IO.File.Exists(filePath))
@@ -59,6 +76,8 @@ namespace bst.Controllers
             return Ok(filePath);
         }
 
+
+        /*
         // GET file/downlaod
         /// <summary>
         /// Return a file stored on server based on file info provided
@@ -90,6 +109,6 @@ namespace bst.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-        }
+        }*/
     }
 }
