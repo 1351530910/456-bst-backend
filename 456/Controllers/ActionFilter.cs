@@ -10,12 +10,13 @@ using System.Net;
 
 namespace bst.Controllers
 {
+    
     public class Session
     {
         public Guid sessionid { get; set; }
         public string deviceid { get; set; }
+        public Guid userid { get; set; }
     }
-
 
     /// <summary>
     /// 
@@ -26,7 +27,9 @@ namespace bst.Controllers
     /// </summary>
     public class AuthFilter : ActionFilterAttribute
     {
-        public static Dictionary<Session, Guid> sessions { get; set; }
+
+
+        public static List<Session> sessions = new List<Session>();
 
         public override void OnActionExecuting(ActionExecutingContext actioncontext)
         {
@@ -40,11 +43,11 @@ namespace bst.Controllers
             {
                 var sessionid = Guid.Parse((string)actioncontext.HttpContext.Request.Headers["sessionid"]);
                 var deviceid = (string)actioncontext.HttpContext.Request.Headers["deviceid"];
-                var session = sessions.Where(x => x.Key.deviceid.Equals(deviceid) && x.Key.sessionid.Equals(sessionid)).FirstOrDefault();
-                if (session.Key!=null)
+                var session = sessions.FirstOrDefault(x => x.deviceid.Equals(deviceid) && x.sessionid.Equals(sessionid));
+                if (session!=null)
                 {
-                    actioncontext.HttpContext.Items["user"] = context.Users.Find(session.Value);
-                    actioncontext.HttpContext.Items["session"] = context.Users.Find(session.Key);
+                    actioncontext.HttpContext.Items["user"] = context.Users.Find(session.userid);
+                    actioncontext.HttpContext.Items["session"] = session;
                 }
                 else
                 {
@@ -64,9 +67,10 @@ namespace bst.Controllers
             var session = new Session
             {
                 sessionid = Guid.NewGuid(),
-                deviceid = deviceid
+                deviceid = deviceid,
+                userid = userid
             };
-            sessions.Add(session, userid);
+            sessions.Add(session);
             return session.sessionid;
         }
     }

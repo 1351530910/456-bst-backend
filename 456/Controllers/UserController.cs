@@ -33,16 +33,11 @@ namespace bst.Controllers
                 HttpContext.Response.StatusCode = 401;
                 return "login failed";
             }
-            var session = new Session
-            {
-                sessionid = Guid.NewGuid(),
-                deviceid = data.Deviceid
-            };
-            AuthFilter.sessions.Add(session, user.Id);
+            var session = AuthFilter.AddSession(user.Id, data.Deviceid);
             await context.SaveChangesAsync();
             return new LoginOut
             {
-                Sessionid = session.sessionid
+                Sessionid = session
             };
         }
 
@@ -74,10 +69,11 @@ namespace bst.Controllers
             
             context.Users.Add(u);
             await context.SaveChangesAsync();
-            AuthFilter.AddSession(u.Id, user.Deviceid);
+            var sessionid = AuthFilter.AddSession(u.Id, user.Deviceid);
 
             return new CreateUserOut
             {
+                Sessionid = sessionid,
                 Firstname = u.FirstName,
                 Lastname = u.LastName,
                 Email = u.Email
@@ -86,9 +82,8 @@ namespace bst.Controllers
 
         [ProducesResponseType(200),AuthFilter]
         [ProducesResponseType(StatusCodes.Status400BadRequest), ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [HttpPost, Route("logout")]
-        
-        public async Task<object> Logout()
+        [HttpPost, Route("logout")]       
+        public object Logout()
         {
             //var session = (Session)HttpContext.Items["session"];
             //var user = await context.users.FindAsync(HttpContext.Items["user"]);
@@ -98,11 +93,18 @@ namespace bst.Controllers
         }
 
 
-        [HttpPost, Route("listProjects"), ProducesResponseType(typeof(List<ProtocolPreview>), 200)]
-        public async Task<object> ListProjects([FromBody]ListCount data)
+        [HttpPost, Route("listProjects"), ProducesResponseType(typeof(List<ProtocolPreview>), 200),AuthFilter]
+        public List<ProtocolPreview> ListProjects([FromBody]ListCount data)
         {
-            var user = await context.Users.FindAsync(HttpContext.Items["user"]);
-            return user.Protocols.Skip(data.Start).Take(data.Count).Select(x => new ProtocolPreview(x.Protocol,x.Privilege));
+            var user = (User)HttpContext.Items["user"];
+            if (user.Protocols != null)
+            {
+                return user.Protocols.Skip(data.Start).Take(data.Count).Select(x => new ProtocolPreview(x.Protocol, x.Privilege)).ToList();
+            }
+            else
+            {
+                return new List<ProtocolPreview>();
+            }
         }
         
     }

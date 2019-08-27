@@ -31,7 +31,6 @@ namespace bst
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
             services.AddDbContext<Model.UserDB>();
 
@@ -85,7 +84,7 @@ namespace bst
                     template: "{controller}/{action}/"
                 );
             });
-            /* databse
+            
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var usercontext = serviceScope.ServiceProvider.GetRequiredService<Model.UserDB>();
@@ -93,7 +92,7 @@ namespace bst
                 usercontext.Database.EnsureCreated();
 
             }
-            */
+            
         }
     }
 }
