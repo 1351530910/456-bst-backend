@@ -147,11 +147,13 @@ namespace bst.Model
         [Key]
         public Guid Id { get; set; }
         [Required]
-        public int Type { get; set; }
-        [Required]
-        public Guid Otherid { get; set; }
+        public int Priviledge { get; set; }
+        public Guid GroupId { get; set; }
+        public Guid ProtocolId { get; set; }
         [Required]
         public DateTime Expiration { get; set; }
+
+        public User SentFrom { get; set; }
 
         public string Message { get; set; }
     }
