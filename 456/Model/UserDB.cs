@@ -30,6 +30,8 @@ namespace bst.Model
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=root;password=Qwe12345", null);
+            /*
             if (optionsBuilder != null)
             {
 
@@ -43,6 +45,7 @@ namespace bst.Model
                 }
 
             }
+            */
         }
 
         public DbSet<User> Users { get; set; }
@@ -99,8 +102,9 @@ namespace bst.Model
         [MaxLength(30)]
         public string LastName { get; set; }
 
-        public ICollection<ParticipateProtocol> Protocols { get; set; }
-        public ICollection<Role> Roles { get; set; }
+        public virtual ICollection<ParticipateProtocol> Protocols { get; set; }
+        public virtual ICollection<Role> Roles { get; set; }
+        public virtual ICollection<Protocol> Locks { get; set; }
     }
 
     public partial class ParticipateProtocol
@@ -123,7 +127,11 @@ namespace bst.Model
         public virtual User User { get; set; }
         [Required]
         public virtual Group Group { get; set; }
-        //1 -> administrator
+        /// <summary>
+        /// 1 -> administrator
+        /// 2 -> has write access
+        /// 3 -> has read access
+        /// </summary>
         [Required]
         public int Privilege { get; set; }
     }
@@ -160,9 +168,11 @@ namespace bst.Model
 
     #endregion
 
-    public enum Priviledge
+    public enum Privilege
     {
-
+        Administrator,
+        ReadWrite,
+        Read
     }
     public class Protocol
     {
@@ -180,6 +190,8 @@ namespace bst.Model
         public virtual Group Group { get; set; }
         public virtual User LockedUser { get; set; }
         public virtual ICollection<Subject> Subjects { get; set; }
+        public virtual ICollection<Study> Studies { get; set; }
+        public virtual ICollection<ParticipateProtocol> Participations { get; set; }
     }
 
     public class Subject
@@ -200,6 +212,8 @@ namespace bst.Model
         public int IOther { get; set; }
         
         public virtual Protocol Protocol { get; set; }
+        public virtual ICollection<Study> Studies { get; set; }
+        public virtual ICollection<AnatomicalFile> AnatomicalFiles { get; set; }
     }
 
     public class Study
@@ -216,6 +230,7 @@ namespace bst.Model
 
         public virtual Protocol Protocol { get; set; }
         public virtual Subject Subject { get; set; }
+        public virtual ICollection<FunctionalFile> FunctionalFiles { get; set; }
     }
 
     public class History
@@ -234,6 +249,21 @@ namespace bst.Model
 
     #region Functional File and its subclasses 
 
+    public enum FunctionalFileType
+    {
+        Channel,
+        TimeFreq,
+        Stat,
+        HeadModel,
+        Result,
+        Recording,
+        Matrix,
+        Dipole,
+        Covariance,
+        Image,
+
+    }
+
     public class FunctionalFile
     {
         [Key]
@@ -241,10 +271,10 @@ namespace bst.Model
         //metadata
         public string Comment { get; set; }
         public string FileName { get; set; }
-        public string FileType { get; set; }
+        public FunctionalFileType FileType { get; set; }
         
         public virtual Study Study { get; set; }
-
+        public virtual ICollection<History> Histories { get; set; }
     }
 
     public class Channel
@@ -395,6 +425,13 @@ namespace bst.Model
 
     #region Anatomical File and its subclasses 
 
+    public enum AnatomicalFileType
+    {
+        Fiber,
+        Volume,
+        Surface
+    }
+
     public class AnatomicalFile
     {
         [Key]
@@ -402,9 +439,10 @@ namespace bst.Model
         //metadata
         public string Comment { get; set; }
         public string FileName { get; set; }
-        public string FileType { get; set; }
+        public AnatomicalFileType FileType { get; set; }
         
         public virtual Subject Subject { get; set; }
+        public virtual ICollection<History> Histories { get; set; }
     }
 
     public class Fiber 
