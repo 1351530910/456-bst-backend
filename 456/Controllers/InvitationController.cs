@@ -10,10 +10,8 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace bst.Controllers
 {
     [Route("Invitation")]
-    public class InvitationController : Controller
+    public class InvitationController : BaseController
     {
-
-        UserDB context = new UserDB();
 
         [HttpPost,Route("Invite"),AuthFilter]
         public async Task<object> Invite([FromBody]Invitation invitation)

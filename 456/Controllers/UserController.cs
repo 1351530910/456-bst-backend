@@ -12,10 +12,8 @@ using Microsoft.AspNetCore.Http;
 namespace bst.Controllers
 {
     [Route("user")]
-    public class UserController : Controller
+    public class UserController : BaseController
     {
-        private UserDB context = new UserDB();
-
         [HttpGet,Route("")]
         public object Index()
         {

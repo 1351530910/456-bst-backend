@@ -33,7 +33,7 @@ namespace bst.Controllers
 
         public override void OnActionExecuting(ActionExecutingContext actioncontext)
         {
-            var context = new UserDB();
+            var context = (UserDB)actioncontext.HttpContext.Items["context"];
             
             if (!actioncontext.ModelState.IsValid)
             {

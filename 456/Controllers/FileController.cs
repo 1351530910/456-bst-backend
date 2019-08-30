@@ -11,9 +11,8 @@ namespace bst.Controllers
 {
     [Route("file")]
     [ApiController]
-    public class FileController : Controller
+    public class FileController : BaseController
     {
-        public UserDB context = new UserDB();
 
         private IHostingEnvironment env;
 

@@ -12,9 +12,8 @@ using Microsoft.EntityFrameworkCore;
 namespace bst.Controllers
 {
     [Route("protocol")]
-    public class ProtocolController: Controller
+    public class ProtocolController: BaseController
     {
-        public UserDB context = new UserDB();
         [AuthFilter,HttpGet,Route("get/{protocolid}"),ProducesResponseType(typeof(ProtocolPreview),200)]
         public async Task<object> Getprotocol(Guid protocolid)
         {

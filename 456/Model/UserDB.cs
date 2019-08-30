@@ -29,9 +29,9 @@ namespace bst.Model
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.UseLazyLoadingProxies();
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=root;password=Qwe12345", null);
-            /*
+            
             if (optionsBuilder != null)
             {
 
@@ -45,7 +45,7 @@ namespace bst.Model
                 }
 
             }
-            */
+            
         }
 
         public DbSet<User> Users { get; set; }
@@ -144,8 +144,8 @@ namespace bst.Model
         public string Name { get; set; }
         public string Description { get; set; }
 
-        public ICollection<Role> Users { get; set; }
-        public ICollection<Protocol> Protocols { get; set; }
+        public virtual ICollection<Role> Users { get; set; }
+        public virtual ICollection<Protocol> Protocols { get; set; }
 
     }
 
@@ -161,7 +161,7 @@ namespace bst.Model
         [Required]
         public DateTime Expiration { get; set; }
 
-        public User SentFrom { get; set; }
+        public virtual User SentFrom { get; set; }
 
         public string Message { get; set; }
     }
