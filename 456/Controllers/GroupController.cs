@@ -66,7 +66,7 @@ namespace bst.Controllers
             result.Skip(data.Start).Take(data.Count);
             return result;           
         }
-
+        /*
         [HttpPost, Route("invite"), ProducesResponseType(200)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<object> Invite([FromBody]GroupInviteIn data)
@@ -90,7 +90,7 @@ namespace bst.Controllers
             await context.SaveChangesAsync();
             return Ok("Add member successfully!");
         }
-
+        */
 
         [HttpPost, Route("changePrivilege"), ProducesResponseType(typeof(string), 200)]
         public async Task<object> ChangePrivilege([FromBody]GroupInviteIn data)
@@ -98,7 +98,7 @@ namespace bst.Controllers
             var user = (User)HttpContext.Items["user"];
             var userPrivilege = user.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid));
             if (userPrivilege == null || userPrivilege.Privilege != 1)
-                return BadRequest("User must be group admin to change privilege.");
+                return Unauthorized("User must be group admin to change privilege.");
             var roletochange = context.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid) && r.User.Id.Equals(data.Userid));
             if (roletochange == null) return NotFound($"User {data.Userid} is not a group member.");
             roletochange.Privilege = data.Permission;
@@ -113,7 +113,7 @@ namespace bst.Controllers
             var user = (User)HttpContext.Items["user"];
             var userPrivilege = user.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid));
             if (userPrivilege == null || (userPrivilege.Privilege != 1 && !user.Id.Equals(data.Userid)))
-                return BadRequest("User must be group admin or himself/herself to remove user.");
+                return Unauthorized("User must be group admin or himself/herself to remove user.");
             context.Roles.Remove(context.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid) && r.User.Id.Equals(data.Userid)));
             await context.SaveChangesAsync();
             return Ok("Remove user successfully!");       
