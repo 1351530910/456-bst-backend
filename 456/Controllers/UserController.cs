@@ -91,17 +91,17 @@ namespace bst.Controllers
         }
 
 
-        [HttpPost, Route("listProjects"), ProducesResponseType(typeof(List<ProtocolPreview>), 200),AuthFilter]
-        public List<ProtocolPreview> ListProjects([FromBody]ListCount data)
+        [HttpPost, Route("listProjects"), ProducesResponseType(typeof(List<ProtocolData>), 200),AuthFilter]
+        public List<ProtocolData> ListProjects([FromBody]ListCount data)
         {
             var user = (User)HttpContext.Items["user"];
             if (user.Protocols != null)
             {
-                return user.Protocols.Skip(data.Start).Take(data.Count).Select(x => new ProtocolPreview(x.Protocol, x.Privilege)).ToList();
+                return user.Protocols.Skip(data.Start).Take(data.Count).Select(x => new ProtocolData(x.Protocol, x.Privilege)).ToList();
             }
             else
             {
-                return new List<ProtocolPreview>();
+                return new List<ProtocolData>();
             }
         }
         

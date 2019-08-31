@@ -53,7 +53,7 @@ namespace bst.Controllers
         public string Name { get; set; }
         public string Description { get; set; }
         public IEnumerable<UserPreview> Users { get; set; }
-        public IEnumerable<ProtocolPreview> Projects { get; set; }
+        public IEnumerable<ProtocolData> Projects { get; set; }
 
         public GroupPreview(Group group)
         {
@@ -84,7 +84,7 @@ namespace bst.Controllers
 
         }
     }
-    public class ProtocolPreview
+    public class ProtocolData
     {
         [Key]
         public Guid Id { get; set; }
@@ -97,7 +97,7 @@ namespace bst.Controllers
         public bool UseDefaultAnat { get; set; }
         public bool UseDefaultChannel { get; set; }
         public int Privilege { get; set; }
-        public ProtocolPreview(Protocol protocol,int priviledge)
+        public ProtocolData(Protocol protocol,int priviledge)
         {
             Id = protocol.Id;
             Name = protocol.Name;

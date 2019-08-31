@@ -17,7 +17,7 @@ namespace bst.Controllers
     [AuthFilter]
     public class ProtocolController: BaseController
     {
-        [HttpGet,Route("get/{protocolid}"),ProducesResponseType(typeof(ProtocolPreview),200)]
+        [HttpGet,Route("get/{protocolid}"),ProducesResponseType(typeof(ProtocolData),200)]
         public async Task<object> Getprotocol(Guid protocolid)
         {
             var user = (User)HttpContext.Items["user"];
@@ -25,7 +25,7 @@ namespace bst.Controllers
             var participation = user.Protocols.Where(x => x.Protocol.Id.Equals(protocolid)).FirstOrDefault();
             if (participation!=null)
             {
-                return new ProtocolPreview(participation.Protocol, participation.Privilege);
+                return new ProtocolData(participation.Protocol, participation.Privilege);
             }
             else
             {

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace bst.Model
 {
+    /*
     public class ProtocolData
     {
         //metadata
@@ -16,6 +17,7 @@ namespace bst.Model
 
         public Guid LockedUserId { get; set; }
     }
+    */
 
     public class SubjectData
     {
@@ -33,7 +35,25 @@ namespace bst.Model
         public int IOther { get; set; }
 
         public Guid ProtocolId { get; set; }
+
+        public SubjectData(Subject subject, Guid protocolid)
+        {
+            Comment = subject.Comment;
+            Filename = subject.Filename;
+            Name = subject.Name;
+            UseDefaultAnat = subject.UseDefaultAnat;
+            UseDefaultChannel = subject.UseDefaultChannel;
+            IAnatomy = subject.IAnatomy;
+            IScalp = subject.IScalp;
+            ICortex = subject.ICortex;
+            IInnerSkull = subject.IInnerSkull;
+            IOuterSkull = subject.IOuterSkull;
+            IOther = subject.IOther;
+            ProtocolId = protocolid;
+        }
     }
+
+  
 
     public class StudyData
     {
