@@ -40,20 +40,33 @@ namespace bst.Controllers
 
 
         [HttpPost, Route("modify"), ProducesResponseType(typeof(GroupPreview), 200)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<object> Modify([FromBody]ModifyGroupIn data)
         {
             var group = await context.Group.FindAsync(data.Id);
+            if (group == null)
+            {
+                HttpContext.Response.StatusCode = 404;
+                return "Group not found";
+            }
             group.Name = data.Name;
             group.Description = data.Description;
             await context.SaveChangesAsync();
             return new GroupPreview(group);
         }
 
-        [HttpPost, Route("detail"), ProducesResponseType(typeof(Group), 200)]
+        [HttpPost, Route("detail"), ProducesResponseType(typeof(GroupDetailOut), 200)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<object> Detail([FromBody]GroupDetailIn data)
         {
             var group = await context.Group.FindAsync(data.Groupid);
-            return group;
+            if (group == null)
+            {
+                HttpContext.Response.StatusCode = 404;
+                return "Group not found";
+            }
+            
+            return new GroupDetailOut(group);
         }        
 
         [HttpPost, Route("listGroup"), ProducesResponseType(typeof(IEnumerable<GroupPreview>), 200)]

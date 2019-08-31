@@ -96,7 +96,7 @@ namespace bst.Controllers
         public int IStudy { get; set; }
         public bool UseDefaultAnat { get; set; }
         public bool UseDefaultChannel { get; set; }
-        public int priviledge { get; set; }
+        public int Privilege { get; set; }
         public ProtocolPreview(Protocol protocol,int priviledge)
         {
             Id = protocol.Id;
@@ -106,7 +106,7 @@ namespace bst.Controllers
             IStudy = protocol.IStudy;
             UseDefaultAnat = protocol.UseDefaultAnat;
             UseDefaultChannel = protocol.UseDefaultChannel;
-            this.priviledge = priviledge;
+            Privilege = priviledge;
         }
     }
     public class GroupInviteIn
@@ -173,5 +173,59 @@ namespace bst.Controllers
     {
         public Guid Protocolid { get; set; }
         public string Filelocation { get; set; }
+    }
+
+    public class GroupMember
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int Privilege { get; set; }
+        public GroupMember(Role role)
+        {
+            FirstName = role.User.FirstName;
+            LastName = role.User.LastName;
+            Privilege = role.Privilege;
+        }
+    }
+
+    public class GroupProtocol
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public bool Isprivate { get; set; }
+        //metadata
+        public string Comment { get; set; }
+        public int IStudy { get; set; }
+        public bool UseDefaultAnat { get; set; }
+        public bool UseDefaultChannel { get; set; }
+        public GroupProtocol(Protocol protocol)
+        {
+            Id = protocol.Id;
+            Name = protocol.Name;
+            Isprivate = protocol.Isprivate;
+            Comment = protocol.Comment;
+            IStudy = protocol.IStudy;
+            UseDefaultAnat = protocol.UseDefaultAnat;
+            UseDefaultChannel = protocol.UseDefaultChannel;
+        }
+    }
+
+    public class GroupDetailOut
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+        public List<GroupMember> GroupMembers { get; set; }
+        public List<GroupProtocol> GroupProtocols { get; set; }
+
+        public GroupDetailOut(Group group)
+        {
+            Id = group.Id;
+            Name = group.Name;
+            Description = group.Description;
+            GroupMembers = group.Users.Select(u => new GroupMember(u)).ToList();
+            GroupProtocols = group.Protocols.Select(p => new GroupProtocol(p)).ToList();
+        }
     }
 }

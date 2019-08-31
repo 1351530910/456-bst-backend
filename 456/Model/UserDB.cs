@@ -31,7 +31,8 @@ namespace bst.Model
         {
             optionsBuilder.UseLazyLoadingProxies();
             base.OnConfiguring(optionsBuilder);
-            
+            optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=root;password=Qwe12345", null);
+            /*
             if (optionsBuilder != null)
             {
 
@@ -45,6 +46,7 @@ namespace bst.Model
                 }
 
             }
+            */
             
         }
 
