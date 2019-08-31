@@ -125,6 +125,13 @@ namespace bst.Model
         public Guid ParentId { get; set; }
     }
 
+
+    public class UploadChannelIn
+    {      
+        public FunctionalFileData FileInfo { get; set; }
+        public ChannelData Metadata { get; set; }
+    }
+
     public class TimeFreqData
     {
         //metadata

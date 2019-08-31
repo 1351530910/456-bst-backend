@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace bst.Controllers
 {
     [Route("subject")]
-    [AuthFilter]
+    [ApiController,AuthFilter]
     public class SubjectController : BaseController
     {
         /// <summary>
