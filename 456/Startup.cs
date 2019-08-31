@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 using System.Reflection;
 using Swashbuckle.AspNetCore.Swagger;
 using System.IO;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace bst
 {
@@ -33,8 +34,11 @@ namespace bst
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
             services.AddDbContext<Model.UserDB>();
+            services.Configure<FormOptions>(options =>
+            {
+                options.MemoryBufferThreshold = int.MaxValue;
+            });
 
-            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info
@@ -84,7 +88,7 @@ namespace bst
                     template: "{controller}/{action}/"
                 );
             });
-            
+            /*
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var usercontext = serviceScope.ServiceProvider.GetRequiredService<Model.UserDB>();
@@ -92,6 +96,7 @@ namespace bst
                 usercontext.Database.EnsureCreated();
 
             }
+            */
             
         }
     }

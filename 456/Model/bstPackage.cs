@@ -34,23 +34,7 @@ namespace bst.Model
         public int IOuterSkull { get; set; }
         public int IOther { get; set; }
 
-        public Guid ProtocolId { get; set; }
-
-        public SubjectData(Subject subject, Guid protocolid)
-        {
-            Comment = subject.Comment;
-            Filename = subject.Filename;
-            Name = subject.Name;
-            UseDefaultAnat = subject.UseDefaultAnat;
-            UseDefaultChannel = subject.UseDefaultChannel;
-            IAnatomy = subject.IAnatomy;
-            IScalp = subject.IScalp;
-            ICortex = subject.ICortex;
-            IInnerSkull = subject.IInnerSkull;
-            IOuterSkull = subject.IOuterSkull;
-            IOther = subject.IOther;
-            ProtocolId = protocolid;
-        }
+        public Guid ProtocolId { get; set; }       
     }
 
   
@@ -68,17 +52,6 @@ namespace bst.Model
         public Guid ProtocolId { get; set; }
         public Guid SubjectId { get; set; }
 
-        public StudyData(Study study)
-        {
-            Filename = study.Filename;
-            Name = study.Name;
-            Condition = study.Condition;
-            DateOfStudy = study.DateOfStudy;
-            IChannel = study.IChannel;
-            IHeadModel = study.IHeadModel;
-            ProtocolId = study.Protocol.Id;
-            SubjectId = study.Subject.Id;
-        }
     }
 
 

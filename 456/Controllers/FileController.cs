@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using bst.Model;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
+using bst.Logic;
 
 namespace bst.Controllers
 {
@@ -23,78 +24,50 @@ namespace bst.Controllers
 
         [HttpPost("upload/channel")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> UploadChannel(UploadChannelIn input)
+        public async Task<IActionResult> UploadChannel()//[FromBody]UploadChannelIn input)
         {
             if (HttpContext.Request.Form.Files.Count < 1) return BadRequest("You must upload a file.");
             var file = HttpContext.Request.Form.Files[0];
-            var result = ValidateAccess(input.FileInfo.StudyId, true);
-            if(result.Result is Study)
-            {
-                var study = await context.Studies.FindAsync(input.FileInfo.StudyId);
-                // Verify the home-bst directory exists, and combine the home-bst directory with the new file name
-                Directory.CreateDirectory(env.ContentRootPath);
-                var filePath = Path.Combine(env.ContentRootPath,"db",study.Protocol.Name,"data",study.Name, input.FileInfo.FileName);
-                // If file already exists, do nothing
-                if (System.IO.File.Exists(filePath))
-                    return BadRequest("You can't upload the same file twice.");
-
-                //update database
-                FunctionalFile functionalFile = ToFunctionalFile(input.FileInfo, FunctionalFileType.Channel, study);
-                context.FunctionalFiles.Add(functionalFile);
-                Channel channel = ToChannel(input.Metadata, functionalFile);
-                context.Channels.Add(channel);
-                await context.SaveChangesAsync();
-
-                // Create a new file in the home-bst directory 
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    //copy the contents of the received file to the newly created local file 
-                    await file.CopyToAsync(stream);
-                }
-                // return the file name for the locally stored file
-                return Ok(filePath);
-            }
-           
-            return BadRequest(result);
-        }
-
-
-        private async Task<object> ValidateAccess(Guid studyid, bool needsWriteAccess)
-        {
-            var study = await context.Studies.FindAsync(studyid);
-            if (study == null) return "Study doesn't exist.";
+            /*
+            var study = await context.Studies.FindAsync(input.FileInfo.StudyId);
+            if (study == null) return NotFound("Study doesn't exist.");
             var user = (User)HttpContext.Items["user"];
             var participation = user.Protocols.FirstOrDefault(x => x.Protocol.Id.Equals(study.Protocol.Id));
-            if (participation == null) return "You don't have access to this study.";
-            if (needsWriteAccess && participation.Privilege > 2) return "You don't have write access to this protocol.";
-            return study;
-        }
+            if (participation == null) return BadRequest("You don't have access to this study.");
+            if (participation.Privilege > 2) return BadRequest("You don't have write access to this protocol.");
+            */
 
-        
+            //var filePath = Path.Combine(env.ContentRootPath, "db", study.Protocol.Name, "data", study.Name, input.FileInfo.FileName);
+            var rootlocation = "D:\\";
+            var filePath = Path.Combine(rootlocation, "channelfiletest");
+            // If file already exists, do nothing
+            if (System.IO.File.Exists(filePath))
+                return BadRequest("You can't upload the same file twice.");
 
-        private FunctionalFile ToFunctionalFile(FunctionalFileData data, FunctionalFileType type, Study study)
-        {
-            return new FunctionalFile
+            Directory.CreateDirectory(filePath);
+            /*
+            //update database
+            FunctionalFile functionalFile = ConfigureData.ToFunctionalFile(input.FileInfo, FunctionalFileType.Channel, study);
+            context.FunctionalFiles.Add(functionalFile);
+            Channel channel = ConfigureData.ToChannel(input.Metadata, functionalFile);
+            context.Channels.Add(channel);
+            await context.SaveChangesAsync();
+            */
+
+            // Create a new file in the home-bst directory 
+            using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                Id = Guid.NewGuid(),
-                Comment = data.Comment,
-                FileName = data.FileName,
-                FileType = type,
-                Study = study
-            };
+                //copy the contents of the received file to the newly created local file 
+                await file.CopyToAsync(stream);
+            }
+            // return the file name for the locally stored file
+            return Ok(filePath);
+
         }
 
-        private Channel ToChannel(ChannelData data, FunctionalFile parent)
-        {
-            return new Channel
-            {
-                Id = Guid.NewGuid(),
-                NbChannels = data.NbChannels,
-                TransfMegLabels = data.TransfMegLabels,
-                TransfEegLabels = data.TransfEegLabels,
-                Parent = parent
-            };
-        }
+
+
+
 
 
 

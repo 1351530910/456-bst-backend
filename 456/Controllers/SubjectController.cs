@@ -1,4 +1,5 @@
-﻿using bst.Model;
+﻿using bst.Logic;
+using bst.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -8,7 +9,8 @@ using System.Threading.Tasks;
 namespace bst.Controllers
 {
     [Route("subject")]
-    [ApiController,AuthFilter]
+    [ApiController]
+    [AuthFilter]
     public class SubjectController : BaseController
     {
         /// <summary>
@@ -27,7 +29,7 @@ namespace bst.Controllers
             var participation = user.Protocols.FirstOrDefault(x => x.Protocol.Id.Equals(subject.Protocol.Id));
             if (participation == null) return NotFound("You don't have access to this subject.");
 
-            return new SubjectData(subject, participation.Protocol.Id);
+            return ConfigureData.ToSubjectData(subject);
         }
 
         /// <summary>
@@ -61,7 +63,10 @@ namespace bst.Controllers
             await context.SaveChangesAsync();
             return subject.Id;
         }
+
+
+        
     }
 }
 
-    
+

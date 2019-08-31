@@ -13,9 +13,9 @@ namespace bst.Controllers
     
     public class Session
     {
-        public Guid sessionid { get; set; }
-        public string deviceid { get; set; }
-        public Guid userid { get; set; }
+        public Guid Sessionid { get; set; }
+        public string Deviceid { get; set; }
+        public Guid Userid { get; set; }
     }
 
     /// <summary>
@@ -43,10 +43,10 @@ namespace bst.Controllers
             {
                 var sessionid = Guid.Parse((string)actioncontext.HttpContext.Request.Headers["sessionid"]);
                 var deviceid = (string)actioncontext.HttpContext.Request.Headers["deviceid"];
-                var session = sessions.FirstOrDefault(x => x.deviceid.Equals(deviceid) && x.sessionid.Equals(sessionid));
+                var session = sessions.FirstOrDefault(x => x.Deviceid.Equals(deviceid) && x.Sessionid.Equals(sessionid));
                 if (session!=null)
                 {
-                    actioncontext.HttpContext.Items["user"] = context.Users.Find(session.userid);
+                    actioncontext.HttpContext.Items["user"] = context.Users.Find(session.Userid);
                     actioncontext.HttpContext.Items["session"] = session;
                 }
                 else
@@ -66,12 +66,12 @@ namespace bst.Controllers
         {
             var session = new Session
             {
-                sessionid = Guid.NewGuid(),
-                deviceid = deviceid,
-                userid = userid
+                Sessionid = Guid.NewGuid(),
+                Deviceid = deviceid,
+                Userid = userid
             };
             sessions.Add(session);
-            return session.sessionid;
+            return session.Sessionid;
         }
     }
 }

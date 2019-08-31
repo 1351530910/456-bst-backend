@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using bst.Logic;
 
 namespace bst.Controllers
 {
@@ -26,7 +27,7 @@ namespace bst.Controllers
             var participation = user.Protocols.FirstOrDefault(x => x.Protocol.Id.Equals(study.Protocol.Id));
             if (participation == null) return NotFound("You don't have access to this study.");
 
-            return new StudyData(study);
+            return ConfigureData.ToStudyData(study);
         }
 
         /// <summary>
@@ -56,5 +57,8 @@ namespace bst.Controllers
             await context.SaveChangesAsync();
             return study.Id;
         }
+
+
+       
     }
 }
