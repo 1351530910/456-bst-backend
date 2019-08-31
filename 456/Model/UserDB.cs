@@ -157,7 +157,7 @@ namespace bst.Model
         [Key]
         public Guid Id { get; set; }
         [Required]
-        public int Priviledge { get; set; }
+        public int Privilege { get; set; }
         public Guid GroupId { get; set; }
         public Guid ProtocolId { get; set; }
         [Required]

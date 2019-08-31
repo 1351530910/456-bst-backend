@@ -9,11 +9,11 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace bst.Controllers
 {
-    [Route("Invitation")]
+    [Route("invitation")]
     public class InvitationController : BaseController
     {
 
-        [HttpPost,Route("Invite"),AuthFilter]
+        [HttpPost,Route("invite"),AuthFilter]
         public async Task<object> Invite([FromBody]Invitation invitation)
         {
             if (invitation.Expiration <= System.DateTime.Now)
@@ -56,7 +56,7 @@ namespace bst.Controllers
             return NotFound();
         }
 
-        [HttpPost,Route("Accept/{invitationid}"),AuthFilter]
+        [HttpPost,Route("accept/{invitationid}"),AuthFilter]
         public async Task<object> Accept(Guid invitationid)
         {
             var invitation = await context.Invitations.FindAsync(invitationid);
@@ -76,7 +76,7 @@ namespace bst.Controllers
                     Id = Guid.NewGuid(),
                     User = user,
                     Group = group,
-                    Privilege = invitation.Priviledge
+                    Privilege = invitation.Privilege
                 });
                 foreach (var p in group.Protocols)
                 {
@@ -85,7 +85,7 @@ namespace bst.Controllers
                         Id = Guid.NewGuid(),
                         User = user,
                         Protocol = p,
-                        Privilege = invitation.Priviledge
+                        Privilege = invitation.Privilege
                     });
                 }
                 context.Invitations.Remove(invitation);
@@ -100,7 +100,7 @@ namespace bst.Controllers
                     Id = Guid.NewGuid(),
                     User = user,
                     Protocol = protocol,
-                    Privilege = invitation.Priviledge
+                    Privilege = invitation.Privilege
                 });
                 context.Invitations.Remove(invitation);
                 await context.SaveChangesAsync();
