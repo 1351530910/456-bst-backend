@@ -7,14 +7,17 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Mvc.Filters;
 using bst.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+
 
 
 namespace bst.Controllers
 {
     [Route("protocol")]
+    [AuthFilter]
     public class ProtocolController: BaseController
     {
-        [AuthFilter,HttpGet,Route("get/{protocolid}"),ProducesResponseType(typeof(ProtocolPreview),200)]
+        [HttpGet,Route("get/{protocolid}"),ProducesResponseType(typeof(ProtocolPreview),200)]
         public async Task<object> Getprotocol(Guid protocolid)
         {
             var user = (User)HttpContext.Items["user"];
@@ -32,13 +35,15 @@ namespace bst.Controllers
 
 #warning default values?
         [HttpPost, Route("create"), ProducesResponseType(typeof(Guid), 200)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<object> Create([FromBody]CreateProtocol data)
         {
             var user = (User)HttpContext.Items["user"];
-            var group = user.Roles.Where(x => x.Group.Id.Equals(data.Group)).FirstOrDefault();
+            var group = user.Roles.Where(x => x.Group.Id.Equals(data.GroupId)).FirstOrDefault();
             if (group == null)
             {
-                return BadRequest("group not found");
+                HttpContext.Response.StatusCode = 404;
+                return "User doesn't belong to this group or the group doesn't exist";
             }
             var protocol = new Protocol
             {

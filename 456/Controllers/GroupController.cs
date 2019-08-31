@@ -106,28 +106,54 @@ namespace bst.Controllers
         */
 
         [HttpPost, Route("changePrivilege"), ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<object> ChangePrivilege([FromBody]GroupInviteIn data)
         {
             var user = (User)HttpContext.Items["user"];
+            var group = await context.Group.FindAsync(data.Groupid);
+            if (group == null)
+            {
+                HttpContext.Response.StatusCode = 404;
+                return "Group doesn't exist";
+            }
             var userPrivilege = user.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid));
             if (userPrivilege == null || userPrivilege.Privilege != 1)
-                return Unauthorized("User must be group admin to change privilege.");
+                return Unauthorized("User must be group admin to change group member privilege.");
+
+            //change user's privilege to group 
             var roletochange = context.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid) && r.User.Id.Equals(data.Userid));
             if (roletochange == null) return NotFound($"User {data.Userid} is not a group member.");
             roletochange.Privilege = data.Permission;
             context.Entry(roletochange).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+
+            //change user's privilege to group protocols
+            var groupProtocols = group.Protocols.Select(p => p.Id);
+            var participations = context.ParticipateProtocols.Where(p => groupProtocols.Contains(p.Protocol.Id) && p.User.Id.Equals(data.Userid));
+            foreach(var participation in participations)
+            {
+                participation.Privilege = Math.Max(participation.Privilege, data.Permission);
+            }
             await context.SaveChangesAsync();
             return Ok("Change privilege successfully!");
         }
 
         [HttpPost, Route("removeUser"), ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<object> RemoveUser([FromBody]RemoveUserIn data)
         {
             var user = (User)HttpContext.Items["user"];
+            var group = await context.Group.FindAsync(data.Groupid);
+            if (group == null)
+            {
+                HttpContext.Response.StatusCode = 404;
+                return "Group doesn't exist";
+            }
             var userPrivilege = user.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid));
             if (userPrivilege == null || (userPrivilege.Privilege != 1 && !user.Id.Equals(data.Userid)))
                 return Unauthorized("User must be group admin or himself/herself to remove user.");
             context.Roles.Remove(context.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid) && r.User.Id.Equals(data.Userid)));
+            var groupProtocols = group.Protocols.Select(p => p.Id);
+            context.ParticipateProtocols.RemoveRange(context.ParticipateProtocols.Where(p => groupProtocols.Contains(p.Protocol.Id) && p.User.Id.Equals(data.Userid)));
             await context.SaveChangesAsync();
             return Ok("Remove user successfully!");       
         }

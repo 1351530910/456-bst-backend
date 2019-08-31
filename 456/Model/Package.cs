@@ -129,7 +129,7 @@ namespace bst.Controllers
     public class CreateProtocol
     {
         [Required]
-        public Guid Group { get; set; }
+        public Guid GroupId { get; set; }
         [MaxLength(100), Required]
         public string Name { get; set; }
         public bool Isprivate { get; set; }
