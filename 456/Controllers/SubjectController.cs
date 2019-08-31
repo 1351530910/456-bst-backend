@@ -11,6 +11,11 @@ namespace bst.Controllers
     [AuthFilter]
     public class SubjectController : BaseController
     {
+        /// <summary>
+        /// get a subject
+        /// </summary>
+        /// <param name="subjectid"></param>
+        /// <returns></returns>
         [HttpGet, Route("get/{subjectid}"), ProducesResponseType(typeof(SubjectData), 200)]
         public async Task<object> GetSubject(Guid subjectid)
         {
@@ -25,7 +30,11 @@ namespace bst.Controllers
             return new SubjectData(subject, participation.Protocol.Id);
         }
 
-
+        /// <summary>
+        /// create a subject
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         [HttpPost, Route("create"), ProducesResponseType(typeof(Guid), 200)]
         public async Task<object> CreateSubject([FromBody]SubjectData data)
         {
