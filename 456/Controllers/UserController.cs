@@ -83,27 +83,35 @@ namespace bst.Controllers
         [HttpPost, Route("logout")]       
         public object Logout()
         {
-            //var session = (Session)HttpContext.Items["session"];
-            //var user = await context.users.FindAsync(HttpContext.Items["user"]);
-
             AuthFilter.sessions.Remove((Session)HttpContext.Items["session"]);
             return Ok();
         }
 
 
-        [HttpPost, Route("listProjects"), ProducesResponseType(typeof(List<ProtocolData>), 200),AuthFilter]
+        [HttpPost, Route("listprotocols"), ProducesResponseType(typeof(List<ProtocolData>), 200),AuthFilter]
         public List<ProtocolData> ListProjects([FromBody]ListCount data)
         {
             var user = (User)HttpContext.Items["user"];
-            if (user.Protocols != null)
+            if (user.ProtocolUsers != null)
             {
-                return user.Protocols.Skip(data.Start).Take(data.Count).Select(x => new ProtocolData(x.Protocol, x.Privilege)).ToList();
+                return user.ProtocolUsers.Skip(data.Start).Take(data.Count).Select(x => new ProtocolData(x.Protocol, x.Privilege)).ToList();
             }
             else
             {
                 return new List<ProtocolData>();
             }
         }
-        
+
+        [HttpPost, Route("listgroups"), ProducesResponseType(typeof(IEnumerable<GroupPreview>), 200),AuthFilter]
+        public async Task<object> ListGroup([FromBody]ListCount data)
+        {
+            var user = (User)HttpContext.Items["user"];
+            var result = user.GroupUsers.Select(r => r.Group).Select(g => new GroupPreview(g));
+            if (data.Order == 0) result.OrderBy(r => r.Name);
+            else if (data.Order == 1) result.OrderByDescending(r => r.Name);
+            result.Skip(data.Start).Take(data.Count);
+            return result;
+        }
+
     }
 }
