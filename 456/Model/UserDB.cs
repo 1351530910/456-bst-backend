@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace bst.Model
 {
@@ -51,12 +51,13 @@ namespace bst.Model
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<ParticipateProtocol> ParticipateProtocols { get; set; }
-        public DbSet<Role> Roles { get; set; }
+        public DbSet<ProtocolUser> ProtocolUsers { get; set; }
+        public DbSet<GroupUser> GroupUsers { get; set; }
         public DbSet<Group> Group { get; set; }
         public DbSet<Invitation> Invitations { get; set; }
-
         public DbSet<Protocol> Protocols { get; set; }
+        public DbSet<ProtocolGroup> ProtocolGroups { get; set; }
+
         public DbSet<Study> Studies { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<History> Histories { get; set; }
@@ -104,24 +105,25 @@ namespace bst.Model
         [MaxLength(30)]
         public string LastName { get; set; }
 
-        public virtual ICollection<ParticipateProtocol> Protocols { get; set; }
-        public virtual ICollection<Role> Roles { get; set; }
+        public virtual ICollection<ProtocolUser> ProtocolUsers { get; set; }
+        public virtual ICollection<GroupUser> GroupUsers { get; set; }
         public virtual ICollection<Protocol> Locks { get; set; }
     }
 
-    public partial class ParticipateProtocol
+    public partial class Group
     {
         [Key]
         public Guid Id { get; set; }
-        [Required]
-        public virtual User User { get; set; }
-        [Required]
-        public virtual Protocol Protocol { get; set; }
-        [Required]
-        public int Privilege { get; set; }
+        [MaxLength(100), Required]
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+        public virtual ICollection<GroupUser> Members { get; set; }
+        public virtual ICollection<ProtocolGroup> GroupProtocols { get; set; }
+
     }
 
-    public partial class Role
+    public partial class GroupUser
     {
         [Key]
         public Guid Id { get; set; }
@@ -130,25 +132,64 @@ namespace bst.Model
         [Required]
         public virtual Group Group { get; set; }
         /// <summary>
-        /// 1 -> administrator
-        /// 2 -> has write access
+        /// 1 -> group manager
+        /// 2 -> member
+        /// </summary>
+        [Required]
+        public int Role { get; set; }
+    }
+
+    public class Protocol
+    {
+        [Key]
+        public Guid Id { get; set; }
+        [MaxLength(100), Required]
+        public string Name { get; set; }
+        public bool Isprivate { get; set; }
+        //metadata
+        public string Comment { get; set; }
+        public int IStudy { get; set; }
+        public bool UseDefaultAnat { get; set; }
+        public bool UseDefaultChannel { get; set; }
+
+        public virtual User LockedUser { get; set; }
+        public virtual ICollection<Subject> Subjects { get; set; }
+        public virtual ICollection<Study> Studies { get; set; }
+        public virtual ICollection<ProtocolUser> ProtocolUsers { get; set; }
+        public virtual ICollection<ProtocolGroup> ProtocolGroups { get; set; }
+    }
+
+    public partial class ProtocolUser
+    {
+        [Key]
+        public Guid Id { get; set; }
+        [Required]
+        public virtual User User { get; set; }
+        [Required]
+        public virtual Protocol Protocol { get; set; }
+        /// <summary>
+        /// 1 -> protocol admin
+        /// 2 -> has read-write access
         /// 3 -> has read access
         /// </summary>
         [Required]
         public int Privilege { get; set; }
     }
 
-    public partial class Group
+    public partial class ProtocolGroup
     {
         [Key]
         public Guid Id { get; set; }
-        [MaxLength(100),Required]
-        public string Name { get; set; }
-        public string Description { get; set; }
-
-        public virtual ICollection<Role> Users { get; set; }
-        public virtual ICollection<Protocol> Protocols { get; set; }
-
+        [Required]
+        public virtual Protocol Protocol { get; set;}
+        [Required]
+        public virtual Group Group { get; set; }
+        /// <summary>
+        /// 1 -> has read-write access
+        /// 2 -> has read access
+        /// </summary>
+        [Required]
+        public int GroupPrivilege { get; set; }       
     }
 
 
@@ -175,25 +216,6 @@ namespace bst.Model
         Administrator,
         ReadWrite,
         Read
-    }
-    public class Protocol
-    {
-        [Key]
-        public Guid Id { get; set; }
-        [MaxLength(100), Required]
-        public string Name { get; set; }
-        public bool Isprivate { get; set; }
-        //metadata
-        public string Comment { get; set; }
-        public int IStudy { get; set; }
-        public bool UseDefaultAnat { get; set; }
-        public bool UseDefaultChannel { get; set; }
-        [Required]
-        public virtual Group Group { get; set; }
-        public virtual User LockedUser { get; set; }
-        public virtual ICollection<Subject> Subjects { get; set; }
-        public virtual ICollection<Study> Studies { get; set; }
-        public virtual ICollection<ParticipateProtocol> Participations { get; set; }
     }
 
     public class Subject

@@ -24,7 +24,7 @@ namespace bst.Controllers
             var study = await context.Studies.FindAsync(studyid);
             if (study == null) return NotFound("Study doesn't exist.");
 
-            var participation = user.Protocols.FirstOrDefault(x => x.Protocol.Id.Equals(study.Protocol.Id));
+            var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(study.Protocol.Id));
             if (participation == null) return NotFound("You don't have access to this study.");
 
             return ConfigureData.ToStudyData(study);
@@ -39,7 +39,7 @@ namespace bst.Controllers
         public async Task<object> CreateStudy([FromBody]StudyData data)
         {
             var user = (User)HttpContext.Items["user"];
-            var participation = user.Protocols.FirstOrDefault(x => x.Protocol.Id.Equals(data.ProtocolId));
+            var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.ProtocolId));
             if (participation == null) return NotFound("You don't have access to this protocol.");
             Study study = new Study
             {

@@ -1,4 +1,5 @@
-﻿using bst.Model;
+﻿using bst.Controllers;
+using bst.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +68,28 @@ namespace bst.Logic
                 TransfMegLabels = data.TransfMegLabels,
                 TransfEegLabels = data.TransfEegLabels,
                 Parent = parent
+            };
+        }
+
+        public static GroupManagement ToGroupManagement(Group group, Guid protocolid)
+        {
+            return new GroupManagement
+            {
+                GroupId = group.Id,
+                GroupName = group.Name,
+                GroupDescription = group.Description,
+                Members = group.Members.Select(role => ToProtocolMember(role.User, protocolid)).ToList()
+            };
+        }
+
+        public static ProtocolMember ToProtocolMember(User user, Guid protocolid)
+        {
+            return new ProtocolMember
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                ProtocolPrivilege = user.ProtocolUsers.First(x => x.Id.Equals(protocolid)).Privilege
             };
         }
     }

@@ -26,7 +26,7 @@ namespace bst.Controllers
             var subject = await context.Subjects.FindAsync(subjectid);
             if (subject == null) return NotFound("Subject doesn't exist.");
 
-            var participation = user.Protocols.FirstOrDefault(x => x.Protocol.Id.Equals(subject.Protocol.Id));
+            var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(subject.Protocol.Id));
             if (participation == null) return NotFound("You don't have access to this subject.");
 
             return ConfigureData.ToSubjectData(subject);
@@ -41,7 +41,7 @@ namespace bst.Controllers
         public async Task<object> CreateSubject([FromBody]SubjectData data)
         {
             var user = (User)HttpContext.Items["user"];
-            var participation = user.Protocols.FirstOrDefault(x => x.Protocol.Id.Equals(data.ProtocolId));
+            var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.ProtocolId));
             if (participation == null) return NotFound("You don't have access to this protocol.");
             Subject subject = new Subject
             {

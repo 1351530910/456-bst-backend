@@ -63,7 +63,7 @@ namespace bst.Controllers
             
             //why protocol have privilege?
             //projects = group.protocols.Select(x => new ProtocolPreview(x));
-            Users = group.Users.Select(x => new UserPreview(x.User, x.Privilege));
+            Users = group.Members.Select(x => new UserPreview(x.User, x.Role));
         }
     }
     public class UserPreview
@@ -109,15 +109,15 @@ namespace bst.Controllers
             Privilege = privilege;
         }
     }
-    public class GroupInviteIn
+    public class EditGroupMemberIn
     {
         [Required]
         public Guid Groupid { get; set; }
         [Required]
         public Guid Userid { get; set; }
         [Required]
-        //the privilege of the added person in the group
-        public int Permission { get; set; }
+        //the role of the added person in the group
+        public int Role { get; set; }
     }
     public class RemoveUserIn
     {
@@ -128,8 +128,6 @@ namespace bst.Controllers
     }
     public class CreateProtocol
     {
-        [Required]
-        public Guid GroupId { get; set; }
         [MaxLength(100), Required]
         public string Name { get; set; }
         public bool Isprivate { get; set; }
@@ -180,15 +178,15 @@ namespace bst.Controllers
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int Privilege { get; set; }
-        public GroupMember(Role role)
+        public GroupMember(GroupUser role)
         {
             FirstName = role.User.FirstName;
             LastName = role.User.LastName;
-            Privilege = role.Privilege;
+            Privilege = role.Role;
         }
     }
 
-    public class GroupProtocol
+    public class GroupProtocolPreview
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -198,7 +196,7 @@ namespace bst.Controllers
         public int IStudy { get; set; }
         public bool UseDefaultAnat { get; set; }
         public bool UseDefaultChannel { get; set; }
-        public GroupProtocol(Protocol protocol)
+        public GroupProtocolPreview(Protocol protocol)
         {
             Id = protocol.Id;
             Name = protocol.Name;
@@ -217,15 +215,63 @@ namespace bst.Controllers
         public string Description { get; set; }
 
         public List<GroupMember> GroupMembers { get; set; }
-        public List<GroupProtocol> GroupProtocols { get; set; }
+        public List<GroupProtocolPreview> GroupProtocols { get; set; }
 
         public GroupDetailOut(Group group)
         {
             Id = group.Id;
             Name = group.Name;
             Description = group.Description;
-            GroupMembers = group.Users.Select(u => new GroupMember(u)).ToList();
-            GroupProtocols = group.Protocols.Select(p => new GroupProtocol(p)).ToList();
+            GroupMembers = group.Members.Select(u => new GroupMember(u)).ToList();
+            GroupProtocols = group.GroupProtocols.Select(p => new GroupProtocolPreview(p.Protocol)).ToList();
         }
+    }
+
+    public class EditGroupProtocolRelationIn
+    {
+        public Guid Groupid { get; set; }
+        public Guid Protocolid { get; set; }
+        public int GroupPrivilege { get; set; }
+    }
+
+    public class RemoveGroupProtocolRelationIn
+    {
+        public Guid Groupid { get; set; }
+        public Guid Protocolid { get; set; }
+    }
+
+    public class EditUserProtocolRelationIn
+    {
+        public Guid Userid { get; set; }
+        public Guid Protocolid { get; set; }
+        public int Privilege { get; set; }
+    }
+
+    public class RemoveUserProtocolRelationIn
+    {
+        public Guid Userid { get; set; }
+        public Guid Protocolid { get; set; }
+    }
+
+    public class ProtocolGroupManagementOut
+    {
+        public List<GroupManagement> Groups;
+        public List<ProtocolMember> ExternelUsers;
+    }
+
+    public class GroupManagement
+    {
+        public Guid GroupId { get; set; }
+        public string GroupName { get; set; }
+        public string GroupDescription { get; set; }
+        public List<ProtocolMember> Members { get; set; }
+    }
+
+    public class ProtocolMember
+    {
+        public Guid Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int ProtocolPrivilege { get; set; }
     }
 }

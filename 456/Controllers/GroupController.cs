@@ -24,16 +24,16 @@ namespace bst.Controllers
                 Description = data.Description,
 
             };
-            var role = new Role
+            var groupUserRelation = new GroupUser
             {
                 Id = Guid.NewGuid(),
                 User = user,
                 Group = group,
-                //add administrator
-                Privilege = 1
+                //the user become group manager by default
+                Role = 1
             };
             context.Group.Add(group);
-            context.Roles.Add(role);
+            context.GroupUsers.Add(groupUserRelation);
             await context.SaveChangesAsync();
             return new GroupPreview(group);
         }
@@ -55,11 +55,11 @@ namespace bst.Controllers
             return new GroupPreview(group);
         }
 
-        [HttpPost, Route("detail"), ProducesResponseType(typeof(GroupDetailOut), 200)]
+        [HttpPost, Route("detail/{groupid}"), ProducesResponseType(typeof(GroupDetailOut), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<object> Detail([FromBody]GroupDetailIn data)
+        public async Task<object> Detail(Guid groupid)
         {
-            var group = await context.Group.FindAsync(data.Groupid);
+            var group = await context.Group.FindAsync(groupid);
             if (group == null)
             {
                 HttpContext.Response.StatusCode = 404;
@@ -69,16 +69,6 @@ namespace bst.Controllers
             return new GroupDetailOut(group);
         }        
 
-        [HttpPost, Route("listGroup"), ProducesResponseType(typeof(IEnumerable<GroupPreview>), 200)]
-        public async Task<object> ListGroup([FromBody]ListCount data)
-        {
-            var user = (User)HttpContext.Items["user"];
-            var result = user.Roles.Select(r => r.Group).Select(g => new GroupPreview(g));
-            if (data.Order == 0) result.OrderBy(r => r.Name);
-            else if (data.Order == 1) result.OrderByDescending(r => r.Name);
-            result.Skip(data.Start).Take(data.Count);
-            return result;           
-        }
         /*
         [HttpPost, Route("invite"), ProducesResponseType(200)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -105,9 +95,9 @@ namespace bst.Controllers
         }
         */
 
-        [HttpPost, Route("changePrivilege"), ProducesResponseType(typeof(string), 200)]
+        [HttpPost, Route("changerole"), ProducesResponseType(typeof(string), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<object> ChangePrivilege([FromBody]GroupInviteIn data)
+        public async Task<object> ChangePrivilege([FromBody]EditGroupMemberIn data)
         {
             var user = (User)HttpContext.Items["user"];
             var group = await context.Group.FindAsync(data.Groupid);
@@ -116,28 +106,21 @@ namespace bst.Controllers
                 HttpContext.Response.StatusCode = 404;
                 return "Group doesn't exist";
             }
-            var userPrivilege = user.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid));
-            if (userPrivilege == null || userPrivilege.Privilege != 1)
-                return Unauthorized("User must be group admin to change group member privilege.");
+            var userGroupRelation = user.GroupUsers.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid));
+            if (userGroupRelation == null || userGroupRelation.Role != 1)
+                return Unauthorized("User must be group manager to change member role.");
 
-            //change user's privilege to group 
-            var roletochange = context.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid) && r.User.Id.Equals(data.Userid));
+            //change target user's role to group 
+            var roletochange = context.GroupUsers.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid) && r.User.Id.Equals(data.Userid));
             if (roletochange == null) return NotFound($"User {data.Userid} is not a group member.");
-            roletochange.Privilege = data.Permission;
+            roletochange.Role = data.Role;
             context.Entry(roletochange).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
 
-            //change user's privilege to group protocols
-            var groupProtocols = group.Protocols.Select(p => p.Id);
-            var participations = context.ParticipateProtocols.Where(p => groupProtocols.Contains(p.Protocol.Id) && p.User.Id.Equals(data.Userid));
-            foreach(var participation in participations)
-            {
-                participation.Privilege = Math.Max(participation.Privilege, data.Permission);
-            }
             await context.SaveChangesAsync();
             return Ok("Change privilege successfully!");
         }
 
-        [HttpPost, Route("removeUser"), ProducesResponseType(typeof(string), 200)]
+        [HttpPost, Route("removeuser"), ProducesResponseType(typeof(string), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<object> RemoveUser([FromBody]RemoveUserIn data)
         {
@@ -148,12 +131,12 @@ namespace bst.Controllers
                 HttpContext.Response.StatusCode = 404;
                 return "Group doesn't exist";
             }
-            var userPrivilege = user.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid));
-            if (userPrivilege == null || (userPrivilege.Privilege != 1 && !user.Id.Equals(data.Userid)))
-                return Unauthorized("User must be group admin or himself/herself to remove user.");
-            context.Roles.Remove(context.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid) && r.User.Id.Equals(data.Userid)));
-            var groupProtocols = group.Protocols.Select(p => p.Id);
-            context.ParticipateProtocols.RemoveRange(context.ParticipateProtocols.Where(p => groupProtocols.Contains(p.Protocol.Id) && p.User.Id.Equals(data.Userid)));
+            var userGroupRelation = user.GroupUsers.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid));
+            if (userGroupRelation == null || (userGroupRelation.Role != 1 && !user.Id.Equals(data.Userid)))
+                return Unauthorized("User must be group manager or himself/herself to remove user.");
+            context.GroupUsers.Remove(userGroupRelation);
+            var groupProtocolIds = group.GroupProtocols.Select(p => p.Id);
+            context.ProtocolUsers.RemoveRange(context.ProtocolUsers.Where(p => groupProtocolIds.Contains(p.Protocol.Id) && p.User.Id.Equals(data.Userid)));
             await context.SaveChangesAsync();
             return Ok("Remove user successfully!");       
         }

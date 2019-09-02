@@ -28,7 +28,7 @@ namespace bst.Controllers
 
             if (group!=null)
             {
-                var role = user.Roles.FirstOrDefault(x => x.Group == group && x.Privilege==1);
+                var role = user.GroupUsers.FirstOrDefault(x => x.Group == group && x.Role==1);
                 if (role==null)
                 {
                     return Unauthorized();
@@ -40,10 +40,10 @@ namespace bst.Controllers
             }
             if (protocol!=null)
             {
-                var groups = user.Roles.Where(x => x.Privilege == 1).Select(x=>x.Group);
+                var groups = user.GroupUsers.Where(x => x.Role == 1).Select(x=>x.Group);
                 foreach (var g in groups)
                 {
-                    if (g.Protocols.Select(x=>x.Id).Contains(invitation.ProtocolId))
+                    if (g.GroupProtocols.Select(x=>x.Id).Contains(invitation.ProtocolId))
                     {
                         invitation.Id = Guid.NewGuid();
                         context.Invitations.Add(invitation);
@@ -71,20 +71,20 @@ namespace bst.Controllers
 
             if (group!=null)
             {
-                context.Roles.Add(new Role
+                context.GroupUsers.Add(new GroupUser
                 {
                     Id = Guid.NewGuid(),
                     User = user,
                     Group = group,
-                    Privilege = invitation.Privilege
+                    Role = invitation.Privilege
                 });
-                foreach (var p in group.Protocols)
+                foreach (var p in group.GroupProtocols)
                 {
-                    context.ParticipateProtocols.Add(new ParticipateProtocol
+                    context.ProtocolUsers.Add(new ProtocolUser
                     {
                         Id = Guid.NewGuid(),
                         User = user,
-                        Protocol = p,
+                        Protocol = p.Protocol,
                         Privilege = invitation.Privilege
                     });
                 }
@@ -95,7 +95,7 @@ namespace bst.Controllers
 
             if (protocol!=null)
             {
-                context.ParticipateProtocols.Add(new ParticipateProtocol
+                context.ProtocolUsers.Add(new ProtocolUser
                 {
                     Id = Guid.NewGuid(),
                     User = user,
