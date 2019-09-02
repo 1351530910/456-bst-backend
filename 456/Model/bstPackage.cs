@@ -34,10 +34,10 @@ namespace bst.Model
         public int IOuterSkull { get; set; }
         public int IOther { get; set; }
 
-        public Guid ProtocolId { get; set; }       
+        public Guid ProtocolId { get; set; }
     }
 
-  
+
 
     public class StudyData
     {
@@ -61,26 +61,39 @@ namespace bst.Model
         public DateTime TimeStamp { get; set; }
         public string Type { get; set; }
         public string HistoryEvent { get; set; }
-
-        public Guid FunctionalFileId { get; set; }
-        public Guid AnatomicalFileId { get; set; }
+        public HistoryData(History history)
+        {
+            TimeStamp = history.TimeStamp;
+            Type = history.Type;
+            HistoryEvent = history.HistoryEvent;
+        }
     }
 
     #region Functional File and its subclasses 
 
 
-    public class FunctionalFileData
+    public abstract class FunctionalFileData
     {
         //metadata
+        public Guid Id { get; set; }
         public string Comment { get; set; }
         public string FileName { get; set; }
-        public string FileType { get; set; }
+        public IEnumerable<HistoryData> Histories { get; set; }
+        public FunctionalFileData()
+        {
 
-        public Guid StudyId { get; set; }
+        }
+        public FunctionalFileData(FunctionalFile f)
+        {
+            Id = f.Id;
+            Comment = f.Comment;
+            FileName = f.FileName;
+            Histories = f.Histories.Select(x => new HistoryData(x));
+        }
 
     }
 
-    public class ChannelData
+    public class ChannelData : FunctionalFileData
     {
         //metadata
         public int NbChannels { get; set; }
@@ -95,17 +108,20 @@ namespace bst.Model
         public int DbTransfEeg { get; set; }
         public int DbIntraElectrodes { get; set; }
         */
-        public Guid ParentId { get; set; }
+        public ChannelData()
+        {
+
+        }
+        public ChannelData(Channel f) : base(f.Parent)
+        {
+            NbChannels = f.NbChannels;
+            TransfMegLabels = f.TransfMegLabels;
+            TransfEegLabels = f.TransfEegLabels;
+        }
     }
 
 
-    public class UploadChannelIn
-    {      
-        public FunctionalFileData FileInfo { get; set; }
-        public ChannelData Metadata { get; set; }
-    }
-
-    public class TimeFreqData
+    public class TimeFreqData : FunctionalFileData
     {
         //metadata
         public string Measure { get; set; }
@@ -114,12 +130,22 @@ namespace bst.Model
         public string ColormapType { get; set; }
         public string DisplayUnits { get; set; }
 
-        //summary info 
-        public Guid ParentId { get; set; }
+        public TimeFreqData()
+        {
+
+        }
+        public TimeFreqData(TimeFreq f) : base(f.Parent)
+        {
+            Measure = f.Measure;
+            Method = f.Method;
+            NAvg = f.NAvg;
+            ColormapType = f.ColormapType;
+            DisplayUnits = f.DisplayUnits;
+        }
 
     }
 
-    public class StatData
+    public class StatData : FunctionalFileData
     {
         //metadata 
         public int Df { get; set; }
@@ -129,10 +155,19 @@ namespace bst.Model
         //summary info
         public int DbChannelFlag { get; set; }  
         */
-        public Guid ParentId { get; set; }
+        public StatData()
+        {
+
+        }
+        public StatData(Stat f) : base(f.Parent)
+        {
+            Df = f.Df;
+            Correction = f.Correction;
+            Type = f.Type;
+        }
     }
 
-    public class HeadModelData
+    public class HeadModelData : FunctionalFileData
     {
         //metadata
         public string Type { get; set; }
@@ -140,12 +175,21 @@ namespace bst.Model
         public string EEGMethod { get; set; }
         public string ECOGMethod { get; set; }
         public string SEEGMethod { get; set; }
+        public HeadModelData()
+        {
 
-        //summary info
-        public Guid ParentId { get; set; }
+        }
+        public HeadModelData(HeadModel f) : base(f.Parent)
+        {
+            Type = f.Type;
+            MEGMethod = f.MEGMethod;
+            EEGMethod = f.EEGMethod;
+            ECOGMethod = f.ECOGMethod;
+            SEEGMethod = f.SEEGMethod;
+        }
     }
 
-    public class ResultData
+    public class ResultData : FunctionalFileData
     {
         //metadata 
         public bool IsLink { get; set; }
@@ -161,11 +205,22 @@ namespace bst.Model
         public int DbChannelFlag { get; set; }
         public int DbAtlas { get; set; }
         */
+        public ResultData()
+        {
 
-        public Guid ParentId { get; set; }
+        }
+        public ResultData(Result f) : base(f.Parent)
+        {
+            IsLink = f.IsLink;
+            NComponents = f.NComponents;
+            Function = f.Function;
+            NAvg = f.NAvg;
+            ColormapType = f.ColormapType;
+            DisplayUnits = f.DisplayUnits;
+        }
     }
 
-    public class RecordingData
+    public class RecordingData : FunctionalFileData
     {
         //metadata 
         public string Format { get; set; }
@@ -191,10 +246,32 @@ namespace bst.Model
         public int DbEpoch { get; set; }
         public int DbChannelFlag { get; set; }
         */
-        public Guid ParentId { get; set; }
+        public RecordingData()
+        {
+
+        }
+        public RecordingData(Recording f) : base(f.Parent)
+        {
+            Format = f.Format;
+            Device = f.Device;
+            Byteorder = f.Byteorder;
+            DataType = f.DataType;
+            NAvg = f.NAvg;
+            SFreq = f.SFreq;
+            TimeStart = f.TimeStart;
+            TimeEnd = f.TimeEnd;
+            SamplesStart = f.SamplesStart;
+            SamplesEnd = f.SamplesEnd;
+            CurrCrfComp = f.CurrCrfComp;
+            DestCtfComp = f.DestCtfComp;
+            Acq_Date = f.Acq_Date;
+            ColormapType = f.ColormapType;
+            DisplayUnits = f.DisplayUnits;
+            IsBids = f.IsBids;
+        }
     }
 
-    public class MatrixData
+    public class MatrixData : FunctionalFileData
     {
         //metadata
         public int NAvg { get; set; }
@@ -205,7 +282,15 @@ namespace bst.Model
         public int DbEvents { get; set; }
         public int DbAtlas { get; set; }
         */
-        public Guid ParentId { get; set; }
+        public MatrixData()
+        {
+
+        }
+        public MatrixData(Matrix f) : base(f.Parent)
+        {
+            NAvg = f.NAvg;
+            DisplayUnits = f.DisplayUnits;
+        }
     }
 
 
