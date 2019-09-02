@@ -89,7 +89,7 @@ namespace bst.Logic
                 Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                ProtocolPrivilege = user.ProtocolUsers.First(x => x.Id.Equals(protocolid)).Privilege
+                ProtocolPrivilege = user.ProtocolUsers.First(x => x.Protocol.Id.Equals(protocolid)).Privilege
             };
         }
     }

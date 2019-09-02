@@ -38,17 +38,16 @@ namespace bst.Controllers
             var protocol = context.Protocols.Find(protocolid);
             if (protocol == null) return NotFound($"Protocol {protocolid} doesn't exist.");
             List<GroupManagement> groups = protocol.ProtocolGroups.Select(x => ConfigureData.ToGroupManagement(x.Group, protocolid)).ToList();
-            List<Guid> internalusers = groups.SelectMany(g => g.Members.Select(m => m.Id)).ToList();
-            List<ProtocolMember> externalUsers = protocol.ProtocolUsers
-                .Select(x => ConfigureData.ToProtocolMember(x.User, protocolid))
-                .Where(x => !internalusers.Contains(x.Id))
-                .ToList();
-
             ProtocolGroupManagementOut result = new ProtocolGroupManagementOut
             {
-                Groups = groups,
-                ExternelUsers = externalUsers
+                Groups = groups
             };
+            List<Guid> internalusers = groups.SelectMany(g => g.Members.Select(m => m.Id)).ToList();
+            var protocolusers = protocol.ProtocolUsers.Select(x => ConfigureData.ToProtocolMember(x.User, protocolid)).ToList();
+            var externalusers = protocolusers.Where(u => !internalusers.Contains(u.Id)).ToList();
+            result.ExternelUsers = externalusers;
+            
+           
             return result;
         }
 
