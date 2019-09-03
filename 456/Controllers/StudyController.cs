@@ -24,10 +24,10 @@ namespace bst.Controllers
             var study = await context.Studies.FindAsync(studyid);
             if (study == null) return NotFound("Study doesn't exist.");
 
-            var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(study.Protocol.Id));
+            var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(study.Subject.Protocol.Id));
             if (participation == null) return NotFound("You don't have access to this study.");
 
-            return ConfigureData.ToStudyData(study);
+            return new StudyData(study);
         }
 
         /// <summary>
@@ -50,15 +50,11 @@ namespace bst.Controllers
                 DateOfStudy = data.DateOfStudy,
                 IChannel = data.IChannel,
                 IHeadModel = data.IHeadModel,
-                Protocol = participation.Protocol,
                 Subject = context.Subjects.Find(data.SubjectId)
             };
             context.Studies.Add(study);
             await context.SaveChangesAsync();
             return study.Id;
         }
-
-
-       
     }
 }

@@ -78,6 +78,11 @@ namespace bst.Model
 
     }
 
+    public class Tracked
+    {
+        public DateTime LastUpdate { get; set; }
+    }
+
     public class BoolToIntConverter : ValueConverter<bool, int>
     {
         public BoolToIntConverter(ConverterMappingHints mappingHints = null)
@@ -139,7 +144,7 @@ namespace bst.Model
         public int Role { get; set; }
     }
 
-    public class Protocol
+    public class Protocol:Tracked
     {
         [Key]
         public Guid Id { get; set; }
@@ -218,7 +223,7 @@ namespace bst.Model
         Read
     }
 
-    public class Subject
+    public class Subject:Tracked
     {
         [Key]
         public Guid Id { get; set; }
@@ -240,7 +245,7 @@ namespace bst.Model
         public virtual ICollection<AnatomicalFile> AnatomicalFiles { get; set; }
     }
 
-    public class Study
+    public class Study:Tracked
     {
         [Key]
         public Guid Id { get; set; }
@@ -252,8 +257,8 @@ namespace bst.Model
         public int IChannel { get; set; }
         public int IHeadModel { get; set; }
 
-        public virtual Protocol Protocol { get; set; }
         public virtual Subject Subject { get; set; }
+
         public virtual ICollection<Channel> Channels { get; set; }
         public virtual ICollection<TimeFreq> TimeFreqs { get; set; }
         public virtual ICollection<Stat> Stats { get; set; }
@@ -296,7 +301,7 @@ namespace bst.Model
         Image
     }
 
-    public class FunctionalFile
+    public class FunctionalFile:Tracked
     {
         [Key]
         public Guid Id { get; set; }
@@ -464,7 +469,7 @@ namespace bst.Model
         Surface
     }
 
-    public class AnatomicalFile
+    public class AnatomicalFile:Tracked
     {
         [Key]
         public Guid Id { get; set; }

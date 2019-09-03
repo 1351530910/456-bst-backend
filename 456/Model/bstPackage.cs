@@ -15,7 +15,6 @@ namespace bst.Model
         public bool UseDefaultChannel { get; set; }
         public bool IsLocked { get; set; }
 
-        public IEnumerable<StudyData> Studies { get; set; }
         public IEnumerable<SubjectData> Subjects { get; set; }
         public ProtocolData()
         {
@@ -30,7 +29,6 @@ namespace bst.Model
 #warning lock
             IsLocked = false;
 
-            Studies = protocol.Studies.Select(x => new StudyData(x));
             Subjects = protocol.Subjects.Select(x => new SubjectData(x));
         }
     }
