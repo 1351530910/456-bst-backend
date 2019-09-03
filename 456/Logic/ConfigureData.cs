@@ -39,8 +39,7 @@ namespace bst.Logic
                 ICortex = subject.ICortex,
                 IInnerSkull = subject.IInnerSkull,
                 IOuterSkull = subject.IOuterSkull,
-                IOther = subject.IOther,
-                ProtocolId = subject.Protocol.Id
+                IOther = subject.IOther
             };
 
         }

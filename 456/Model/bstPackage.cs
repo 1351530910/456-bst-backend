@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace bst.Model
 {
-    /*
+    
     public class ProtocolData
     {
         //metadata
@@ -15,9 +15,26 @@ namespace bst.Model
         public bool UseDefaultChannel { get; set; }
         public bool IsLocked { get; set; }
 
-        public Guid LockedUserId { get; set; }
+        public IEnumerable<StudyData> Studies { get; set; }
+        public IEnumerable<SubjectData> Subjects { get; set; }
+        public ProtocolData()
+        {
+
+        }
+        public ProtocolData(Protocol protocol)
+        {
+            Comment = protocol.Comment;
+            IStudy = protocol.IStudy;
+            UseDefaultAnat = protocol.UseDefaultAnat;
+            UseDefaultChannel = protocol.UseDefaultChannel;
+#warning lock
+            IsLocked = false;
+
+            Studies = protocol.Studies.Select(x => new StudyData(x));
+            Subjects = protocol.Subjects.Select(x => new SubjectData(x));
+        }
     }
-    */
+    
 
     public class SubjectData
     {
@@ -34,7 +51,28 @@ namespace bst.Model
         public int IOuterSkull { get; set; }
         public int IOther { get; set; }
 
-        public Guid ProtocolId { get; set; }
+        public IEnumerable<StudyData> Studies { get; set; }
+
+        public SubjectData()
+        {
+
+        }
+
+        public SubjectData(Subject subject)
+        {
+            Comment = subject.Comment;
+            Filename = subject.Filename;
+            Name = subject.Name;
+            UseDefaultAnat = subject.UseDefaultAnat;
+            UseDefaultChannel = subject.UseDefaultChannel;
+            IAnatomy = subject.IAnatomy;
+            IScalp = subject.IScalp;
+            ICortex = subject.ICortex;
+            IInnerSkull = subject.IInnerSkull;
+            IOuterSkull = subject.IOuterSkull;
+            IOther = subject.IOther;
+            Studies = subject.Studies.Select(x => new StudyData(x));
+        }
     }
 
 
@@ -51,6 +89,22 @@ namespace bst.Model
 
         public Guid ProtocolId { get; set; }
         public Guid SubjectId { get; set; }
+
+        public IEnumerable<ChannelData> Channels { get; set; }
+        public IEnumerable<TimeFreqData> TimeFreqs { get; set; }
+        public IEnumerable<StatData> Stats { get; set; }
+        public IEnumerable<HeadModelData> HeadModels { get; set; }
+        public IEnumerable<ResultData> Results { get; set; }
+        public IEnumerable<RecordingData> Recordings { get; set; }
+        public IEnumerable<MatrixData> Matrixs { get; set; }
+        //public IEnumerable<DipoleData> Dipoles { get; set; }
+        //public IEnumerable<CovarianceData> Covariances { get; set; }
+        //public IEnumerable<ImageData> Images { get; set; }
+
+        public StudyData()
+        {
+
+        }
         public StudyData(Study study)
         {
             Filename = study.Filename;
@@ -61,6 +115,15 @@ namespace bst.Model
             ProtocolId = study.Protocol.Id;
             Condition = study.Condition;
             SubjectId = study.Subject.Id;
+
+            Channels = study.Channels.Select(x => new ChannelData(x));
+            TimeFreqs = study.TimeFreqs.Select(x => new TimeFreqData(x));
+            Stats = study.Stats.Select(x => new StatData(x));
+            HeadModels = study.HeadModels.Select(x => new HeadModelData(x));
+            Results = study.Results.Select(x => new ResultData(x));
+            Recordings = study.Recordings.Select(x => new RecordingData(x));
+            Matrixs = study.Matrixs.Select(x => new MatrixData(x));
+
         }
 
     }
@@ -89,6 +152,7 @@ namespace bst.Model
         public Guid Id { get; set; }
         public string Comment { get; set; }
         public string FileName { get; set; }
+        public FunctionalFileType type { get; set; }
         public IEnumerable<HistoryData> Histories { get; set; }
         public FunctionalFileData()
         {
@@ -99,9 +163,10 @@ namespace bst.Model
             Id = f.Id;
             Comment = f.Comment;
             FileName = f.FileName;
+            type = f.FileType;
             Histories = f.Histories.Select(x => new HistoryData(x));
         }
-
+        
     }
 
     public class ChannelData : FunctionalFileData
@@ -336,7 +401,7 @@ namespace bst.Model
     /*
     public enum AnatomicalFileType
     {
-        Fiber, Volume, Surface
+        Fiber; Volume; Surface
     }
 
     public class AnatomicalFile
