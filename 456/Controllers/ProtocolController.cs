@@ -33,7 +33,7 @@ namespace bst.Controllers
         }
         
         [HttpGet, Route("detail/{protocolid}"), ProducesResponseType(typeof(ProtocolGroupManagementOut), 200)]
-        public async Task<object> GetProtocolDetail(Guid protocolid)
+        public async Task<object> GetProtocolUsers(Guid protocolid)
         {
             var protocol = context.Protocols.Find(protocolid);
             if (protocol == null) return NotFound($"Protocol {protocolid} doesn't exist.");

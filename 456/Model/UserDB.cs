@@ -254,7 +254,16 @@ namespace bst.Model
 
         public virtual Protocol Protocol { get; set; }
         public virtual Subject Subject { get; set; }
-        public virtual ICollection<FunctionalFile> FunctionalFiles { get; set; }
+        public virtual ICollection<Channel> Channels { get; set; }
+        public virtual ICollection<TimeFreq> TimeFreqs { get; set; }
+        public virtual ICollection<Stat> Stats { get; set; }
+        public virtual ICollection<HeadModel> HeadModels { get; set; }
+        public virtual ICollection<Result> Results { get; set; }
+        public virtual ICollection<Recording> Recordings { get; set; }
+        public virtual ICollection<Matrix> Matrixs { get; set; }
+        public virtual ICollection<Dipole> Dipoles { get; set; }
+        public virtual ICollection<Covariance> Covariances { get; set; }
+        public virtual ICollection<Image> Images { get; set; }
     }
 
     public class History
@@ -284,8 +293,7 @@ namespace bst.Model
         Matrix,
         Dipole,
         Covariance,
-        Image,
-
+        Image
     }
 
     public class FunctionalFile

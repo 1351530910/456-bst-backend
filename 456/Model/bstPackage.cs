@@ -51,6 +51,17 @@ namespace bst.Model
 
         public Guid ProtocolId { get; set; }
         public Guid SubjectId { get; set; }
+        public StudyData(Study study)
+        {
+            Filename = study.Filename;
+            Name = study.Name;
+            DateOfStudy = study.DateOfStudy;
+            IChannel = study.IChannel;
+            IHeadModel = study.IHeadModel;
+            ProtocolId = study.Protocol.Id;
+            Condition = study.Condition;
+            SubjectId = study.Subject.Id;
+        }
 
     }
 
