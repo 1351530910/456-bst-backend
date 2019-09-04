@@ -78,6 +78,16 @@ namespace bst.Controllers
             };
         }
 
+        [ProducesResponseType(typeof(bool),200)]
+        [HttpGet, Route("checksession")]
+        public object CheckSession([FromBody]CheckSessionIn input)
+        {
+            var session = AuthFilter.sessions
+                .FirstOrDefault(s => s.Deviceid.Equals(input.Deviceid) && s.Sessionid.Equals(input.Sessionid));
+            if (session == null) return Ok(false);
+            else return Ok(true);
+        }
+
         [ProducesResponseType(200),AuthFilter]
         [ProducesResponseType(StatusCodes.Status400BadRequest), ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost, Route("logout")]       
@@ -112,6 +122,8 @@ namespace bst.Controllers
             result.Skip(data.Start).Take(data.Count);
             return result;
         }
+
+
 
     }
 }

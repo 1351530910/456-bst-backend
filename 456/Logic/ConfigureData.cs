@@ -19,7 +19,7 @@ namespace bst.Logic
                 DateOfStudy = study.DateOfStudy,
                 IChannel = study.IChannel,
                 IHeadModel = study.IHeadModel,
-                ProtocolId = study.Protocol.Id,
+                ProtocolId = study.Subject.Protocol.Id,
                 SubjectId = study.Subject.Id
             };
 

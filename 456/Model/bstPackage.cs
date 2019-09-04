@@ -48,6 +48,8 @@ namespace bst.Model
         public int IInnerSkull { get; set; }
         public int IOuterSkull { get; set; }
         public int IOther { get; set; }
+        public Guid ProtocolId { get; set; }
+
 
         public IEnumerable<StudyData> Studies { get; set; }
 
@@ -70,6 +72,7 @@ namespace bst.Model
             IOuterSkull = subject.IOuterSkull;
             IOther = subject.IOther;
             Studies = subject.Studies.Select(x => new StudyData(x));
+            ProtocolId = subject.Protocol.Id;
         }
     }
 
