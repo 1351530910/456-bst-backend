@@ -29,7 +29,7 @@ namespace bst.Controllers
             var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(subject.Protocol.Id));
             if (participation == null) return NotFound("You don't have access to this subject.");
 
-            return ConfigureData.ToSubjectData(subject);
+            return new SubjectData(subject);
         }
 
         /// <summary>

@@ -16,6 +16,16 @@ namespace bst.Controllers
         public Guid Sessionid { get; set; }
         public string Deviceid { get; set; }
         public Guid Userid { get; set; }
+        public Guid Protocol = Guid.Empty;
+        public DateTime LastActive { get; set; }
+    }
+
+    public class UploadQueue
+    {
+        public Guid id { get; set; }
+        public string sessionid { get; set; }
+        public string deviceid { get; set; }
+        public string path { get; set; }
     }
 
     /// <summary>
@@ -27,39 +37,47 @@ namespace bst.Controllers
     /// </summary>
     public class AuthFilter : ActionFilterAttribute
     {
-
+        public const int EXPIRETIME = 30;
 
         public static List<Session> sessions = new List<Session>();
+        public static List<UploadQueue> uploads = new List<UploadQueue>();
 
-        public override void OnActionExecuting(ActionExecutingContext actioncontext)
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var context = (UserDB)actioncontext.HttpContext.Items["context"];
+            var dbcontext = (UserDB)context.HttpContext.Items["context"];
             
-            if (!actioncontext.ModelState.IsValid)
+            if (!context.ModelState.IsValid)
             {
-                actioncontext.Result = new BadRequestResult();
+                context.Result = new BadRequestResult();
             }
-            if ((string)actioncontext.HttpContext.Request.Headers["deviceid"] != null)
+            if ((string)context.HttpContext.Request.Headers["deviceid"] != null)
             {
-                var sessionid = Guid.Parse((string)actioncontext.HttpContext.Request.Headers["sessionid"]);
-                var deviceid = (string)actioncontext.HttpContext.Request.Headers["deviceid"];
+                var sessionid = Guid.Parse((string)context.HttpContext.Request.Headers["sessionid"]);
+                var deviceid = (string)context.HttpContext.Request.Headers["deviceid"];
                 var session = sessions.FirstOrDefault(x => x.Deviceid.Equals(deviceid) && x.Sessionid.Equals(sessionid));
                 if (session!=null)
                 {
-                    actioncontext.HttpContext.Items["user"] = context.Users.Find(session.Userid);
-                    actioncontext.HttpContext.Items["session"] = session;
+                    if (session.LastActive.AddMinutes(EXPIRETIME)<System.DateTime.Now)
+                    {
+                        sessions.Remove(session);
+                        context.Result = new UnauthorizedResult();
+                    }
+                    session.LastActive = System.DateTime.Now;
+                    context.HttpContext.Items["user"] = dbcontext.Users.Find(session.Userid);
+                    context.HttpContext.Items["session"] = session;
+
                 }
                 else
                 {
-                    actioncontext.Result = new UnauthorizedResult();
+                    context.Result = new UnauthorizedResult();
                 }
             }
             else
             {
-                actioncontext.Result = new BadRequestResult();
+                context.Result = new BadRequestResult();
             }
 
-            base.OnActionExecuting(actioncontext);
+            base.OnActionExecuting(context);
         }
 
         public static Guid AddSession(Guid userid,string deviceid)
@@ -73,5 +91,6 @@ namespace bst.Controllers
             sessions.Add(session);
             return session.Sessionid;
         }
+
     }
 }

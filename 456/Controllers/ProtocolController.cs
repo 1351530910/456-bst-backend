@@ -13,10 +13,9 @@ using bst.Logic;
 namespace bst.Controllers
 {
     [Route("protocol")]
-    [AuthFilter]
     public class ProtocolController : BaseController
     {
-        [HttpGet, Route("get/{protocolid}"), ProducesResponseType(typeof(ProtocolData), 200)]
+        [HttpGet, Route("get/{protocolid}"), ProducesResponseType(typeof(ProtocolData), 200),AuthFilter]
         public async Task<object> Getprotocol(Guid protocolid)
         {
             var user = (User)HttpContext.Items["user"];
@@ -31,8 +30,24 @@ namespace bst.Controllers
                 return NotFound();
             }
         }
-        
-        [HttpGet, Route("detail/{protocolid}"), ProducesResponseType(typeof(ProtocolGroupManagementOut), 200)]
+
+        [HttpPost,Route("lock/{protocolid}"), ProducesResponseType(typeof(string),200),AuthFilter]
+        public object LockProtocol(Guid protocolid)
+        {
+            var session = (Session)HttpContext.Items["session"];
+            session.Protocol = protocolid;
+            return Ok();
+        }
+        [HttpPost, Route("unlock/{protocolid}"), ProducesResponseType(typeof(string), 200), AuthFilter]
+        public object UnlockProtocol(Guid protocolid)
+        {
+            var session = (Session)HttpContext.Items["session"];
+            session.Protocol = Guid.Empty;
+            return Ok();
+        }
+
+
+        [HttpGet, Route("detail/{protocolid}"), ProducesResponseType(typeof(ProtocolGroupManagementOut), 200),AuthFilter]
         public async Task<object> GetProtocolUsers(Guid protocolid)
         {
             var protocol = context.Protocols.Find(protocolid);
@@ -52,11 +67,12 @@ namespace bst.Controllers
         }
 
 #warning default values?
-        [HttpPost, Route("create"), ProducesResponseType(typeof(Guid), 200)]
+        [HttpPost, Route("create"), ProducesResponseType(typeof(Guid), 200),AuthFilter]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<object> CreateProtocol([FromBody]CreateProtocol data)
         {
             var user = (User)HttpContext.Items["user"];
+            var session = (Session)HttpContext.Items["session"];
             var protocol = new Protocol
             {
                 Id = Guid.NewGuid(),
@@ -78,11 +94,12 @@ namespace bst.Controllers
             };
             context.ProtocolUsers.Add(protocoluser);
             await context.SaveChangesAsync();
+            session.Protocol = protocol.Id;
             return protocol.Id;
         }
 
 
-        [HttpPost, Route("editgroup"), ProducesResponseType(typeof(Guid), 200)]
+        [HttpPost, Route("editgroup"), ProducesResponseType(typeof(Guid), 200),AuthFilter]
         public async Task<object> AddOrEditGroup([FromBody]EditGroupProtocolRelationIn data)
         {
             var group = await context.Group.FindAsync(data.Groupid);
@@ -119,7 +136,7 @@ namespace bst.Controllers
             }
         }
 
-        [HttpPost, Route("removegroup"), ProducesResponseType(200)]
+        [HttpPost, Route("removegroup"), ProducesResponseType(200),AuthFilter]
         public async Task<object> RemoveGroup([FromBody]RemoveGroupProtocolRelationIn data)
         {
             var protocolgroup = await context.ProtocolGroups
@@ -134,7 +151,7 @@ namespace bst.Controllers
             return Ok();           
         }
 
-        [HttpPost, Route("edituser"), ProducesResponseType(typeof(Guid), 200)]
+        [HttpPost, Route("edituser"), ProducesResponseType(typeof(Guid), 200),AuthFilter]
         public async Task<object> AddOrEditUser([FromBody] EditUserProtocolRelationIn data)
         {
             //check if user is protocol admin
@@ -167,7 +184,7 @@ namespace bst.Controllers
             }
         }
 
-        [HttpPost, Route("removeuser"), ProducesResponseType(200)]
+        [HttpPost, Route("removeuser"), ProducesResponseType(200),AuthFilter]
         public async Task<object> RemoveUser([FromBody] RemoveUserProtocolRelationIn data)
         {
             //check if user is protocol admin
@@ -183,7 +200,5 @@ namespace bst.Controllers
             await context.SaveChangesAsync();
             return Ok();
         }
-
-
     }
 }
