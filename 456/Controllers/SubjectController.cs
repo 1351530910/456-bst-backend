@@ -41,7 +41,7 @@ namespace bst.Controllers
         public async Task<object> CreateSubject([FromBody]SubjectData data)
         {
             var user = (User)HttpContext.Items["user"];
-            var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.ProtocolId));
+            var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.));
             if (participation == null) return NotFound("You don't have access to this protocol.");
             Subject subject = new Subject
             {

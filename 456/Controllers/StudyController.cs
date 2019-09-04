@@ -39,8 +39,11 @@ namespace bst.Controllers
         public async Task<object> CreateStudy([FromBody]StudyData data)
         {
             var user = (User)HttpContext.Items["user"];
+            var session = (Session)HttpContext.Items["session"];
             var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.ProtocolId));
-            if (participation == null) return NotFound("You don't have access to this protocol.");
+
+            if (participation == null) return Unauthorized("You don't have access to this protocol.");
+
             Study study = new Study
             {
                 Id = Guid.NewGuid(),
