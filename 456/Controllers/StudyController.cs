@@ -53,7 +53,8 @@ namespace bst.Controllers
                 DateOfStudy = data.DateOfStudy,
                 IChannel = data.IChannel,
                 IHeadModel = data.IHeadModel,
-                Subject = context.Subjects.Find(data.SubjectId)
+                Subject = context.Subjects.Find(data.SubjectId),
+                LastUpdate = System.DateTime.Now
             };
             context.Studies.Add(study);
             await context.SaveChangesAsync();

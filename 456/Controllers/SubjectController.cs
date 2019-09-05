@@ -45,7 +45,7 @@ namespace bst.Controllers
             var user = (User)HttpContext.Items["user"];
             var session = (Session)HttpContext.Items["session"];
 
-            var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.));
+            var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.ProtocolId));
             if (participation == null) return NotFound("You don't have access to this protocol.");
             Subject subject = new Subject
             {
@@ -61,7 +61,8 @@ namespace bst.Controllers
                 IInnerSkull = data.IInnerSkull,
                 IOuterSkull = data.IOuterSkull,
                 IOther = data.IOther,
-                Protocol = participation.Protocol
+                Protocol = participation.Protocol,
+                LastUpdate = System.DateTime.Now
             };
             context.Subjects.Add(subject);
             await context.SaveChangesAsync();

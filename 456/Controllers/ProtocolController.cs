@@ -82,6 +82,7 @@ namespace bst.Controllers
                 IStudy = data.Istudy ?? 0,
                 UseDefaultAnat = data.Usedefaultanat ?? true,
                 UseDefaultChannel = data.Usedefaultchannel ?? true,
+                LastUpdate = System.DateTime.Now
             };
             context.Protocols.Add(protocol);
             var protocoluser = new ProtocolUser
