@@ -37,6 +37,12 @@ namespace bst.Controllers
         [Required]
         public string Deviceid { get; set; }
     }
+
+    public class CheckSessionIn
+    {
+        public string Deviceid { get; set; }
+        public Guid Sessionid { get; set; }
+    }
     public class LoginOut
     {
         public Guid Sessionid { get; set; }
