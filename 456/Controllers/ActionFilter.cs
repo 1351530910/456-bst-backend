@@ -20,13 +20,6 @@ namespace bst.Controllers
         public DateTime LastActive { get; set; }
     }
 
-    public class UploadQueue
-    {
-        public Guid id { get; set; }
-        public string sessionid { get; set; }
-        public string deviceid { get; set; }
-        public string path { get; set; }
-    }
 
     /// <summary>
     /// 
@@ -40,7 +33,6 @@ namespace bst.Controllers
         public const int EXPIRETIME = 30;
 
         public static List<Session> sessions = new List<Session>();
-        public static List<UploadQueue> uploads = new List<UploadQueue>();
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {

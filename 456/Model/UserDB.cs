@@ -75,7 +75,6 @@ namespace bst.Model
         public DbSet<Volume> Volumes { get; set; }
         public DbSet<Surface> Surfaces { get; set; }
         public DbSet<AnatomicalFile> AnatomicalFiles { get; set; }
-
     }
 
     public class Tracked
@@ -258,6 +257,7 @@ namespace bst.Model
         public int IHeadModel { get; set; }
 
         public virtual Subject Subject { get; set; }
+        public virtual Protocol Protocol { get; set; }
 
         public virtual ICollection<Channel> Channels { get; set; }
         public virtual ICollection<TimeFreq> TimeFreqs { get; set; }
@@ -277,12 +277,12 @@ namespace bst.Model
         public Guid Id { get; set; }
         //metadata
         public DateTime TimeStamp { get; set; }
-        public string Type { get; set; }  //what does type mean here?
         public string HistoryEvent { get; set; }
         
         public virtual FunctionalFile FunctionalFile { get; set; }
 
         public virtual AnatomicalFile AnatomicalFile { get; set; }
+        public virtual Protocol protocol { get; set; }
     }
 
     #region Functional File and its subclasses 
@@ -300,6 +300,13 @@ namespace bst.Model
         Covariance,
         Image
     }
+
+
+
+
+
+#warning raw files.
+
 
     public class FunctionalFile:Tracked
     {

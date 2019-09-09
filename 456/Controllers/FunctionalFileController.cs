@@ -39,4 +39,24 @@ namespace bst.Controllers
             return Ok();
         }
     }
+
+    #region filetypes
+    [HttpPost,Route("Channel"),AuthFilter]
+    public async Task<object> Channel([FromBody]ChannelData data)
+    {
+        var user = (User)HttpContext.Items["user"];
+
+
+
+
+
+        throw new NotImplementedException();
+    }
+
+
+
+
+
+    #endregion
+
 }
