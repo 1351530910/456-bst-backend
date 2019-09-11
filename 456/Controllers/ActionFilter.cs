@@ -78,7 +78,8 @@ namespace bst.Controllers
             {
                 Sessionid = Guid.NewGuid(),
                 Deviceid = deviceid,
-                Userid = userid
+                Userid = userid,
+                LastActive = DateTime.Now
             };
             sessions.Add(session);
             return session.Sessionid;
