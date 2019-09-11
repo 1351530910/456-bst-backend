@@ -56,7 +56,6 @@ namespace bst.Controllers
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
         public IEnumerable<UserPreview> Users { get; set; }
         public IEnumerable<ProtocolData> Projects { get; set; }
 
@@ -215,7 +214,6 @@ namespace bst.Controllers
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
 
         public List<GroupMember> GroupMembers { get; set; }
         public List<GroupProtocolPreview> GroupProtocols { get; set; }
@@ -265,7 +263,6 @@ namespace bst.Controllers
     {
         public Guid GroupId { get; set; }
         public string GroupName { get; set; }
-        public string GroupDescription { get; set; }
         public List<ProtocolMember> Members { get; set; }
     }
 
