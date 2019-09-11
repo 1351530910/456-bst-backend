@@ -68,7 +68,7 @@ namespace bst
             {
                 app.UseHsts();
             }
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseSwagger();
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
@@ -88,7 +88,7 @@ namespace bst
                     template: "{controller}/{action}/"
                 );
             });
-            /*
+            
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var usercontext = serviceScope.ServiceProvider.GetRequiredService<Model.UserDB>();
@@ -96,7 +96,7 @@ namespace bst
                 usercontext.Database.EnsureCreated();
 
             }
-            */
+            
             
             
         }

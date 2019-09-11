@@ -15,14 +15,11 @@ namespace bst.Controllers
         [HttpPost,Route("create"),ProducesResponseType(typeof(GroupPreview),200)]
         public async Task<object> CreateGroup([FromBody]CreateGroupIn data)
         {
-            var user = (User)HttpContext.Items["user"];
-            
+            var user = (User)HttpContext.Items["user"];          
             var group = new Group
             {
                 Id = Guid.NewGuid(),
                 Name = data.Name,
-                Description = data.Description,
-
             };
             var groupUserRelation = new GroupUser
             {
@@ -41,7 +38,7 @@ namespace bst.Controllers
 
         [HttpPost, Route("modify"), ProducesResponseType(typeof(GroupPreview), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<object> Modify([FromBody]ModifyGroupIn data)
+        public async Task<object> ModifyName([FromBody]ModifyGroupIn data)
         {
             var group = await context.Group.FindAsync(data.Id);
             if (group == null)
@@ -50,7 +47,6 @@ namespace bst.Controllers
                 return "Group not found";
             }
             group.Name = data.Name;
-            group.Description = data.Description;
             await context.SaveChangesAsync();
             return new GroupPreview(group);
         }

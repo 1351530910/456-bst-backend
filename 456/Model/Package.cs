@@ -51,7 +51,6 @@ namespace bst.Controllers
     {
         [Required]
         public string Name { get; set; }
-        public string Description { get; set; }
     }
     public class GroupPreview
     {
@@ -64,9 +63,7 @@ namespace bst.Controllers
         public GroupPreview(Group group)
         {
             Id = group.Id;
-            Name = group.Name;
-            Description = group.Description;
-            
+            Name = group.Name;            
             //why protocol have privilege?
             //projects = group.protocols.Select(x => new ProtocolPreview(x));
             Users = group.Members.Select(x => new UserPreview(x.User, x.Role));
@@ -227,7 +224,6 @@ namespace bst.Controllers
         {
             Id = group.Id;
             Name = group.Name;
-            Description = group.Description;
             GroupMembers = group.Members.Select(u => new GroupMember(u)).ToList();
             GroupProtocols = group.GroupProtocols.Select(p => new GroupProtocolPreview(p.Protocol)).ToList();
         }

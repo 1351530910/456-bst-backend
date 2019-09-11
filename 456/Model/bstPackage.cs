@@ -139,7 +139,7 @@ namespace bst.Model
         public HistoryData(History history)
         {
             TimeStamp = history.TimeStamp;
-            Type = history.Type;
+            //Type = history.Type;
             HistoryEvent = history.HistoryEvent;
         }
     }

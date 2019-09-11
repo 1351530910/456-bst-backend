@@ -15,6 +15,8 @@ namespace bst.Model
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+            modelBuilder.Entity<Group>().HasIndex(g => g.Name).IsUnique();
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
                 foreach (var property in entityType.GetProperties())
@@ -120,7 +122,6 @@ namespace bst.Model
         public Guid Id { get; set; }
         [MaxLength(100), Required]
         public string Name { get; set; }
-        public string Description { get; set; }
 
         public virtual ICollection<GroupUser> Members { get; set; }
         public virtual ICollection<ProtocolGroup> GroupProtocols { get; set; }

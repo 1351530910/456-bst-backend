@@ -41,8 +41,9 @@ namespace bst.Controllers
     }
 
     #region filetypes
+    /*
     [HttpPost,Route("Channel"),AuthFilter]
-    public async Task<object> Channel([FromBody]ChannelData data)
+    public Task<object> Channel([FromBody]ChannelData data)
     {
         var user = (User)HttpContext.Items["user"];
 
@@ -52,6 +53,7 @@ namespace bst.Controllers
 
         throw new NotImplementedException();
     }
+    */
 
 
 

@@ -76,7 +76,6 @@ namespace bst.Logic
             {
                 GroupId = group.Id,
                 GroupName = group.Name,
-                GroupDescription = group.Description,
                 Members = group.Members.Select(role => ToProtocolMember(role.User, protocolid)).ToList()
             };
         }
