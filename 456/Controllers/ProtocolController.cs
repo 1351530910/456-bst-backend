@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using bst.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
-using bst.Logic;
 
 namespace bst.Controllers
 {
@@ -52,13 +51,13 @@ namespace bst.Controllers
         {
             var protocol = context.Protocols.Find(protocolid);
             if (protocol == null) return NotFound($"Protocol {protocolid} doesn't exist.");
-            List<GroupManagement> groups = protocol.ProtocolGroups.Select(x => ConfigureData.ToGroupManagement(x.Group, protocolid)).ToList();
+            List<GroupManagement> groups = protocol.ProtocolGroups.Select(x => new GroupManagement(x.Group, x.GroupPrivilege)).ToList();
             ProtocolGroupManagementOut result = new ProtocolGroupManagementOut
             {
                 Groups = groups
             };
             List<Guid> internalusers = groups.SelectMany(g => g.Members.Select(m => m.Id)).ToList();
-            var protocolusers = protocol.ProtocolUsers.Select(x => ConfigureData.ToProtocolMember(x.User, protocolid)).ToList();
+            var protocolusers = protocol.ProtocolUsers.Select(x => new ProtocolMember(x)).ToList();
             var externalusers = protocolusers.Where(u => !internalusers.Contains(u.Id)).ToList();
             result.ExternelUsers = externalusers;
             
@@ -184,7 +183,30 @@ namespace bst.Controllers
                 return targetUserProtocolRelation.Id;
             }
         }
+        [HttpPost, Route("adduser/{userdid}/{priviledge}"), ProducesResponseType(200), AuthFilter]
+        public async Task<object> AddUser([FromBody] AddUserProtocolRelationIn data)
+        {
+            //check if user is protocol admin
+            var user = (User)HttpContext.Items["user"];
+            var userProtocolRelation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.Protocolid));
+            if (userProtocolRelation == null || userProtocolRelation.Privilege > 1) Unauthorized("You are not protocol admin.");
 
+            var target = context.Users.Find(data.Userid);
+            if (target==null)
+            {
+                return NotFound("user not found");
+            }
+            //find target user 
+            context.Add(new ProtocolUser
+            {
+                Id = Guid.NewGuid(),
+                User = target,
+                Protocol = userProtocolRelation.Protocol,
+                Privilege = data.Priviledge
+            });
+            await context.SaveChangesAsync();
+            return Ok();
+        }
         [HttpPost, Route("removeuser"), ProducesResponseType(200),AuthFilter]
         public async Task<object> RemoveUser([FromBody] RemoveUserProtocolRelationIn data)
         {

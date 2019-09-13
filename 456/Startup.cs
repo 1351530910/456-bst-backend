@@ -20,7 +20,7 @@ namespace bst
 {
     public class Startup
     {
-        public static bool devenv = false;
+        public static string env = "";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -62,7 +62,6 @@ namespace bst
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                devenv = true;
             }
             else
             {

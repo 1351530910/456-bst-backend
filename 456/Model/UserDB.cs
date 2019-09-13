@@ -33,23 +33,19 @@ namespace bst.Model
         {
             optionsBuilder.UseLazyLoadingProxies();
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=root;password=Qwe12345", null);
-            /*
-            if (optionsBuilder != null)
+            switch (Environment.GetEnvironmentVariable("sqlaccess"))
             {
-
-                if (bst.Startup.devenv)
-                {
-                    optionsBuilder.UseSqlServer("server=.;database=bstusers;Integrated Security=SSPI;user=sa;password=asd45214", null);
-                }
-                else
-                {
+                case "sqlserver":
+                    optionsBuilder.UseSqlServer("server=.;database=bstusers;Integrated Security=SSPI;user=sa;password=asd45214..", null);
+                    break;
+                case "mysql":
+                    optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=root;password=Qwe12345", null);
+                    break;
+                default:
                     optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=bst;password=asd45214", null);
-                }
-
+                    break;
             }
-            */
-            
+
         }
 
         public DbSet<User> Users { get; set; }

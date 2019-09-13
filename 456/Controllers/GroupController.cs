@@ -65,31 +65,6 @@ namespace bst.Controllers
             return new GroupDetailOut(group);
         }        
 
-        /*
-        [HttpPost, Route("invite"), ProducesResponseType(200)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<object> Invite([FromBody]GroupInviteIn data)
-        {
-            var user = (User)HttpContext.Items["user"];
-            var userPrivilege = user.Roles.FirstOrDefault(r => r.Group.Id.Equals(data.Groupid));
-            if (userPrivilege == null || userPrivilege.Privilege != 1)
-                return BadRequest("User must be group admin to add people.");
-            var group = context.Group.FirstOrDefault(g => g.Id.Equals(data.Groupid));
-            var addeduser = context.Users.FirstOrDefault(u => u.Id.Equals(data.Userid));
-            if (group == null || addeduser == null) return NotFound("Group or added user not found.");
-            var newrole = new Role
-            {
-                Id = Guid.NewGuid(),
-                User = addeduser,
-                Group = group,
-                //add administrator
-                Privilege = data.Permission
-            };
-            context.Roles.Add(newrole);
-            await context.SaveChangesAsync();
-            return Ok("Add member successfully!");
-        }
-        */
 
         [HttpPost, Route("changerole"), ProducesResponseType(typeof(string), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -116,12 +91,33 @@ namespace bst.Controllers
             return Ok("Change privilege successfully!");
         }
 
-        [HttpPost, Route("removeuser"), ProducesResponseType(typeof(string), 200)]
+        [HttpPost, Route("adduser"), ProducesResponseType(typeof(string), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<object> RemoveUser([FromBody]RemoveUserIn data)
+        public async Task<object> AddUser([FromBody]RemoveGroupUserIn data)
         {
             var user = (User)HttpContext.Items["user"];
-            var group = await context.Group.FindAsync(data.Groupid);
+            var group = user.GroupUsers.FirstOrDefault(x => x.Group.Id.Equals(data.Groupid));
+            if (group == null)
+                return NotFound("group not found");
+            var target = context.Users.Find(data.Userid);
+            if (target == null)
+                return NotFound("user not found");
+            context.GroupUsers.Add(new GroupUser
+            {
+                Id = Guid.NewGuid(),
+                User = user,
+                Group = group.Group
+            });
+            await context.SaveChangesAsync();
+            return Ok("Remove user successfully!");
+        }
+
+        [HttpPost, Route("removeuser"), ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<object> RemoveUser([FromBody]RemoveGroupUserIn data)
+        {
+            var user = (User)HttpContext.Items["user"];
+            var group = user.GroupUsers.FirstOrDefault(x=>x.Group.Id.Equals(data.Groupid));
             if (group == null)
             {
                 HttpContext.Response.StatusCode = 404;
@@ -131,7 +127,7 @@ namespace bst.Controllers
             if (userGroupRelation == null || (userGroupRelation.Role != 1 && !user.Id.Equals(data.Userid)))
                 return Unauthorized("User must be group manager or himself/herself to remove user.");
             context.GroupUsers.Remove(userGroupRelation);
-            var groupProtocolIds = group.GroupProtocols.Select(p => p.Id);
+            var groupProtocolIds = group.Group.GroupProtocols.Select(p => p.Id);
             context.ProtocolUsers.RemoveRange(context.ProtocolUsers.Where(p => groupProtocolIds.Contains(p.Protocol.Id) && p.User.Id.Equals(data.Userid)));
             await context.SaveChangesAsync();
             return Ok("Remove user successfully!");       

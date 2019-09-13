@@ -121,7 +121,16 @@ namespace bst.Controllers
         //the role of the added person in the group
         public int Role { get; set; }
     }
-    public class RemoveUserIn
+    public class AddGroupUserIn
+    {
+        [Required]
+        public Guid Groupid { get; set; }
+        [Required]
+        public Guid Userid { get; set; }
+        [Required]
+        public int priviledge { get; set; }
+    }
+    public class RemoveGroupUserIn
     {
         [Required]
         public Guid Groupid { get; set; }
@@ -246,7 +255,12 @@ namespace bst.Controllers
         public Guid Protocolid { get; set; }
         public int Privilege { get; set; }
     }
-
+    public class AddUserProtocolRelationIn
+    {
+        public Guid Userid { get; set; }
+        public Guid Protocolid { get; set; }
+        public int Priviledge { get; set; }
+    }
     public class RemoveUserProtocolRelationIn
     {
         public Guid Userid { get; set; }
@@ -263,7 +277,16 @@ namespace bst.Controllers
     {
         public Guid GroupId { get; set; }
         public string GroupName { get; set; }
+        public int GroupPriviledge { get; set; }
         public List<ProtocolMember> Members { get; set; }
+        public GroupManagement() { }
+        public GroupManagement(Group group,int priviledge)
+        {
+            GroupId = group.Id;
+            GroupName = group.Name;
+            Members = group.Members.Select(role => new ProtocolMember(role.User)).ToList();
+            GroupPriviledge = priviledge;
+        }
     }
 
     public class ProtocolMember
@@ -272,5 +295,19 @@ namespace bst.Controllers
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int ProtocolPrivilege { get; set; }
+        public ProtocolMember() { }
+        public ProtocolMember(User user)
+        {
+            Id = user.Id;
+            FirstName = user.FirstName;
+            LastName = user.LastName;
+        }
+        public ProtocolMember(ProtocolUser protocolUser)
+        {
+            Id = protocolUser.User.Id;
+            FirstName = protocolUser.User.FirstName;
+            LastName = protocolUser.User.LastName;
+            ProtocolPrivilege = protocolUser.Privilege;
+        }
     }
 }

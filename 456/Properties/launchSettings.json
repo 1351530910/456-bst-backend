@@ -34,8 +34,10 @@
       "commandName": "IIS",
       "workingDirectory": "C:\\Users\\Administrator\\source\\repos\\1351530910\\456-bst-backend",
       "environmentVariables": {
+        "sqlaccess": "sqlserver",
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "nativeDebugging": true
     },
     "dp": {
       "commandName": "IIS"

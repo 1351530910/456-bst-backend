@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace bst.Logic
+namespace bst.Logic.temp
 {
     public class ConfigureData
     {
@@ -74,9 +74,7 @@ namespace bst.Logic
         {
             return new GroupManagement
             {
-                GroupId = group.Id,
-                GroupName = group.Name,
-                Members = group.Members.Select(role => ToProtocolMember(role.User, protocolid)).ToList()
+                
             };
         }
 
@@ -84,11 +82,7 @@ namespace bst.Logic
         {
             return new ProtocolMember
             {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                ProtocolPrivilege = user.ProtocolUsers.First(x => x.Protocol.Id.Equals(protocolid)).Privilege
-            };
+                };
         }
     }
 }
