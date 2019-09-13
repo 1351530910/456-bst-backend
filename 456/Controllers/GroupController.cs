@@ -93,7 +93,7 @@ namespace bst.Controllers
 
         [HttpPost, Route("adduser"), ProducesResponseType(typeof(string), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<object> AddUser([FromBody]RemoveGroupUserIn data)
+        public async Task<object> AddUser([FromBody]AddGroupUserIn data)
         {
             var user = (User)HttpContext.Items["user"];
             var group = user.GroupUsers.FirstOrDefault(x => x.Group.Id.Equals(data.Groupid));
@@ -106,7 +106,8 @@ namespace bst.Controllers
             {
                 Id = Guid.NewGuid(),
                 User = user,
-                Group = group.Group
+                Group = group.Group,
+                Role = data.priviledge
             });
             await context.SaveChangesAsync();
             return Ok("Remove user successfully!");
