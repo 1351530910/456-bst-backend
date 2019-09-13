@@ -109,9 +109,9 @@ namespace bst.Controllers
     public class EditGroupMemberIn
     {
         [Required]
-        public Guid Groupid { get; set; }
+        public string GroupName { get; set; }
         [Required]
-        public Guid Userid { get; set; }
+        public string UserEmail { get; set; }
         [Required]
         //the role of the added person in the group
         public int Role { get; set; }
@@ -119,18 +119,18 @@ namespace bst.Controllers
     public class AddGroupUserIn
     {
         [Required]
-        public Guid Groupid { get; set; }
+        public string GroupName { get; set; }
         [Required]
-        public Guid Userid { get; set; }
+        public string UserEmail { get; set; }
         [Required]
         public int priviledge { get; set; }
     }
     public class RemoveGroupUserIn
     {
         [Required]
-        public Guid Groupid { get; set; }
+        public string GroupName { get; set; }
         [Required]
-        public Guid Userid { get; set; }
+        public string UserEmail { get; set; }
     }
     public class CreateProtocol
     {
@@ -164,11 +164,10 @@ namespace bst.Controllers
     public class GroupDetailIn
     {
         [Required]
-        public Guid Groupid { get; set; }
+        public string GroupName { get; set; }
     }
     public class ModifyGroupIn
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
     }

@@ -33,18 +33,17 @@ namespace bst.Controllers
             return new GroupPreview(group);
         }
 
-
+#warning what is going to be modified?
         [HttpPost, Route("modify"), ProducesResponseType(typeof(GroupPreview), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<object> ModifyName([FromBody]ModifyGroupIn data)
         {
-            var group = await context.Group.FindAsync(data.Id);
+            var group = await context.Group.FindAsync(data.Name);
             if (group == null)
             {
                 HttpContext.Response.StatusCode = 404;
                 return "Group not found";
             }
-            group.Name = data.Name;
             await context.SaveChangesAsync();
             return new GroupPreview(group);
         }
@@ -70,19 +69,19 @@ namespace bst.Controllers
         public async Task<object> ChangePrivilege([FromBody]EditGroupMemberIn data)
         {
             var user = (User)HttpContext.Items["user"];
-            var group = await context.Group.FindAsync(data.Groupid);
+            var group = await context.Group.FindAsync(data.GroupName);
             if (group == null)
             {
                 HttpContext.Response.StatusCode = 404;
                 return "Group doesn't exist";
             }
-            var userGroupRelation = user.GroupUsers.FirstOrDefault(r => r.Group.Name.Equals(data.Groupid));
+            var userGroupRelation = user.GroupUsers.FirstOrDefault(r => r.Group.Name.Equals(data.GroupName));
             if (userGroupRelation == null || userGroupRelation.Role != 1)
                 return Unauthorized("User must be group manager to change member role.");
 
             //change target user's role to group 
-            var roletochange = context.GroupUsers.FirstOrDefault(r => r.Group.Name.Equals(data.Groupid) && r.User.Email.Equals(data.Userid));
-            if (roletochange == null) return NotFound($"User {data.Userid} is not a group member.");
+            var roletochange = context.GroupUsers.FirstOrDefault(r => r.Group.Name.Equals(data.GroupName) && r.User.Email.Equals(data.UserEmail));
+            if (roletochange == null) return NotFound($"User {data.UserEmail} is not a group member.");
             roletochange.Role = data.Role;
             context.Entry(roletochange).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
 
@@ -95,10 +94,10 @@ namespace bst.Controllers
         public async Task<object> AddUser([FromBody]AddGroupUserIn data)
         {
             var user = (User)HttpContext.Items["user"];
-            var group = user.GroupUsers.FirstOrDefault(x => x.Group.Name.Equals(data.Groupid));
+            var group = user.GroupUsers.FirstOrDefault(x => x.Group.Name.Equals(data.GroupName));
             if (group == null)
                 return NotFound("group not found");
-            var target = context.Users.Find(data.Userid);
+            var target = context.Users.Find(data.UserEmail);
             if (target == null)
                 return NotFound("user not found");
             context.GroupUsers.Add(new GroupUser
@@ -117,18 +116,18 @@ namespace bst.Controllers
         public async Task<object> RemoveUser([FromBody]RemoveGroupUserIn data)
         {
             var user = (User)HttpContext.Items["user"];
-            var group = user.GroupUsers.FirstOrDefault(x=>x.Group.Name.Equals(data.Groupid));
+            var group = user.GroupUsers.FirstOrDefault(x=>x.Group.Name.Equals(data.GroupName));
             if (group == null)
             {
                 HttpContext.Response.StatusCode = 404;
                 return "Group doesn't exist";
             }
-            var userGroupRelation = user.GroupUsers.FirstOrDefault(r => r.Group.Name.Equals(data.Groupid));
-            if (userGroupRelation == null || (userGroupRelation.Role != 1 && !user.Email.Equals(data.Userid)))
+            var userGroupRelation = user.GroupUsers.FirstOrDefault(r => r.Group.Name.Equals(data.GroupName));
+            if (userGroupRelation == null || (userGroupRelation.Role != 1 && !user.Email.Equals(data.UserEmail)))
                 return Unauthorized("User must be group manager or himself/herself to remove user.");
             context.GroupUsers.Remove(userGroupRelation);
             var groupProtocolIds = group.Group.GroupProtocols.Select(p => p.Id);
-            context.ProtocolUsers.RemoveRange(context.ProtocolUsers.Where(p => groupProtocolIds.Contains(p.Protocol.Id) && p.User.Email.Equals(data.Userid)));
+            context.ProtocolUsers.RemoveRange(context.ProtocolUsers.Where(p => groupProtocolIds.Contains(p.Protocol.Id) && p.User.Email.Equals(data.UserEmail)));
             await context.SaveChangesAsync();
             return Ok("Remove user successfully!");       
         }

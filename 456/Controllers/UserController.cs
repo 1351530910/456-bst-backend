@@ -97,13 +97,13 @@ namespace bst.Controllers
         }
 
 
-        [HttpPost, Route("listprotocols"), ProducesResponseType(typeof(List<ProtocolData>), 200),AuthFilter]
-        public List<ProtocolData> ListProjects([FromBody]ListCount data)
+        [HttpPost, Route("listprotocols"), ProducesResponseType(typeof(IEnumerable<ProtocolData>), 200),AuthFilter]
+        public IEnumerable<ProtocolData> ListProjects([FromBody]ListCount data)
         {
             var user = (User)HttpContext.Items["user"];
             if (user.ProtocolUsers != null)
             {
-                return user.ProtocolUsers.Skip(data.Start).Take(data.Count).Select(x => new ProtocolData(x.Protocol, x.Privilege)).ToList();
+                return user.ProtocolUsers.Skip(data.Start).Take(data.Count).Select(x => new ProtocolData(x.Protocol, x.Privilege));
             }
             else
             {
@@ -115,7 +115,7 @@ namespace bst.Controllers
         public async Task<object> ListGroup([FromBody]ListCount data)
         {
             var user = (User)HttpContext.Items["user"];
-            var result = user.GroupUsers.Select(r => r.Group).Select(g => new GroupPreview(g));
+            var result = user.GroupUsers.Select(r => new GroupPreview(r.Group));
             if (data.Order == 0) result.OrderBy(r => r.Name);
             else if (data.Order == 1) result.OrderByDescending(r => r.Name);
             result.Skip(data.Start).Take(data.Count);
