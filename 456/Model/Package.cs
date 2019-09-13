@@ -54,14 +54,12 @@ namespace bst.Controllers
     }
     public class GroupPreview
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public IEnumerable<UserPreview> Users { get; set; }
         public IEnumerable<ProtocolData> Projects { get; set; }
 
         public GroupPreview(Group group)
         {
-            Id = group.Id;
             Name = group.Name;            
             //why protocol have privilege?
             //projects = group.protocols.Select(x => new ProtocolPreview(x));
@@ -70,7 +68,6 @@ namespace bst.Controllers
     }
     public class UserPreview
     {
-        public Guid Id { get; set; }
         public string Email { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
@@ -79,11 +76,9 @@ namespace bst.Controllers
         public UserPreview(User user,int privilege)
         {
             this.Privilege = privilege;
-            Id = user.Id;
             Email = user.Email;
             Firstname = user.FirstName;
             Lastname = user.LastName;
-
         }
     }
     public class ProtocolData
@@ -221,7 +216,6 @@ namespace bst.Controllers
 
     public class GroupDetailOut
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
 
         public List<GroupMember> GroupMembers { get; set; }
@@ -229,7 +223,6 @@ namespace bst.Controllers
 
         public GroupDetailOut(Group group)
         {
-            Id = group.Id;
             Name = group.Name;
             GroupMembers = group.Members.Select(u => new GroupMember(u)).ToList();
             GroupProtocols = group.GroupProtocols.Select(p => new GroupProtocolPreview(p.Protocol)).ToList();
@@ -275,14 +268,12 @@ namespace bst.Controllers
 
     public class GroupManagement
     {
-        public Guid GroupId { get; set; }
         public string GroupName { get; set; }
         public int GroupPriviledge { get; set; }
         public List<ProtocolMember> Members { get; set; }
         public GroupManagement() { }
         public GroupManagement(Group group,int priviledge)
         {
-            GroupId = group.Id;
             GroupName = group.Name;
             Members = group.Members.Select(role => new ProtocolMember(role.User)).ToList();
             GroupPriviledge = priviledge;
@@ -291,20 +282,20 @@ namespace bst.Controllers
 
     public class ProtocolMember
     {
-        public Guid Id { get; set; }
+        public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int ProtocolPrivilege { get; set; }
         public ProtocolMember() { }
         public ProtocolMember(User user)
         {
-            Id = user.Id;
+            Email = user.Email;
             FirstName = user.FirstName;
             LastName = user.LastName;
         }
         public ProtocolMember(ProtocolUser protocolUser)
         {
-            Id = protocolUser.User.Id;
+            Email = protocolUser.User.Email;
             FirstName = protocolUser.User.FirstName;
             LastName = protocolUser.User.LastName;
             ProtocolPrivilege = protocolUser.Privilege;

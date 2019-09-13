@@ -31,7 +31,7 @@ namespace bst.Controllers
                 HttpContext.Response.StatusCode = 401;
                 return "login failed";
             }
-            var session = AuthFilter.AddSession(user.Id, data.Deviceid);
+            var session = AuthFilter.AddSession(user.Email, data.Deviceid);
             await context.SaveChangesAsync();
             return new LoginOut
             {
@@ -58,7 +58,6 @@ namespace bst.Controllers
 
             var u = new User
             {
-                Id = Guid.NewGuid(),
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
@@ -67,7 +66,7 @@ namespace bst.Controllers
             
             context.Users.Add(u);
             await context.SaveChangesAsync();
-            var sessionid = AuthFilter.AddSession(u.Id, user.Deviceid);
+            var sessionid = AuthFilter.AddSession(u.Email, user.Deviceid);
 
             return new CreateUserOut
             {

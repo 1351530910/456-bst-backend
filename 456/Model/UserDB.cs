@@ -96,9 +96,7 @@ namespace bst.Model
     #region user-group
     public partial class User
     {
-        [Key]
-        public Guid Id { get; set; }
-        [EmailAddress]
+        [Key,EmailAddress]
         public string Email { get; set; }
         [MinLength(8), MaxLength(15), Required]
         public string Password { get; set; }
@@ -114,9 +112,7 @@ namespace bst.Model
 
     public partial class Group
     {
-        [Key]
-        public Guid Id { get; set; }
-        [MaxLength(100), Required]
+        [Key,MaxLength(100), Required]
         public string Name { get; set; }
 
         public virtual ICollection<GroupUser> Members { get; set; }
