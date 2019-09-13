@@ -51,18 +51,19 @@ namespace bst.Controllers
             return new GroupPreview(group);
         }
 
-        [HttpPost, Route("detail/{groupid}"), ProducesResponseType(typeof(GroupDetailOut), 200)]
+        [HttpPost, Route("detail/{groupname}"), ProducesResponseType(typeof(GroupDetailOut), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<object> Detail(Guid groupid)
+        public async Task<object> Detail(string groupname)
         {
-            var group = await context.Group.FindAsync(groupid);
+            var u = (User)HttpContext.Items["user"];
+            var group = u.GroupUsers.FirstOrDefault(x => x.Group.Name.Equals(groupname));
             if (group == null)
             {
                 HttpContext.Response.StatusCode = 404;
                 return "Group not found";
             }
             
-            return new GroupDetailOut(group);
+            return new GroupDetailOut(group.Group);
         }        
 
 
