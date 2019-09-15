@@ -96,7 +96,6 @@ namespace bst.Controllers
             return Ok();
         }
 
-
         [HttpPost, Route("listprotocols"), ProducesResponseType(typeof(IEnumerable<ProtocolData>), 200),AuthFilter]
         public IEnumerable<ProtocolData> ListProjects([FromBody]ListCount data)
         {
@@ -121,8 +120,5 @@ namespace bst.Controllers
             result.Skip(data.Start).Take(data.Count);
             return result;
         }
-
-
-
     }
 }

@@ -56,9 +56,9 @@ namespace bst.Controllers
             {
                 Groups = groups
             };
-            List<Guid> internalusers = groups.SelectMany(g => g.Members.Select(m => m.Id)).ToList();
+            List<string> internalusers = groups.SelectMany(g => g.Members.Select(m => m.Email)).ToList();
             var protocolusers = protocol.ProtocolUsers.Select(x => new ProtocolMember(x)).ToList();
-            var externalusers = protocolusers.Where(u => !internalusers.Contains(u.Id)).ToList();
+            var externalusers = protocolusers.Where(u => !internalusers.Contains(u.Email)).ToList();
             result.ExternelUsers = externalusers;
             
            
