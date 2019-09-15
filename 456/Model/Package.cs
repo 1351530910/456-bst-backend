@@ -134,7 +134,7 @@ namespace bst.Controllers
     }
     public class CreateProtocol
     {
-        [MaxLength(100), Required]
+        public string Id { get; set; }
         public string Name { get; set; }
         public bool Isprivate { get; set; }
         public string Comment { get; set; }
@@ -299,5 +299,31 @@ namespace bst.Controllers
             LastName = protocolUser.User.LastName;
             ProtocolPrivilege = protocolUser.Privilege;
         }
+    }
+
+
+
+
+    public class ShareProtocolOut
+    {
+        public Guid Protocolid { get; set; }
+        public List<ShareProtocolGroup> Groups { get; set; }
+        public List<ShareProtocolExternalMember> ExternalMembers { get; set; }
+    }
+
+    public class ShareProtocolGroup
+    {
+        [Required]
+        public string Name { get; set; }
+        [Required]
+        public string Access { get; set; }
+    }
+
+    public class ShareProtocolExternalMember
+    {
+        [Required]
+        public string Email { get; set; }
+        [Required]
+        public string Access { get; set; }
     }
 }

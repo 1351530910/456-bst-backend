@@ -99,6 +99,65 @@ namespace bst.Controllers
         }
 
 
+        [HttpPost, Route("share"), ProducesResponseType(typeof(ShareProtocolOut), 200), AuthFilter]
+        public async Task<object> ShareProtocol([FromBody]CreateProtocol data)
+        {
+            var user = (User)HttpContext.Items["user"];
+            var session = (Session)HttpContext.Items["session"];
+            Guid procotolid;
+            Protocol protocol = null;
+            if(Guid.TryParse(data.Id, out procotolid)){
+                protocol = context.Protocols.Find(procotolid);
+            }
+            if (protocol == null)            
+            {
+                protocol = new Protocol
+                {
+                    Id = Guid.NewGuid(),
+                    Name = data.Name,
+                    Isprivate = data.Isprivate,
+                    Comment = data.Comment,
+                    IStudy = data.Istudy ?? 0,
+                    UseDefaultAnat = data.Usedefaultanat ?? true,
+                    UseDefaultChannel = data.Usedefaultchannel ?? true,
+                    LastUpdate = System.DateTime.Now
+                };
+                context.Protocols.Add(protocol);
+                var protocoluser = new ProtocolUser
+                {
+                    Id = Guid.NewGuid(),
+                    User = user,
+                    Protocol = protocol,
+                    //become protocol admin by default
+                    Privilege = 1
+                };
+                context.ProtocolUsers.Add(protocoluser);
+                await context.SaveChangesAsync();
+            }
+            session.Protocol = protocol.Id;
+            //provide information for share protocol panel
+            var result = new ShareProtocolOut();
+            result.Protocolid = protocol.Id;
+            var protocolGroups = protocol.ProtocolGroups.Select(g => new ShareProtocolGroup{               
+                Name = g.Group.Name,
+                Access = g.GroupPrivilege == 1 ? "write" : "read"
+            }).ToList();
+            var userGroupsWithNoAccess = user.GroupUsers.Where(x => !protocolGroups.Exists(g => x.Group.Name.Equals(g.Name)));
+            protocolGroups.AddRange(userGroupsWithNoAccess.Select(g => new ShareProtocolGroup {
+                Name = g.Group.Name,
+                Access = "no access"
+            }).ToList());
+            var externalMembers = protocol.ProtocolUsers.Select(x => new ShareProtocolExternalMember
+            {
+                Email = x.User.Email,
+                Access = x.Privilege == 1 ? "admin" : x.Privilege == 2 ? "write" : "read"
+            }).ToList();
+            result.Groups = protocolGroups;
+            result.ExternalMembers = externalMembers;
+            return result;
+        }
+
+
         [HttpPost, Route("editgroup"), ProducesResponseType(typeof(Guid), 200),AuthFilter]
         public async Task<object> AddOrEditGroup([FromBody]EditGroupProtocolRelationIn data)
         {
