@@ -78,7 +78,7 @@ namespace bst.Controllers
         }
 
         [ProducesResponseType(typeof(bool),200)]
-        [HttpGet, Route("checksession")]
+        [HttpPost, Route("checksession")]
         public object CheckSession([FromBody]CheckSessionIn input)
         {
             var session = AuthFilter.sessions

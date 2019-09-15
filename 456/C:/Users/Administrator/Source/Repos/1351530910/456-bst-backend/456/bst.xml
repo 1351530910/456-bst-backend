@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>bst</name>
+    </assembly>
+    <members>
+        <member name="T:bst.Controllers.AuthFilter">
+            <summary>
+            
+            sessions will keep the current active sessions
+            if a session can be paired, the user can be found in context.items["user"]
+            otherwise session expired
+            
+            </summary>
+        </member>
+        <member name="M:bst.Controllers.StudyController.GetSubject(System.Guid)">
+            <summary>
+            get a study
+            </summary>
+            <param name="studyid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:bst.Controllers.StudyController.CreateStudy(bst.Model.StudyData)">
+            <summary>
+            create a study
+            </summary>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:bst.Controllers.SubjectController.GetSubject(System.Guid)">
+            <summary>
+            get a subject
+            </summary>
+            <param name="subjectid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:bst.Controllers.SubjectController.CreateSubject(bst.Model.SubjectData)">
+            <summary>
+            create a subject
+            </summary>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="P:bst.Controllers.ListCount.Start">
+            <summary>
+            start index
+            </summary>
+        </member>
+        <member name="P:bst.Controllers.ListCount.Count">
+            <summary>
+            how many results(max)
+            </summary>
+        </member>
+        <member name="P:bst.Controllers.ListCount.Order">
+            <summary>
+            ordering
+            </summary>
+        </member>
+        <member name="P:bst.Model.GroupUser.Role">
+            <summary>
+            1 -> group manager
+            2 -> member
+            </summary>
+        </member>
+        <member name="P:bst.Model.ProtocolUser.Privilege">
+            <summary>
+            1 -> protocol admin
+            2 -> has read-write access
+            3 -> has read access
+            </summary>
+        </member>
+        <member name="P:bst.Model.ProtocolGroup.GroupPrivilege">
+            <summary>
+            1 -> has read-write access
+            2 -> has read access
+            </summary>
+        </member>
+    </members>
+</doc>

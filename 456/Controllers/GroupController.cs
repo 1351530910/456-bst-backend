@@ -105,10 +105,10 @@ namespace bst.Controllers
                 Id = Guid.NewGuid(),
                 User = user,
                 Group = group.Group,
-                Role = data.priviledge
+                Role = data.Privilege
             });
             await context.SaveChangesAsync();
-            return Ok("Remove user successfully!");
+            return Ok("Add user successfully!");
         }
 
         [HttpPost, Route("removeuser"), ProducesResponseType(typeof(string), 200)]

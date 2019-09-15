@@ -123,7 +123,7 @@ namespace bst.Controllers
         [Required]
         public string UserEmail { get; set; }
         [Required]
-        public int priviledge { get; set; }
+        public int Privilege { get; set; }
     }
     public class RemoveGroupUserIn
     {
@@ -268,14 +268,14 @@ namespace bst.Controllers
     public class GroupManagement
     {
         public string GroupName { get; set; }
-        public int GroupPriviledge { get; set; }
+        public int GroupPrivilege { get; set; }
         public List<ProtocolMember> Members { get; set; }
         public GroupManagement() { }
-        public GroupManagement(Group group,int priviledge)
+        public GroupManagement(Group group,int privilege)
         {
             GroupName = group.Name;
             Members = group.Members.Select(role => new ProtocolMember(role.User)).ToList();
-            GroupPriviledge = priviledge;
+            GroupPrivilege = privilege;
         }
     }
 
