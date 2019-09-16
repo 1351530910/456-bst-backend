@@ -182,11 +182,13 @@ namespace bst.Controllers
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Email { get; set; }
         public int Privilege { get; set; }
         public GroupMember(GroupUser role)
         {
             FirstName = role.User.FirstName;
             LastName = role.User.LastName;
+            Email = role.User.Email;
             Privilege = role.Role;
         }
     }
@@ -325,5 +327,10 @@ namespace bst.Controllers
     public class Protocolid
     {
         public Guid Id { get; set; }
+    }
+
+    public class GroupName
+    {
+        public string Name { get; set; }
     }
 }

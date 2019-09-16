@@ -16,13 +16,14 @@ namespace bst.Controllers
         public async Task<object> CreateGroup([FromBody]CreateGroupIn data)
         {
             var user = (User)HttpContext.Items["user"];
+            // group name should be unique and is not allowed to be empty 
             if (data.Name == null
-                || data.Name.Equals("")
+                //|| data.Name.IndexOf(' ') >= 0                
                 || context.Group.FirstOrDefault(g => data.Name.Equals(g.Name)) != null)
                 return BadRequest("Group name not valid.");
             var group = new Group
             {
-                Name = data.Name
+                Name = data.Name.Trim()
             };
             var groupUserRelation = new GroupUser
             {
@@ -38,18 +39,15 @@ namespace bst.Controllers
         }
 
 
-        [HttpPost, Route("detail/{groupname}"), ProducesResponseType(typeof(GroupDetailOut), 200)]
+        [HttpPost, Route("detail"), ProducesResponseType(typeof(GroupDetailOut), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<object> Detail(string groupname)
+        public object Detail([FromBody]GroupName groupname)
         {
             var u = (User)HttpContext.Items["user"];
-            var group = u.GroupUsers.FirstOrDefault(x => x.Group.Name.Equals(groupname));
-            if (group == null)
-            {
-                HttpContext.Response.StatusCode = 404;
-                return "Group not found";
-            }
-            
+            var group = u.GroupUsers.FirstOrDefault(x => x.Group.Name.Equals(groupname.Name.Trim()));
+            if (group == null)            
+                return NotFound("group not found");            
+
             return new GroupDetailOut(group.Group);
         }        
 
@@ -59,12 +57,9 @@ namespace bst.Controllers
         public async Task<object> ChangePrivilege([FromBody]EditGroupMemberIn data)
         {
             var user = (User)HttpContext.Items["user"];
-            var group = await context.Group.FindAsync(data.GroupName);
+            var group = user.GroupUsers.FirstOrDefault(x => x.Group.Name.Equals(data.GroupName));
             if (group == null)
-            {
-                HttpContext.Response.StatusCode = 404;
-                return "Group doesn't exist";
-            }
+                return NotFound("group not found");
             var userGroupRelation = user.GroupUsers.FirstOrDefault(r => r.Group.Name.Equals(data.GroupName));
             if (userGroupRelation == null || userGroupRelation.Role != 1)
                 return Unauthorized("User must be group manager to change member role.");
@@ -72,7 +67,10 @@ namespace bst.Controllers
             //change target user's role to group 
             var roletochange = context.GroupUsers.FirstOrDefault(r => r.Group.Name.Equals(data.GroupName) && r.User.Email.Equals(data.UserEmail));
             if (roletochange == null) return NotFound($"User {data.UserEmail} is not a group member.");
-            roletochange.Role = data.Role;
+            if (data.Role != 1 && data.Role != 2)
+                roletochange.Role = 2;
+            else
+                roletochange.Role = data.Role;
             context.Entry(roletochange).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
 
             await context.SaveChangesAsync();
@@ -91,13 +89,17 @@ namespace bst.Controllers
             var target = context.Users.FirstOrDefault(x => x.Email.Equals(data.UserEmail));
             if (target == null)
                 return NotFound("user to add doesn't exist");
-            
+
+            var privilege = data.Privilege;
+            if (data.Privilege != 1 && data.Privilege != 2)
+                privilege = 2;
+           
             context.GroupUsers.Add(new GroupUser
             {
                 Id = Guid.NewGuid(),
                 User = target,
                 Group = group.Group,
-                Role = data.Privilege
+                Role = privilege
             });
             await context.SaveChangesAsync();
             return Ok("Add user to group successfully!");

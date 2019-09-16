@@ -18,6 +18,7 @@ namespace bst.Model
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
             modelBuilder.Entity<Group>().HasIndex(g => g.Name).IsUnique();
+
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
                 foreach (var property in entityType.GetProperties())
