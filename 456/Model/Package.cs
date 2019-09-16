@@ -251,7 +251,7 @@ namespace bst.Controllers
     {
         public Guid Userid { get; set; }
         public Guid Protocolid { get; set; }
-        public int Priviledge { get; set; }
+        public int Privilege { get; set; }
     }
     public class RemoveUserProtocolRelationIn
     {

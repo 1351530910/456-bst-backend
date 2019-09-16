@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace bst.Model
 {
@@ -99,7 +100,9 @@ namespace bst.Model
     #region user-group
     public partial class User
     {
-        [Key,EmailAddress]
+        [Key]
+        public Guid Id { get; set; }
+        [EmailAddress]
         public string Email { get; set; }
         [MinLength(8), MaxLength(15), Required]
         public string Password { get; set; }
@@ -115,7 +118,9 @@ namespace bst.Model
 
     public partial class Group
     {
-        [Key,MaxLength(100), Required]
+        [Key]
+        public Guid Id { get; set; }
+        [MaxLength(100), Required]
         public string Name { get; set; }
 
         public virtual ICollection<GroupUser> Members { get; set; }

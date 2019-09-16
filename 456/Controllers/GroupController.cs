@@ -26,6 +26,7 @@ namespace bst.Controllers
             };
             var groupUserRelation = new GroupUser
             {
+                Id = Guid.NewGuid(),
                 User = user,
                 Group = group,
                 //the user become group manager by default
