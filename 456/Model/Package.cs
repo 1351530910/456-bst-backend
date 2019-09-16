@@ -304,12 +304,7 @@ namespace bst.Controllers
 
 
 
-    public class ShareProtocolOut
-    {
-        public Guid Protocolid { get; set; }
-        public List<ShareProtocolGroup> Groups { get; set; }
-        public List<ShareProtocolExternalMember> ExternalMembers { get; set; }
-    }
+
 
     public class ShareProtocolGroup
     {
@@ -325,5 +320,10 @@ namespace bst.Controllers
         public string Email { get; set; }
         [Required]
         public string Access { get; set; }
+    }
+
+    public class Protocolid
+    {
+        public Guid Id { get; set; }
     }
 }

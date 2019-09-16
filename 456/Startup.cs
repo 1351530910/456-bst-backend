@@ -87,7 +87,9 @@ namespace bst
                     template: "{controller}/{action}/"
                 );
             });
-            
+
+
+            /*
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var usercontext = serviceScope.ServiceProvider.GetRequiredService<Model.UserDB>();
@@ -95,6 +97,7 @@ namespace bst
                 usercontext.Database.EnsureCreated();
 
             }
+            */
             
             
             

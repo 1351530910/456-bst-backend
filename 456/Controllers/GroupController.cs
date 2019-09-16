@@ -15,7 +15,11 @@ namespace bst.Controllers
         [HttpPost,Route("create"),ProducesResponseType(typeof(GroupPreview),200)]
         public async Task<object> CreateGroup([FromBody]CreateGroupIn data)
         {
-            var user = (User)HttpContext.Items["user"];          
+            var user = (User)HttpContext.Items["user"];
+            if (data.Name == null
+                || data.Name.Equals("")
+                || context.Group.FirstOrDefault(g => data.Name.Equals(g.Name)) != null)
+                return BadRequest("Group name not valid.");
             var group = new Group
             {
                 Name = data.Name

@@ -65,41 +65,9 @@ namespace bst.Controllers
             return result;
         }
 
-#warning default values?
-        [HttpPost, Route("create"), ProducesResponseType(typeof(Guid), 200),AuthFilter]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<object> CreateProtocol([FromBody]CreateProtocol data)
-        {
-            var user = (User)HttpContext.Items["user"];
-            var session = (Session)HttpContext.Items["session"];
-            var protocol = new Protocol
-            {
-                Id = Guid.NewGuid(),
-                Name = data.Name,
-                Isprivate = data.Isprivate,
-                Comment = data.Comment,
-                IStudy = data.Istudy ?? 0,
-                UseDefaultAnat = data.Usedefaultanat ?? true,
-                UseDefaultChannel = data.Usedefaultchannel ?? true,
-                LastUpdate = System.DateTime.Now
-            };
-            context.Protocols.Add(protocol);
-            var protocoluser = new ProtocolUser
-            {
-                Id = Guid.NewGuid(),
-                User = user,
-                Protocol = protocol,
-                //become protocol admin by default
-                Privilege = 1
-            };
-            context.ProtocolUsers.Add(protocoluser);
-            await context.SaveChangesAsync();
-            session.Protocol = protocol.Id;
-            return protocol.Id;
-        }
 
 
-        [HttpPost, Route("share"), ProducesResponseType(typeof(ShareProtocolOut), 200), AuthFilter]
+        [HttpPost, Route("share"), ProducesResponseType(typeof(Protocolid), 200), AuthFilter]
         public async Task<object> ShareProtocol([FromBody]CreateProtocol data)
         {
             var user = (User)HttpContext.Items["user"];
@@ -135,27 +103,51 @@ namespace bst.Controllers
                 await context.SaveChangesAsync();
             }
             session.Protocol = protocol.Id;
-            //provide information for share protocol panel
-            var result = new ShareProtocolOut();
-            result.Protocolid = protocol.Id;
-            var protocolGroups = protocol.ProtocolGroups.Select(g => new ShareProtocolGroup{               
+            return new Protocolid
+            {
+                Id = protocol.Id
+            };
+        }
+
+
+        [HttpGet, Route("groups/{protocolid}"), ProducesResponseType(typeof(List<ShareProtocolGroup>), 200), AuthFilter]
+        public object ShowProtocolGroups(Guid protocolid)
+        {
+            var user = (User)HttpContext.Items["user"];
+            var session = (Session)HttpContext.Items["session"];
+            var protocol = context.Protocols.Find(protocolid);
+            if (protocol == null) return NotFound();
+            var protocolGroups = protocol.ProtocolGroups.Select(g => new ShareProtocolGroup
+            {
                 Name = g.Group.Name,
                 Access = g.GroupPrivilege == 1 ? "write" : "read"
             }).ToList();
             var userGroupsWithNoAccess = user.GroupUsers.Where(x => !protocolGroups.Exists(g => x.Group.Name.Equals(g.Name)));
-            protocolGroups.AddRange(userGroupsWithNoAccess.Select(g => new ShareProtocolGroup {
+            protocolGroups.AddRange(userGroupsWithNoAccess.Select(g => new ShareProtocolGroup
+            {
                 Name = g.Group.Name,
                 Access = "no access"
             }).ToList());
+            return protocolGroups;
+        }
+
+
+        [HttpGet, Route("members/{protocolid}"), ProducesResponseType(typeof(List<ShareProtocolExternalMember>), 200), AuthFilter]
+        public object ShowProtocolMembers(Guid protocolid)
+        {
+            var user = (User)HttpContext.Items["user"];
+            var session = (Session)HttpContext.Items["session"];
+            var protocol = context.Protocols.Find(protocolid);
+            if (protocol == null) return NotFound();
             var externalMembers = protocol.ProtocolUsers.Select(x => new ShareProtocolExternalMember
             {
                 Email = x.User.Email,
                 Access = x.Privilege == 1 ? "admin" : x.Privilege == 2 ? "write" : "read"
             }).ToList();
-            result.Groups = protocolGroups;
-            result.ExternalMembers = externalMembers;
-            return result;
+            return externalMembers;
         }
+
+
 
 
         [HttpPost, Route("editgroup"), ProducesResponseType(typeof(Guid), 200),AuthFilter]
