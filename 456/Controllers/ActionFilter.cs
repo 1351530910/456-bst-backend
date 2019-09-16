@@ -15,7 +15,7 @@ namespace bst.Controllers
     {
         public Guid Sessionid { get; set; }
         public string Deviceid { get; set; }
-        public string UserEmail { get; set; }
+        public Guid Userid { get; set; }
         public Guid Protocol = Guid.Empty;
         public DateTime LastActive { get; set; }
     }
@@ -55,7 +55,9 @@ namespace bst.Controllers
                         context.Result = new UnauthorizedResult();
                     }
                     session.LastActive = System.DateTime.Now;
-                    context.HttpContext.Items["user"] = dbcontext.Users.Find(session.UserEmail);
+                    var user = dbcontext.Users.Find(session.Userid);
+                    if(user == null) context.Result = new UnauthorizedResult();
+                    context.HttpContext.Items["user"] = user;
                     context.HttpContext.Items["session"] = session;
 
                 }
@@ -72,13 +74,13 @@ namespace bst.Controllers
             base.OnActionExecuting(context);
         }
 
-        public static Guid AddSession(string userid,string deviceid)
+        public static Guid AddSession(Guid userid,string deviceid)
         {
             var session = new Session
             {
                 Sessionid = Guid.NewGuid(),
                 Deviceid = deviceid,
-                UserEmail = userid,
+                Userid = userid,
                 LastActive = DateTime.Now
             };
             sessions.Add(session);

@@ -26,7 +26,6 @@ namespace bst.Controllers
             };
             var groupUserRelation = new GroupUser
             {
-                Id = Guid.NewGuid(),
                 User = user,
                 Group = group,
                 //the user become group manager by default
@@ -38,20 +37,6 @@ namespace bst.Controllers
             return new GroupPreview(group);
         }
 
-#warning what is going to be modified?
-        [HttpPost, Route("modify"), ProducesResponseType(typeof(GroupPreview), 200)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<object> ModifyName([FromBody]ModifyGroupIn data)
-        {
-            var group = await context.Group.FindAsync(data.Name);
-            if (group == null)
-            {
-                HttpContext.Response.StatusCode = 404;
-                return "Group not found";
-            }
-            await context.SaveChangesAsync();
-            return new GroupPreview(group);
-        }
 
         [HttpPost, Route("detail/{groupname}"), ProducesResponseType(typeof(GroupDetailOut), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -102,18 +87,20 @@ namespace bst.Controllers
             var group = user.GroupUsers.FirstOrDefault(x => x.Group.Name.Equals(data.GroupName));
             if (group == null)
                 return NotFound("group not found");
-            var target = context.Users.Find(data.UserEmail);
+            if (group.Role > 1) return Unauthorized("you are not group manager");
+            var target = context.Users.FirstOrDefault(x => x.Email.Equals(data.UserEmail));
             if (target == null)
-                return NotFound("user not found");
+                return NotFound("user to add doesn't exist");
+            
             context.GroupUsers.Add(new GroupUser
             {
                 Id = Guid.NewGuid(),
-                User = user,
+                User = target,
                 Group = group.Group,
                 Role = data.Privilege
             });
             await context.SaveChangesAsync();
-            return Ok("Add user successfully!");
+            return Ok("Add user to group successfully!");
         }
 
         [HttpPost, Route("removeuser"), ProducesResponseType(typeof(string), 200)]
@@ -123,18 +110,18 @@ namespace bst.Controllers
             var user = (User)HttpContext.Items["user"];
             var group = user.GroupUsers.FirstOrDefault(x=>x.Group.Name.Equals(data.GroupName));
             if (group == null)
-            {
-                HttpContext.Response.StatusCode = 404;
-                return "Group doesn't exist";
-            }
+                return NotFound("Group doesn't exist");
+            var target = context.Users.FirstOrDefault(x => x.Email.Equals(data.UserEmail));
+            if (target == null)
+                return NotFound("user to remove doesn't exist");
             var userGroupRelation = user.GroupUsers.FirstOrDefault(r => r.Group.Name.Equals(data.GroupName));
             if (userGroupRelation == null || (userGroupRelation.Role != 1 && !user.Email.Equals(data.UserEmail)))
                 return Unauthorized("User must be group manager or himself/herself to remove user.");
-            context.GroupUsers.Remove(userGroupRelation);
-            var groupProtocolIds = group.Group.GroupProtocols.Select(p => p.Id);
-            context.ProtocolUsers.RemoveRange(context.ProtocolUsers.Where(p => groupProtocolIds.Contains(p.Protocol.Id) && p.User.Email.Equals(data.UserEmail)));
+            var relationToRemove = target.GroupUsers.FirstOrDefault(r => r.Group.Name.Equals(data.GroupName));
+            if (relationToRemove == null) return NotFound("User to remove does not belong to the group.");
+            context.GroupUsers.Remove(relationToRemove);
             await context.SaveChangesAsync();
-            return Ok("Remove user successfully!");       
+            return Ok("Remove user from group successfully!");       
         }
     }
 }
