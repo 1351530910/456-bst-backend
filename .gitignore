@@ -29,6 +29,7 @@ tarballs/
 test-results/
 Thumbs.db
 .vs/
+Model/ConnectionString.cs
 
 # Mac bundle stuff
 *.dmg
