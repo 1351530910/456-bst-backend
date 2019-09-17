@@ -35,17 +35,16 @@ namespace bst.Model
         {
             optionsBuilder.UseLazyLoadingProxies();
             base.OnConfiguring(optionsBuilder);
-            
-            switch (Environment.GetEnvironmentVariable("sqlaccess"))
+
+            switch (ConnectionString.servertype)
             {
-                case "sqlserver":
-                    optionsBuilder.UseSqlServer("server=.;database=bstusers;Integrated Security=SSPI;user=sa;password=asd45214..", null);
+                case "MYSQL":
+                    optionsBuilder.UseMySQL(ConnectionString.connectionstring);
                     break;
-                case "mysql":
-                    optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=root;password=Qwe12345", null);
+                case "MSSQL":
+                    optionsBuilder.UseSqlServer(ConnectionString.connectionstring);
                     break;
                 default:
-                    optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=bst;password=asd45214", null);
                     break;
             }
         }
