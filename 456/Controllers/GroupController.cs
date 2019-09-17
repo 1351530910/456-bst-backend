@@ -45,8 +45,8 @@ namespace bst.Controllers
         {
             var u = (User)HttpContext.Items["user"];
             var group = u.GroupUsers.FirstOrDefault(x => x.Group.Name.Equals(groupname.Name.Trim()));
-            if (group == null)            
-                return NotFound("group not found");            
+            if (group == null)
+                return NotFound($"You do not have a group named {data.GroupName}.");
 
             return new GroupPreview(group.Group);
         }        
@@ -59,7 +59,7 @@ namespace bst.Controllers
             var user = (User)HttpContext.Items["user"];
             var group = user.GroupUsers.FirstOrDefault(x => x.Group.Name.Equals(data.GroupName));
             if (group == null)
-                return NotFound("group not found");
+                return NotFound($"You do not have a group named {data.GroupName}.");
             var userGroupRelation = user.GroupUsers.FirstOrDefault(r => r.Group.Name.Equals(data.GroupName));
             if (userGroupRelation == null || userGroupRelation.Role != 1)
                 return Unauthorized("User must be group manager to change member role.");
@@ -84,11 +84,13 @@ namespace bst.Controllers
             var user = (User)HttpContext.Items["user"];
             var group = user.GroupUsers.FirstOrDefault(x => x.Group.Name.Equals(data.GroupName));
             if (group == null)
-                return NotFound("group not found");
-            if (group.Role > 1) return Unauthorized("you are not group manager");
+                return NotFound($"You do not have a group named {data.GroupName}.");
+            if (group.Role > 1) return Unauthorized("You are not group manager.");
             var target = context.Users.FirstOrDefault(x => x.Email.Equals(data.UserEmail));
             if (target == null)
-                return NotFound("user to add doesn't exist");
+                return NotFound("Target user doesn't exist.");
+            if (group.Group.Members.FirstOrDefault(m => data.UserEmail.Equals(m.User.Email)) != null)
+                return BadRequest("The target user has already in this group.");
 
             var privilege = data.Privilege;
             if (data.Privilege != 1 && data.Privilege != 2)
@@ -112,7 +114,7 @@ namespace bst.Controllers
             var user = (User)HttpContext.Items["user"];
             var group = user.GroupUsers.FirstOrDefault(x=>x.Group.Name.Equals(data.GroupName));
             if (group == null)
-                return NotFound("Group doesn't exist");
+                return NotFound($"You do not have a group named {data.GroupName}.");
             var target = context.Users.FirstOrDefault(x => x.Email.Equals(data.UserEmail));
             if (target == null)
                 return NotFound("user to remove doesn't exist");
