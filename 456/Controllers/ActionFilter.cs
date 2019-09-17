@@ -68,7 +68,7 @@ namespace bst.Controllers
             }
             else
             {
-                context.Result = new BadRequestResult();
+                context.Result = new UnauthorizedResult();
             }
 
             base.OnActionExecuting(context);

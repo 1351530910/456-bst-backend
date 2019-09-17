@@ -8,17 +8,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using bst.Model;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace bst.Controllers
 {
     [Route("user")]
     public class UserController : BaseController
     {
+        
         [HttpGet,Route("")]
         public object Index()
         {
             return "success";
         }
+
 
         [HttpPost,Route("login")]
         [ProducesResponseType(typeof(LoginOut),200)]
@@ -116,9 +119,11 @@ namespace bst.Controllers
         {
             var user = (User)HttpContext.Items["user"];
             var result = user.GroupUsers.Select(r => new GroupPreview(r.Group));
-            if (data.Order == 0) result.OrderBy(r => r.Name);
-            else if (data.Order == 1) result.OrderByDescending(r => r.Name);
-            result.Skip(data.Start).Take(data.Count);
+            if (data.Order == 0)
+                result = result.OrderBy(r => r.Name);
+            else if (data.Order == 1)
+                result = result.OrderByDescending(r => r.Name);
+            result = result.Skip(data.Start).Take(data.Count);
             return result;
         }
     }

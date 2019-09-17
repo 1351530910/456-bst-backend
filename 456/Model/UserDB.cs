@@ -35,8 +35,7 @@ namespace bst.Model
         {
             optionsBuilder.UseLazyLoadingProxies();
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=root;password=Qwe12345", null);
-            /*
+            
             switch (Environment.GetEnvironmentVariable("sqlaccess"))
             {
                 case "sqlserver":
@@ -49,8 +48,6 @@ namespace bst.Model
                     optionsBuilder.UseMySQL("server=localhost;database=bstusers;user=bst;password=asd45214", null);
                     break;
             }
-            */
-
         }
 
         public DbSet<User> Users { get; set; }

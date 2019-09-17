@@ -39,7 +39,7 @@ namespace bst.Controllers
         }
 
 
-        [HttpPost, Route("detail"), ProducesResponseType(typeof(GroupDetailOut), 200)]
+        [HttpPost, Route("detail"), ProducesResponseType(typeof(GroupPreview), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public object Detail([FromBody]GroupName groupname)
         {
@@ -48,7 +48,7 @@ namespace bst.Controllers
             if (group == null)            
                 return NotFound("group not found");            
 
-            return new GroupDetailOut(group.Group);
+            return new GroupPreview(group.Group);
         }        
 
 

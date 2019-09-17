@@ -57,13 +57,19 @@ namespace bst.Controllers
         public string Name { get; set; }
         public IEnumerable<UserPreview> Users { get; set; }
         public IEnumerable<ProtocolData> Projects { get; set; }
+        public GroupPreview()
+        {
 
+        }
         public GroupPreview(Group group)
         {
-            Name = group.Name;            
-            //why protocol have privilege?
-            //projects = group.protocols.Select(x => new ProtocolPreview(x));
+            Name = group.Name;        
             Users = group.Members.Select(x => new UserPreview(x.User, x.Role));
+            if (group.GroupProtocols!=null)
+                Projects = group.GroupProtocols.Select(p => new ProtocolData(p.Protocol, p.GroupPrivilege));
+            else
+                Projects = new List<ProtocolData>();
+            
         }
     }
     public class UserPreview
@@ -72,6 +78,10 @@ namespace bst.Controllers
         public string Firstname { get; set; }
         public string Lastname { get; set; }
         public int Privilege { get; set; }
+        public UserPreview()
+        {
+
+        }
 
         public UserPreview(User user,int privilege)
         {
@@ -178,57 +188,10 @@ namespace bst.Controllers
         public string Filelocation { get; set; }
     }
 
-    public class GroupMember
-    {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public int Privilege { get; set; }
-        public GroupMember(GroupUser role)
-        {
-            FirstName = role.User.FirstName;
-            LastName = role.User.LastName;
-            Email = role.User.Email;
-            Privilege = role.Role;
-        }
-    }
+    
 
-    public class GroupProtocolPreview
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public bool Isprivate { get; set; }
-        //metadata
-        public string Comment { get; set; }
-        public int IStudy { get; set; }
-        public bool UseDefaultAnat { get; set; }
-        public bool UseDefaultChannel { get; set; }
-        public GroupProtocolPreview(Protocol protocol)
-        {
-            Id = protocol.Id;
-            Name = protocol.Name;
-            Isprivate = protocol.Isprivate;
-            Comment = protocol.Comment;
-            IStudy = protocol.IStudy;
-            UseDefaultAnat = protocol.UseDefaultAnat;
-            UseDefaultChannel = protocol.UseDefaultChannel;
-        }
-    }
 
-    public class GroupDetailOut
-    {
-        public string Name { get; set; }
-
-        public List<GroupMember> GroupMembers { get; set; }
-        public List<GroupProtocolPreview> GroupProtocols { get; set; }
-
-        public GroupDetailOut(Group group)
-        {
-            Name = group.Name;
-            GroupMembers = group.Members.Select(u => new GroupMember(u)).ToList();
-            GroupProtocols = group.GroupProtocols.Select(p => new GroupProtocolPreview(p.Protocol)).ToList();
-        }
-    }
+    
 
     public class EditGroupProtocolRelationIn
     {

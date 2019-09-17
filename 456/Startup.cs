@@ -95,12 +95,7 @@ namespace bst
                 var usercontext = serviceScope.ServiceProvider.GetRequiredService<Model.UserDB>();
                 usercontext.Database.EnsureDeleted();
                 usercontext.Database.EnsureCreated();
-
             }
-            
-            
-            
-            
         }
     }
 }
