@@ -46,7 +46,7 @@ namespace bst.Controllers
             var u = (User)HttpContext.Items["user"];
             var group = u.GroupUsers.FirstOrDefault(x => x.Group.Name.Equals(groupname.Name.Trim()));
             if (group == null)
-                return NotFound($"You do not have a group named {data.GroupName}.");
+                return NotFound($"You do not have a group named {groupname.Name}.");
 
             return new GroupPreview(group.Group);
         }        
