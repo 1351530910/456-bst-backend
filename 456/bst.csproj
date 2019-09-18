@@ -18,7 +18,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='win debug|AnyCPU'">
     <Optimize>true</Optimize>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <DocumentationFile>C:\Users\Administrator\Source\Repos\1351530910\456-bst-backend\456\bst.xml</DocumentationFile>
+    <DocumentationFile>.\bst.xml</DocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
