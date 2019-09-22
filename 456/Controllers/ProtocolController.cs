@@ -154,7 +154,8 @@ namespace bst.Controllers
         [HttpPost, Route("editgroup"), ProducesResponseType(typeof(Guid), 200), AuthFilter]
         public async Task<object> AddOrEditGroup([FromBody]EditGroupProtocolRelationIn data)
         {
-            var group = await context.Group.FindAsync(data.Groupid);
+            var group = await context.Group.FirstOrDefaultAsync(g => g.Name.Equals(data.Groupname));
+
             if (group == null) return NotFound("Group not found.");
             var protocol = await context.Protocols.FindAsync(data.Protocolid);
             if (protocol == null) return NotFound("Protocol not found.");
@@ -164,7 +165,7 @@ namespace bst.Controllers
             if (userProtocolRelation == null || userProtocolRelation.Privilege > 1) Unauthorized("You are not protocol admin.");
 
             var protocolgroup = await context.ProtocolGroups
-                .FirstOrDefaultAsync(p => p.Group.Name.Equals(data.Groupid) && p.Protocol.Id.Equals(data.Protocolid));
+                .FirstOrDefaultAsync(p => p.Group.Name.Equals(data.Groupname) && p.Protocol.Id.Equals(data.Protocolid));
             if (protocolgroup == null)
             {
                 //add group to protocol

@@ -195,7 +195,7 @@ namespace bst.Controllers
 
     public class EditGroupProtocolRelationIn
     {
-        public Guid Groupid { get; set; }
+        public string Groupname { get; set; }
         public Guid Protocolid { get; set; }
         public int GroupPrivilege { get; set; }
     }
