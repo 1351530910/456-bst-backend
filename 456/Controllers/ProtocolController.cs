@@ -215,6 +215,7 @@ namespace bst.Controllers
             if (userProtocolRelation == null || userProtocolRelation.Privilege > 1) Unauthorized("You are not protocol admin.");
             //remove group
             context.ProtocolGroups.Remove(protocolgroup);
+            await context.SaveChangesAsync();
             return Ok();
         }
 
