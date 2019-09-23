@@ -36,13 +36,13 @@ namespace bst.Model
             optionsBuilder.UseLazyLoadingProxies();
             base.OnConfiguring(optionsBuilder);
 
-            switch (ConnectionString.servertype)
+            switch (ConnectionStringExample.servertype)
             {
                 case "MYSQL":
-                    optionsBuilder.UseMySQL(ConnectionString.connectionstring);
+                    optionsBuilder.UseMySQL(ConnectionStringExample.connectionstring);
                     break;
                 case "MSSQL":
-                    optionsBuilder.UseSqlServer(ConnectionString.connectionstring);
+                    optionsBuilder.UseSqlServer(ConnectionStringExample.connectionstring);
                     break;
                 default:
                     break;
