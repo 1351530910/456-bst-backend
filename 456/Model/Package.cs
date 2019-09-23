@@ -202,25 +202,25 @@ namespace bst.Controllers
 
     public class RemoveGroupProtocolRelationIn
     {
-        public Guid Groupid { get; set; }
+        public string Groupname { get; set; }
         public Guid Protocolid { get; set; }
     }
 
     public class EditUserProtocolRelationIn
     {
-        public Guid Userid { get; set; }
+        public string Useremail { get; set; }
         public Guid Protocolid { get; set; }
         public int Privilege { get; set; }
     }
     public class AddUserProtocolRelationIn
     {
-        public Guid Userid { get; set; }
+        public string Useremail { get; set; }
         public Guid Protocolid { get; set; }
         public int Privilege { get; set; }
     }
     public class RemoveUserProtocolRelationIn
     {
-        public Guid Userid { get; set; }
+        public string Useremail { get; set; }
         public Guid Protocolid { get; set; }
     }
 

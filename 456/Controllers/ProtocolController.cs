@@ -122,14 +122,22 @@ namespace bst.Controllers
             {
                 Name = g.Group.Name,
                 Access = g.GroupPrivilege == 1 ? "write" : "read"
-            }).ToList();
-            var userGroupsWithNoAccess = user.GroupUsers.Where(x => !protocolGroups.Exists(g => x.Group.Name.Equals(g.Name)));
-            protocolGroups.AddRange(userGroupsWithNoAccess.Select(g => new ShareProtocolGroup
-            {
-                Name = g.Group.Name,
-                Access = "no access"
-            }).ToList());
+            }).ToList();           
             return protocolGroups;
+        }
+
+
+        [HttpGet, Route("availablegroups/{protocolid}"), ProducesResponseType(typeof(List<String>), 200), AuthFilter]
+        public object ShowAvailableGroupsThatCanBeAdded(Guid protocolid)
+        {
+            var user = (User)HttpContext.Items["user"];
+            var session = (Session)HttpContext.Items["session"];
+            var protocol = context.Protocols.Find(protocolid);
+            if (protocol == null) return NotFound();
+            var protocolGroups = protocol.ProtocolGroups.Select(g => g.Group.Name).ToList();
+            var userGroupsWithNoAccess = user.GroupUsers.Where(x => !protocolGroups.Contains(x.Group.Name));
+            var result = userGroupsWithNoAccess.Select(g => g.Group.Name).ToList();
+            return result;
         }
 
 
@@ -193,7 +201,7 @@ namespace bst.Controllers
         public async Task<object> RemoveGroup([FromBody]RemoveGroupProtocolRelationIn data)
         {
             var protocolgroup = await context.ProtocolGroups
-                .FirstOrDefaultAsync(p => p.Group.Name.Equals(data.Groupid) && p.Protocol.Id.Equals(data.Protocolid));
+                .FirstOrDefaultAsync(p => p.Group.Name.Equals(data.Groupname) && p.Protocol.Id.Equals(data.Protocolid));
             if (protocolgroup == null) NotFound("There's no relation between the protocol and the group");
             //check if user is protocol admin
             var user = (User)HttpContext.Items["user"];
@@ -205,7 +213,7 @@ namespace bst.Controllers
         }
 
         [HttpPost, Route("edituser"), ProducesResponseType(typeof(Guid), 200), AuthFilter]
-        public async Task<object> AddOrEditUser([FromBody] EditUserProtocolRelationIn data)
+        public async Task<object> AddOrEditUser([FromBody]EditUserProtocolRelationIn data)
         {
             //check if user is protocol admin
             var user = (User)HttpContext.Items["user"];
@@ -213,16 +221,21 @@ namespace bst.Controllers
             if (userProtocolRelation == null || userProtocolRelation.Privilege > 1) Unauthorized("You are not protocol admin.");
             //find target user protocol relation
             var targetUserProtocolRelation = context.ProtocolUsers
-                .FirstOrDefault(x => x.Protocol.Id.Equals(data.Protocolid) && x.User.Email.Equals(data.Userid));
+                .FirstOrDefault(x => x.Protocol.Id.Equals(data.Protocolid) && x.User.Email.Equals(data.Useremail));
+            var privildge = data.Privilege;
+            if (privildge < 1 || privildge > 3) privildge = 3;
             if (targetUserProtocolRelation == null)
             {
+                var targetuser = context.Users.FirstOrDefault(u => u.Email.Equals(data.Useremail));
+                if (targetuser == null) return NotFound("The user you want to edit doesn't exist.");
+               
                 //create relation 
                 var newTargetUserProtocolRelation = new ProtocolUser
                 {
                     Id = Guid.NewGuid(),
-                    User = context.Users.Find(data.Userid),
-                    Protocol = context.Protocols.Find(data.Protocolid),
-                    Privilege = data.Privilege
+                    User = targetuser,
+                    Protocol = userProtocolRelation.Protocol,
+                    Privilege = privildge
                 };
                 context.ProtocolUsers.Add(newTargetUserProtocolRelation);
                 await context.SaveChangesAsync();
@@ -231,35 +244,12 @@ namespace bst.Controllers
             else
             {
                 //edit relation
-                targetUserProtocolRelation.Privilege = data.Privilege;
+                targetUserProtocolRelation.Privilege = privildge;
                 await context.SaveChangesAsync();
                 return targetUserProtocolRelation.Id;
             }
         }
-        [HttpPost, Route("adduser/{userdid}/{priviledge}"), ProducesResponseType(200), AuthFilter]
-        public async Task<object> AddUser([FromBody] AddUserProtocolRelationIn data)
-        {
-            //check if user is protocol admin
-            var user = (User)HttpContext.Items["user"];
-            var userProtocolRelation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.Protocolid));
-            if (userProtocolRelation == null || userProtocolRelation.Privilege > 1) Unauthorized("You are not protocol admin.");
-
-            var target = context.Users.Find(data.Userid);
-            if (target == null)
-            {
-                return NotFound("user not found");
-            }
-            //find target user 
-            context.Add(new ProtocolUser
-            {
-                Id = Guid.NewGuid(),
-                User = target,
-                Protocol = userProtocolRelation.Protocol,
-                Privilege = data.Privilege
-            });
-            await context.SaveChangesAsync();
-            return Ok();
-        }
+       
         [HttpPost, Route("removeuser"), ProducesResponseType(200), AuthFilter]
         public async Task<object> RemoveUser([FromBody] RemoveUserProtocolRelationIn data)
         {
@@ -269,7 +259,7 @@ namespace bst.Controllers
             if (userProtocolRelation == null || userProtocolRelation.Privilege > 1) Unauthorized("You are not protocol admin.");
             //find target user protocol relation
             var targetUserProtocolRelation = context.ProtocolUsers
-                .FirstOrDefault(x => x.Protocol.Id.Equals(data.Protocolid) && x.User.Email.Equals(data.Userid));
+                .FirstOrDefault(x => x.Protocol.Id.Equals(data.Protocolid) && x.User.Email.Equals(data.Useremail));
             if (targetUserProtocolRelation == null) return NotFound("User protocol relation not found.");
             //remove
             context.ProtocolUsers.Remove(targetUserProtocolRelation);
