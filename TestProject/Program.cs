@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using Newtonsoft.Json;
 using System.Linq;
+using System.Reflection;
 
 
 namespace TestProject
@@ -44,6 +45,15 @@ namespace TestProject
         static string deviceid = randomstr();
         static string sessionid2;
         static string deviceid2 = randomstr();
+        static bst.Model.Protocol protocol = new bst.Model.Protocol
+        {
+            Name = randomstr(),
+            Isprivate = true,
+            Comment = randomstr(),
+            IStudy = 5,
+            UseDefaultAnat = true,
+            UseDefaultChannel = true
+        };
         #endregion
         static void Main(string[] args)
         {
@@ -54,15 +64,10 @@ namespace TestProject
             starttime = System.DateTime.Now;
 
             Console.WriteLine("test started");
-            call(createuser);
-            call(login);
-            call(failauthentication);
-            call(listprotocols);
-            call(listgroups);
-            call(creategroup);
-            call(groupdetail);
-            call(createSecondUser);
-            call(addSecondUserToGroup);
+            foreach (var f in typeof(Program).GetMethods().Where(x => x.IsStatic&&x.ReturnType.Equals(typeof(Task))).ToArray())
+            {
+                call(f);
+            }
             Console.WriteLine($"total time is {(System.DateTime.Now - starttime).TotalMilliseconds}ms");
         }
 
@@ -218,18 +223,89 @@ namespace TestProject
             Assert.AreEqual(u.Email, gp.Users.FirstOrDefault().Email);
             Assert.AreEqual(2, gp.Users.Where(x => x.Email.Equals(u2.Email)).FirstOrDefault().Privilege);
         }
+        public static async Task changeGroupMemberPriviledge()
+        {
+            var r2 = await client2.PostAsJsonAsync("group/changerole", new AddGroupUserIn
+            {
+                GroupName = g.Name,
+                UserEmail = u.Email,
+                Privilege = 2
+            });
+            Assert.AreEqual(r2.StatusCode, HttpStatusCode.Unauthorized);
+            var r = await client.PostAsJsonAsync("group/changerole", new EditGroupMemberIn
+            {
+                GroupName = g.Name,
+                UserEmail = u2.Email,
+                Role = 1
+            });
+            Assert.AreEqual(r.StatusCode, HttpStatusCode.OK);
+            var r3 = await client.PostAsJsonAsync("group/detail", new GroupName
+            {
+                Name = g.Name
+            });
+            Assert.AreEqual(r3.StatusCode, HttpStatusCode.OK);
+            var gp = await r3.Content.ReadAsAsync<GroupPreview>();
+            Assert.AreEqual(gp.Users.Where(x => x.Email.Equals(u2.Email)).First().Privilege, 1);
 
+        }
+        public static async Task removeUserFromGroup()
+        {
+            var r = await client.PostAsJsonAsync("group/removeuser", new RemoveGroupUserIn
+            {
+                GroupName = g.Name,
+                UserEmail = u2.Email
+            });
+            Assert.AreEqual(r.StatusCode, HttpStatusCode.OK);
+            r = await client.PostAsJsonAsync("group/detail", new GroupName
+            {
+                Name = g.Name
+            });
+            Assert.AreEqual(r.StatusCode, HttpStatusCode.OK);
+            var gp = await r.Content.ReadAsAsync<GroupPreview>();
+            Assert.AreEqual(gp.Users.Count(), 1);
+        }
+        public static async Task createProtocol()
+        {
+            var r = await client.PostAsJsonAsync("protocol/share", new CreateProtocol
+            {
+                Name = protocol.Name,
+                Isprivate = protocol.Isprivate,
+                Comment = protocol.Comment,
+                Istudy = protocol.IStudy,
+                Usedefaultanat = protocol.UseDefaultAnat,
+                Usedefaultchannel = protocol.UseDefaultChannel
+            });
+            Assert.AreEqual(r.StatusCode, HttpStatusCode.OK);
+            protocol.Id = (await r.Content.ReadAsAsync<Protocolid>()).Id;
+
+        }
+        public static async Task getProtocol()
+        {
+            var r = await client.GetAsync($"protocol/get/{protocol.Id}");
+            Assert.AreEqual(r.StatusCode, HttpStatusCode.OK);
+            var data = (await r.Content.ReadAsAsync<ProtocolData>());
+            Assert.AreEqual(data.Name, protocol.Name);
+            Assert.AreEqual(data.UseDefaultAnat, protocol.UseDefaultAnat);
+            Assert.AreEqual(data.UseDefaultChannel, protocol.UseDefaultChannel);
+            Assert.AreEqual(data.Comment, protocol.Comment);
+            r = await client.GetAsync($"protocol/get/{Guid.Empty}");
+            Assert.AreEqual(r.StatusCode, HttpStatusCode.NotFound);
+        }
+        public static async Task checkProtocolGroup()
+        {
+
+        }
 
         public static string randomstr()
         {
             return Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10);
         }
 
-        public static void call(Func<Task> f)
+        public static void call(MethodInfo f)
         {
             lasttime = System.DateTime.Now;
-            f().Wait();
-            Console.WriteLine($"{f.Method.Name} passed using {(System.DateTime.Now-lasttime).TotalMilliseconds}ms");
+            f.Invoke(null, null);
+            Console.WriteLine($"{f.Name} passed using {(System.DateTime.Now-lasttime).TotalMilliseconds}ms");
         }
     }
 }
