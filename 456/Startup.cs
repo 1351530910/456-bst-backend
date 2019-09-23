@@ -93,7 +93,8 @@ namespace bst
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var usercontext = serviceScope.ServiceProvider.GetRequiredService<Model.UserDB>();
-                usercontext.Database.EnsureDeleted();
+                //uncomment the following line if need to recreate the database
+                //usercontext.Database.EnsureDeleted();
                 usercontext.Database.EnsureCreated();
             }
         }
