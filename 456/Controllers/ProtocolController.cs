@@ -122,7 +122,13 @@ namespace bst.Controllers
             {
                 Name = g.Group.Name,
                 Access = g.GroupPrivilege == 1 ? "write" : "read"
-            }).ToList();           
+            }).ToList();
+            var userGroupsWithNoAccess = user.GroupUsers.Where(x => !protocolGroups.Exists(g => x.Group.Name.Equals(g.Name)));
+            protocolGroups.AddRange(userGroupsWithNoAccess.Select(g => new ShareProtocolGroup
+            {
+                Name = g.Group.Name,
+                Access = "no access"
+            }).ToList());
             return protocolGroups;
         }
 
