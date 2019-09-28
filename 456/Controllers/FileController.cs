@@ -11,7 +11,7 @@ using System.Collections.Generic;
 namespace bst.Controllers
 {
     [Route("file")]
-    [ApiController]
+    [ApiController,AuthFilter]
     public class FileController : BaseController
     {
         UserDB context = new UserDB();
