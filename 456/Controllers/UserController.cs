@@ -128,18 +128,6 @@ namespace bst.Controllers
             return result;
         }
 
-        [HttpPost, Route("test")]
-        public async Task<object> testupload([FromBody]LoginIn data)
-        {
-            if (data==null || !ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-            foreach (var file in HttpContext.Request.Form.Files)
-            {
-                file.CopyTo(new FileStream(file.FileName, FileMode.CreateNew));
-            }
-            return HttpContext.Request.Form.Files.Count;
-        }
+        
     }
 }
