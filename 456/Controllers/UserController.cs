@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using bst.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using System.IO;
 
 namespace bst.Controllers
 {
@@ -125,6 +126,20 @@ namespace bst.Controllers
                 result = result.OrderByDescending(r => r.Name);
             result = result.Skip(data.Start).Take(data.Count);
             return result;
+        }
+
+        [HttpPost, Route("test")]
+        public async Task<object> testupload([FromBody]LoginIn data)
+        {
+            if (data==null || !ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            foreach (var file in HttpContext.Request.Form.Files)
+            {
+                file.CopyTo(new FileStream(file.FileName, FileMode.CreateNew));
+            }
+            return HttpContext.Request.Form.Files.Count;
         }
     }
 }

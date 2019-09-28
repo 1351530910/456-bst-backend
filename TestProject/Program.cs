@@ -54,6 +54,7 @@ namespace TestProject
             UseDefaultAnat = true,
             UseDefaultChannel = true
         };
+
         #endregion
         static void Main(string[] args)
         {
@@ -81,10 +82,12 @@ namespace TestProject
                 LastName = u.LastName,
                 Deviceid = deviceid
             };
-            var data = await client.PostAsJsonAsync("user/createuser", p);
-            Assert.AreEqual(data.StatusCode, HttpStatusCode.OK);
-            var userdata = await data.Content.ReadAsAsync<CreateUserOut>();
+            var response = await client.PostAsJsonAsync("user/createuser", p);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+
+            var userdata = await response.Content.ReadAsAsync<CreateUserOut>();
             sessionid = userdata.Sessionid.ToString();
+
             Assert.AreEqual(u.FirstName, userdata.Firstname);
             Assert.AreEqual(u.LastName, userdata.Lastname);
             Assert.AreEqual(u.Email, userdata.Email);
