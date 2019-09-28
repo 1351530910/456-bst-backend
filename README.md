@@ -24,7 +24,7 @@ development setup steps:
 7. in Startup.cs, uncomment 'usercontext.Database.EnsureDeleted();' if need to delete an old database with the same name
 8. run
 
-**make sure that the app has All Access/Priviledgesff to all files in its folder
+**make sure that the app has All Access/Priviledges to all files in its folder
 
 P.S.
  in ConnectionString.cs, 
