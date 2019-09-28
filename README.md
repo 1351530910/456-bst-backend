@@ -24,7 +24,11 @@ development setup steps:
 7. in Startup.cs, uncomment 'usercontext.Database.EnsureDeleted();' if need to delete an old database with the same name
 8. run
 
+**make sure that the app has All Access/Priviledgesff to all files in its folder
+
 P.S.
  in ConnectionString.cs, 
  servertype is either "MSSQL" or "MYSQL"
  connection string is something that should be similar to "server=serverurl;database=dbname;user=username;password=password"
+
+   
