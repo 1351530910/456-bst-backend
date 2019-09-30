@@ -28,7 +28,7 @@ namespace bst.Controllers
 
         public static List<UploadInfo> queue = new List<UploadInfo>();
 
-        [Route("test/{uploadid}")]
+        [HttpPost,Route("test/{uploadid}")]
         public async Task<object> test(Guid uploadid)
         {
             if (HttpContext.Request.Form.Files.Count != 1) return BadRequest("number of file wrong");
@@ -37,7 +37,7 @@ namespace bst.Controllers
             return Ok();
         }
 
-        [Route("ffile/{uploadid}")]
+        [HttpPost, Route("ffile/{uploadid}")]
         public async Task<object> uploadFFile(Guid uploadid)
         {
             if (HttpContext.Request.Form.Files.Count != 1) return BadRequest("number of file wrong");
@@ -63,7 +63,7 @@ namespace bst.Controllers
             return Ok();
         }
 
-        [Route("afile/{uploadid}")]
+        [HttpPost, Route("afile/{uploadid}")]
         public async Task<object> uploadAFile(Guid uploadid)
         {
             if (HttpContext.Request.Form.Files.Count != 1) return BadRequest("number of file wrong");
