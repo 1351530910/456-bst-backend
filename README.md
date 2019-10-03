@@ -9,7 +9,7 @@ prerequisites software:
 
 
 Hosting/publishing:
-https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/?view=aspnetcore-2.2
+https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/?view=aspnetcore-3.0
 
 development setup steps:
 
