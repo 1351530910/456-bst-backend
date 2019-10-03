@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace bst.Model
 {
@@ -56,7 +56,6 @@ namespace bst.Model
         public DbSet<Invitation> Invitations { get; set; }
         public DbSet<Protocol> Protocols { get; set; }
         public DbSet<ProtocolGroup> ProtocolGroups { get; set; }
-
         public DbSet<Study> Studies { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<History> Histories { get; set; }

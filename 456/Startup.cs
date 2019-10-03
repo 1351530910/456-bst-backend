@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Reflection;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 using System.IO;
 using Microsoft.AspNetCore.Http.Features;
 
@@ -32,7 +32,8 @@ namespace bst
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
+            services.AddControllers();
+
             services.AddDbContext<Model.UserDB>();
             services.Configure<FormOptions>(options =>
             {
@@ -41,7 +42,7 @@ namespace bst
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info
+                c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "API help page",
                     Version = "v1",
@@ -68,25 +69,22 @@ namespace bst
                 app.UseHsts();
             }
             //app.UseHttpsRedirection();
-            app.UseSwagger();
+            
 
+
+            app.UseStaticFiles();
+
+            app.UseRouting();
+            
+            app.UseSwagger();
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
             // specifying the Swagger JSON endpoint.
-
-            
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute
-                (
-                    name: "default",
-                    template: "{controller}/{action}/"
-                );
-            });
+            
 
 
             

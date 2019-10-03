@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Net.Http.Headers;
 
 namespace Tests
 {
@@ -10,7 +11,7 @@ namespace Tests
     {
         public JsonHttpClient():base()
         {
-            DefaultRequestHeaders.Add("Content-Type", "application/json");
+            DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
         public async Task<T> GetAsJsonAsync<T>(string url)
         {
