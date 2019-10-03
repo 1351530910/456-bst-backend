@@ -2,7 +2,7 @@
 
 prerequisites software:
 1.  Visual Studio 2019 (any edition, either mac or windows)
-2.  .Net core sdk : https://dotnet.microsoft.com/download/dotnet-core/2.2
+2.  .Net core sdk 3.0 : https://dotnet.microsoft.com/download
 3.  Mysql or MSSQL(any edition) 
     https://www.microsoft.com/en-ca/sql-server/sql-server-downloads  
     https://www.mysql.com/downloads/
