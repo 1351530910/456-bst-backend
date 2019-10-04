@@ -16,7 +16,6 @@ Makefile.in
 *.pidb
 *.userprefs
 *.usertasks
-*.csproj
 config.log
 config.make
 config.status
