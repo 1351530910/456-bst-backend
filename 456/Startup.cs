@@ -32,7 +32,10 @@ namespace bst
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddMvc(options=>
+            {
+                options.EnableEndpointRouting = false;
+            });
 
             services.AddDbContext<Model.UserDB>();
             services.Configure<FormOptions>(options =>
@@ -69,12 +72,12 @@ namespace bst
                 app.UseHsts();
             }
             //app.UseHttpsRedirection();
-            
 
+            app.UseMvc();
 
             app.UseStaticFiles();
 
-            app.UseRouting();
+            //app.UseRouting();
             
             app.UseSwagger();
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
