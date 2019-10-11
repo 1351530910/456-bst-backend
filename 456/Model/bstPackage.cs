@@ -153,6 +153,7 @@ namespace bst.Model
         public Guid Id { get; set; }
         public string Comment { get; set; }
         public string FileName { get; set; }
+        public Guid studyID { get; set; }
         public FunctionalFileType type { get; set; }
         public IEnumerable<HistoryData> Histories { get; set; }
         public FunctionalFileData()
@@ -165,9 +166,19 @@ namespace bst.Model
             Comment = f.Comment;
             FileName = f.FileName;
             type = f.FileType;
+            studyID = f.Study.Id;
             Histories = f.Histories.Select(x => new HistoryData(x));
         }
-        
+        public FunctionalFile toFunctionalFile(string filePath)
+        {
+            return new FunctionalFile
+            {
+                Id = Guid.NewGuid(),
+                Comment = Comment,
+                FileName = filePath + FileName,
+                FileType = type
+            };
+        }
     }
 
     public class ChannelData : FunctionalFileData
@@ -194,6 +205,18 @@ namespace bst.Model
             NbChannels = f.NbChannels;
             TransfMegLabels = f.TransfMegLabels;
             TransfEegLabels = f.TransfEegLabels;
+        }
+        
+        public Channel toChannel(string filepath)
+        {
+            return new Channel
+            {
+                Id = Guid.NewGuid(),
+                NbChannels = NbChannels,
+                TransfMegLabels = TransfMegLabels,
+                TransfEegLabels = TransfEegLabels,
+                Parent = base.toFunctionalFile(filepath)
+            };
         }
     }
 

@@ -98,6 +98,7 @@ namespace bst.Model
     {
         [Key]
         public Guid Id { get; set; }
+
         [EmailAddress]
         public string Email { get; set; }
         [MinLength(8), MaxLength(15), Required]
@@ -109,7 +110,7 @@ namespace bst.Model
 
         public virtual ICollection<ProtocolUser> ProtocolUsers { get; set; }
         public virtual ICollection<GroupUser> GroupUsers { get; set; }
-        public virtual ICollection<Protocol> Locks { get; set; }
+        
     }
 
     public partial class Group
@@ -313,7 +314,7 @@ namespace bst.Model
         public string Comment { get; set; }
         public string FileName { get; set; }
         public FunctionalFileType FileType { get; set; }
-        
+        [Required]
         public virtual Study Study { get; set; }
         public virtual ICollection<History> Histories { get; set; }
     }
@@ -333,6 +334,7 @@ namespace bst.Model
         public int DbTransfMeg { get; set; }
         public int DbTransfEeg { get; set; }
         public int DbIntraElectrodes { get; set; }
+        [Required]
         public virtual FunctionalFile Parent { get; set; }
     }
 
@@ -347,6 +349,7 @@ namespace bst.Model
         public string ColormapType { get; set; }
         public string DisplayUnits { get; set; }
         //summary info 
+        [Required]
         public virtual FunctionalFile Parent { get; set; }
     }
 
@@ -360,6 +363,7 @@ namespace bst.Model
         public string Type { get; set; }
         //summary info
         public int DbChannelFlag { get; set; }
+        [Required]
         public virtual FunctionalFile Parent { get; set; }
     }
 
@@ -373,6 +377,7 @@ namespace bst.Model
         public string EEGMethod { get; set; }
         public string ECOGMethod { get; set; }
         public string SEEGMethod { get; set; }
+        [Required]
         //summary info
         public virtual FunctionalFile Parent { get; set; }
     }
@@ -393,6 +398,7 @@ namespace bst.Model
         public bool DbImagingKernel { get; set; }
         public int DbChannelFlag { get; set; }
         public int DbAtlas { get; set; }
+        [Required]
         public virtual FunctionalFile Parent { get; set; }
     }
 
