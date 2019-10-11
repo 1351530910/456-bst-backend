@@ -104,6 +104,10 @@ namespace bst.Controllers
         public bool UseDefaultAnat { get; set; }
         public bool UseDefaultChannel { get; set; }
         public int Privilege { get; set; }
+        public ProtocolData()
+        {
+
+        }
         public ProtocolData(Protocol protocol,int privilege)
         {
             Id = protocol.Id;

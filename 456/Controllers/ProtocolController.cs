@@ -17,8 +17,6 @@ namespace bst.Controllers
         [HttpGet, Route("get/{protocolid}"), ProducesResponseType(typeof(ProtocolData), 200), AuthFilter]
         public async Task<object> Getprotocol(Guid protocolid)
         {
-            
-
             var userProtocolRelation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(protocolid));
             if (userProtocolRelation != null)
             {
@@ -88,7 +86,6 @@ namespace bst.Controllers
                     UseDefaultChannel = data.Usedefaultchannel ?? true,
                     LastUpdate = System.DateTime.Now
                 };
-                context.Protocols.Add(protocol);
                 var protocoluser = new ProtocolUser
                 {
                     Id = Guid.NewGuid(),
@@ -97,6 +94,7 @@ namespace bst.Controllers
                     //become protocol admin by default
                     Privilege = 1
                 };
+                context.Protocols.Add(protocol);
                 context.ProtocolUsers.Add(protocoluser);
                 await context.SaveChangesAsync();
             }

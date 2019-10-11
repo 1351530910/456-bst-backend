@@ -94,29 +94,72 @@ namespace bst.Controllers
     }
     /// <summary>
     /// attribute to check if an user has the lock of a protocol
+    /// enables protocol variable in basecontroller
     /// </summary>
-    public class PLockFilter : ActionFilterAttribute
+    public class WriteLock : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             string pid;
             if ((pid = context.HttpContext.Request.Headers["protocolid"])==null)
             {
-                context.Result = new BadRequestObjectResult("protocolid not found");
+                context.Result = new BadRequestObjectResult("protocolid in header not found");
                 return;
             }
+
             var controller = (BaseController)context.HttpContext.Items["context"];
             var protocolid = Guid.Parse(pid);
+            var protocol = controller.user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(protocolid));
+            if (protocol==null)
+            {
+                context.Result = new UnauthorizedObjectResult("protocol participation not found " + controller.user.ProtocolUsers.Count);
+            }
+            controller.protocol = protocol.Protocol;
             if (controller.session.Protocol != protocolid)
             {
                 Session s;
                 if ((s = AuthFilter.sessions.FirstOrDefault(x => x.Protocol == protocolid)) != null)
                 {
-
                     context.Result = new UnauthorizedObjectResult("locked by " + s.email);
-                    
+                }
+                s.Protocol = protocol.Protocol.Id;
+            }
+            
+            base.OnActionExecuting(context);
+        }
+    }
+    /// <summary>
+    /// attribute to check if an user has the lock of a protocol
+    /// enables protocol variable in basecontroller
+    /// </summary>
+    public class ReadLock : ActionFilterAttribute
+    {
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            string pid;
+            if ((pid = context.HttpContext.Request.Headers["protocolid"]) == null)
+            {
+                context.Result = new BadRequestObjectResult("protocolid in header not found");
+                return;
+            }
+
+            var controller = (BaseController)context.HttpContext.Items["context"];
+            var protocolid = Guid.Parse(pid);
+            var protocol = controller.user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(protocolid));
+            if (protocol == null)
+            {
+                context.Result = new UnauthorizedObjectResult("protocol participation not found " + controller.user.ProtocolUsers.Count);
+            }
+            controller.protocol = protocol.Protocol;
+            if (controller.session.Protocol != protocolid)
+            {
+                Session s;
+                if ((s = AuthFilter.sessions.FirstOrDefault(x => x.Protocol == protocolid)) != null)
+                {
+                    context.Result = new UnauthorizedObjectResult("locked by " + s.email);
                 }
             }
+
             base.OnActionExecuting(context);
         }
     }

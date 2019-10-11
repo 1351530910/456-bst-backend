@@ -169,13 +169,13 @@ namespace bst.Model
             studyID = f.Study.Id;
             Histories = f.Histories.Select(x => new HistoryData(x));
         }
-        public FunctionalFile toFunctionalFile(string filePath)
+        public FunctionalFile toFunctionalFile()
         {
             return new FunctionalFile
             {
                 Id = Guid.NewGuid(),
                 Comment = Comment,
-                FileName = filePath + FileName,
+                FileName = FileName,
                 FileType = type
             };
         }
@@ -207,7 +207,7 @@ namespace bst.Model
             TransfEegLabels = f.TransfEegLabels;
         }
         
-        public Channel toChannel(string filepath)
+        public Channel toChannel()
         {
             return new Channel
             {
@@ -215,7 +215,7 @@ namespace bst.Model
                 NbChannels = NbChannels,
                 TransfMegLabels = TransfMegLabels,
                 TransfEegLabels = TransfEegLabels,
-                Parent = base.toFunctionalFile(filepath)
+                Parent = base.toFunctionalFile()
             };
         }
     }

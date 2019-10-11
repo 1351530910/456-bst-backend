@@ -13,17 +13,17 @@ namespace bst.Controllers
     public class FunctionalFileController : BaseController
     {
         
-        [HttpPost,Route("createChannel"),AuthFilter,PLockFilter]
+        [HttpPost,Route("createChannel"),AuthFilter,WriteLock]
         public async Task<object> createChannel([FromBody]ChannelData data)
         {
-            var protocol = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(Request.Headers["protocolid"]));
-            if (protocol == null) return Unauthorized("no participation found");
-            var study = protocol.Protocol.Studies.FirstOrDefault(x => x.Id == data.studyID);
-            var channel = data.toChannel(mapFile(protocol.Protocol.Id.ToString(),study.Id.ToString(),Guid.NewGuid().ToString()));
+            var study = protocol.Studies.FirstOrDefault(x => x.Id == data.studyID);
+            var channel = data.toChannel();
+            channel.Parent.Study = study;
             context.Channels.Add(channel);
             context.FunctionalFiles.Add(channel.Parent);
             await context.SaveChangesAsync();
-            FileStream fs = new FileStream(channel.Parent.FileName, FileMode.CreateNew);
+            Directory.CreateDirectory(mapFile(protocol.Id.ToString(),study.Id.ToString(),""));
+            FileStream fs = new FileStream(mapFile(protocol.Id.ToString(), study.Id.ToString(), channel.Parent.FileName), FileMode.CreateNew);
             Guid uploadid = Guid.NewGuid();
             FileController.queue[uploadid] = fs;
             return uploadid;
@@ -40,11 +40,11 @@ namespace bst.Controllers
         {
             if (string.IsNullOrEmpty(SecondLayer))
             {
-                return $"./{firstLayer}/{filename}";
+                return $"./files/{firstLayer}/ffiles/{filename}";
             }
             else
             {
-                return $"./{firstLayer}/{SecondLayer}/{filename}";
+                return $"./files/{firstLayer}/ffiles/{SecondLayer}/{filename}";
             }
         }
         

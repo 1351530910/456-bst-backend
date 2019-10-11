@@ -74,7 +74,8 @@ namespace Tests
         {
             Comment = randomstr(),
             Study = study,
-            FileType = bst.Model.FunctionalFileType.Channel
+            FileType = bst.Model.FunctionalFileType.Channel,
+            FileName = "test.bin"
         };
         #endregion
         static void Main(string[] args)
@@ -103,7 +104,6 @@ namespace Tests
                 LastName = u.LastName,
                 Deviceid = deviceid
             };
-
             var userdata = await client.PostAsJsonAsync<CreateUserOut>("user/createuser", p);
             sessionid = userdata.Sessionid.ToString();
 
@@ -123,6 +123,8 @@ namespace Tests
             });
             sessionid = r.Sessionid.ToString();
             fs.WriteLine("sessionid: " + sessionid);
+            client.DefaultRequestHeaders.Add("sessionid", sessionid);
+            client.DefaultRequestHeaders.Add("deviceid", deviceid);
         }
         public static async Task listprotocols()
         {
@@ -245,7 +247,7 @@ namespace Tests
                 Usedefaultchannel = protocol.UseDefaultChannel
             });
             protocol.Id = r.Id;
-
+            client.DefaultRequestHeaders.Add("protocolid", protocol.Id.ToString());
         }
         public static async Task getProtocol()
         {
@@ -265,30 +267,24 @@ namespace Tests
                 DateOfStudy = study.DateOfStudy,
                 IChannel = study.IChannel,
                 IHeadModel = study.IHeadModel,
-                ProtocolId = study.Protocol.Id
+                ProtocolId = study.Protocol.Id,
+                
             });
             study.Id = Guid.Parse(studyid);
         }
         public static async Task createChannel()
         {
-            var uploadid = await client.PostAsJsonAsync<string>("functionalfile/createchannel", new bst.Model.ChannelData
+            var uploadid = await client.PostAsJsonAsync<string>($"functionalfile/createchannel", new bst.Model.ChannelData
             {
                 Comment = ff.Comment,
                 studyID = ff.Study.Id,
                 type = ff.FileType,
                 NbChannels = channel.NbChannels,
                 TransfEegLabels = channel.TransfEegLabels,
-                TransfMegLabels = channel.TransfMegLabels
+                TransfMegLabels = channel.TransfMegLabels,
+                FileName = ff.FileName
             });
-            using (HttpClient tempclient = new HttpClient())
-            {
-                byte[] data = new byte[5000000];
-                MultipartFormDataContent form = new MultipartFormDataContent();
-                form.Add(new ByteArrayContent(data));
-                var response = await tempclient.PostAsync($"localhost/file/upload/{protocol.Id}/true", form);
-                if (!response.IsSuccessStatusCode) Console.WriteLine("upload failed");
-
-            }
+            Console.WriteLine($"\tto be tested upload file using id {uploadid}");
         }
         public static string randomstr()
         {
@@ -302,11 +298,11 @@ namespace Tests
             {
                 Task t = (Task)f.Invoke(null, null);
                 t.Wait();
-                Console.WriteLine($"{f.Name} passed using {(System.DateTime.Now - lasttime).TotalMilliseconds}ms");
+                Console.WriteLine($"{f.Name} \tpassed using {(System.DateTime.Now - lasttime).TotalMilliseconds}ms");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(f.Name + " "+ex.Message);
+                Console.WriteLine(f.Name + "\t"+ex.Message);
             }
             
         }

@@ -17,7 +17,10 @@ namespace Tests
         {
             var response = await GetAsync(url);
             if (response.IsSuccessStatusCode)
-                return JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync());
+                return JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
             else
                 throw new HttpRequestException();
 
@@ -35,9 +38,10 @@ namespace Tests
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                
-                
-                T d = JsonSerializer.Deserialize<T>(content);
+                T d = JsonSerializer.Deserialize<T>(content, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
                 return d;
             }
             else

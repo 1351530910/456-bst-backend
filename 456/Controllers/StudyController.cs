@@ -34,7 +34,7 @@ namespace bst.Controllers
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        [HttpPost, Route("create"), ProducesResponseType(typeof(Guid), 200)]
+        [HttpPost, Route("create"), ProducesResponseType(typeof(Guid), 200),WriteLock]
         public async Task<object> CreateStudy([FromBody]StudyData data)
         {
             var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.ProtocolId));
@@ -51,7 +51,8 @@ namespace bst.Controllers
                 IChannel = data.IChannel,
                 IHeadModel = data.IHeadModel,
                 Subject = context.Subjects.Find(data.SubjectId),
-                LastUpdate = System.DateTime.Now
+                LastUpdate = System.DateTime.Now,
+                Protocol = protocol
             };
             context.Studies.Add(study);
             await context.SaveChangesAsync();

@@ -11,7 +11,7 @@ using System.Collections.Generic;
 namespace bst.Controllers
 {
     [Route("file")]
-    [ApiController,AuthFilter]
+    [ApiController]
     public class FileController : BaseController
     {
         UserDB context = new UserDB();
@@ -24,7 +24,7 @@ namespace bst.Controllers
         {
 
             if (HttpContext.Request.Form.Files.Count != 1) return BadRequest("number of file wrong");
-            if (queue[uploadid] != null)
+            if (queue.ContainsKey(uploadid))
             {
                 await HttpContext.Request.Form.Files.First().CopyToAsync(queue[uploadid]);
                 if (last)

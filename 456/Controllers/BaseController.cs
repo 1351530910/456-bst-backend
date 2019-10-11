@@ -14,6 +14,7 @@ namespace bst.Controllers
         public UserDB context;
         public User user;
         public Session session;
+        public Protocol protocol;
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             this.context = new UserDB();

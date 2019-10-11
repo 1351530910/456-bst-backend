@@ -13,9 +13,16 @@
             
             </summary>
         </member>
-        <member name="T:bst.Controllers.PLockFilter">
+        <member name="T:bst.Controllers.WriteLock">
             <summary>
             attribute to check if an user has the lock of a protocol
+            enables protocol variable in basecontroller
+            </summary>
+        </member>
+        <member name="T:bst.Controllers.ReadLock">
+            <summary>
+            attribute to check if an user has the lock of a protocol
+            enables protocol variable in basecontroller
             </summary>
         </member>
         <member name="M:bst.Controllers.FunctionalFileController.mapFile(System.String,System.String,System.String)">
