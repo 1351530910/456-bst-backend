@@ -21,7 +21,7 @@ namespace bst.Controllers
         [HttpGet, Route("get/{subjectid}"), ProducesResponseType(typeof(SubjectData), 200)]
         public async Task<object> GetSubject(Guid subjectid)
         {
-            var user = (User)HttpContext.Items["user"];
+            
             
 
             var subject = await context.Subjects.FindAsync(subjectid);
@@ -42,8 +42,8 @@ namespace bst.Controllers
         [HttpPost, Route("create"), ProducesResponseType(typeof(Guid), 200)]
         public async Task<object> CreateSubject([FromBody]SubjectData data)
         {
-            var user = (User)HttpContext.Items["user"];
-            var session = (Session)HttpContext.Items["session"];
+            
+            
 
             var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.ProtocolId));
             if (participation == null) return NotFound("You don't have access to this protocol.");

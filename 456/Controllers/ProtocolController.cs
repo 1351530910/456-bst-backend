@@ -17,7 +17,7 @@ namespace bst.Controllers
         [HttpGet, Route("get/{protocolid}"), ProducesResponseType(typeof(ProtocolData), 200), AuthFilter]
         public async Task<object> Getprotocol(Guid protocolid)
         {
-            var user = (User)HttpContext.Items["user"];
+            
 
             var userProtocolRelation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(protocolid));
             if (userProtocolRelation != null)
@@ -33,14 +33,12 @@ namespace bst.Controllers
         [HttpPost, Route("lock/{protocolid}"), ProducesResponseType(typeof(string), 200), AuthFilter]
         public object LockProtocol(Guid protocolid)
         {
-            var session = (Session)HttpContext.Items["session"];
             session.Protocol = protocolid;
             return Ok();
         }
         [HttpPost, Route("unlock/{protocolid}"), ProducesResponseType(typeof(string), 200), AuthFilter]
         public object UnlockProtocol(Guid protocolid)
         {
-            var session = (Session)HttpContext.Items["session"];
             session.Protocol = Guid.Empty;
             return Ok();
         }
@@ -70,8 +68,7 @@ namespace bst.Controllers
         [HttpPost, Route("share"), ProducesResponseType(typeof(Protocolid), 200), AuthFilter]
         public async Task<object> ShareProtocol([FromBody]CreateProtocol data)
         {
-            var user = (User)HttpContext.Items["user"];
-            var session = (Session)HttpContext.Items["session"];
+            
             Guid procotolid;
             Protocol protocol = null;
             if (Guid.TryParse(data.Id, out procotolid))
@@ -114,8 +111,6 @@ namespace bst.Controllers
         [HttpGet, Route("groups/{protocolid}"), ProducesResponseType(typeof(List<ShareProtocolGroup>), 200), AuthFilter]
         public object ShowProtocolGroups(Guid protocolid)
         {
-            var user = (User)HttpContext.Items["user"];
-            var session = (Session)HttpContext.Items["session"];
             var protocol = context.Protocols.Find(protocolid);
             if (protocol == null) return NotFound();
             var protocolGroups = protocol.ProtocolGroups.Select(g => new ShareProtocolGroup
@@ -136,8 +131,6 @@ namespace bst.Controllers
         [HttpGet, Route("availablegroups/{protocolid}"), ProducesResponseType(typeof(List<String>), 200), AuthFilter]
         public object ShowAvailableGroupsThatCanBeAdded(Guid protocolid)
         {
-            var user = (User)HttpContext.Items["user"];
-            var session = (Session)HttpContext.Items["session"];
             var protocol = context.Protocols.Find(protocolid);
             if (protocol == null) return NotFound();
             var protocolGroups = protocol.ProtocolGroups.Select(g => g.Group.Name).ToList();
@@ -150,8 +143,6 @@ namespace bst.Controllers
         [HttpGet, Route("members/{protocolid}"), ProducesResponseType(typeof(List<ShareProtocolExternalMember>), 200), AuthFilter]
         public object ShowProtocolMembers(Guid protocolid)
         {
-            var user = (User)HttpContext.Items["user"];
-            var session = (Session)HttpContext.Items["session"];
             var protocol = context.Protocols.Find(protocolid);
             if (protocol == null) return NotFound();
             var externalMembers = protocol.ProtocolUsers.Select(x => new ShareProtocolExternalMember
@@ -174,7 +165,7 @@ namespace bst.Controllers
             var protocol = await context.Protocols.FindAsync(data.Protocolid);
             if (protocol == null) return NotFound("Protocol not found.");
             //check if user is protocol admin
-            var user = (User)HttpContext.Items["user"];
+            
             var userProtocolRelation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.Protocolid));
             if (userProtocolRelation == null || userProtocolRelation.Privilege > 1) Unauthorized("You are not protocol admin.");
 
@@ -210,7 +201,7 @@ namespace bst.Controllers
                 .FirstOrDefaultAsync(p => p.Group.Name.Equals(data.Groupname) && p.Protocol.Id.Equals(data.Protocolid));
             if (protocolgroup == null) NotFound("There's no relation between the protocol and the group");
             //check if user is protocol admin
-            var user = (User)HttpContext.Items["user"];
+            
             var userProtocolRelation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.Protocolid));
             if (userProtocolRelation == null || userProtocolRelation.Privilege > 1) Unauthorized("You are not protocol admin.");
             //remove group
@@ -223,7 +214,7 @@ namespace bst.Controllers
         public async Task<object> AddOrEditUser([FromBody]EditUserProtocolRelationIn data)
         {
             //check if user is protocol admin
-            var user = (User)HttpContext.Items["user"];
+            
             var userProtocolRelation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.Protocolid));
             if (userProtocolRelation == null || userProtocolRelation.Privilege > 1) Unauthorized("You are not protocol admin.");
             //find target user protocol relation
@@ -261,7 +252,7 @@ namespace bst.Controllers
         public async Task<object> RemoveUser([FromBody] RemoveUserProtocolRelationIn data)
         {
             //check if user is protocol admin
-            var user = (User)HttpContext.Items["user"];
+            
             var userProtocolRelation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.Protocolid));
             if (userProtocolRelation == null || userProtocolRelation.Privilege > 1) Unauthorized("You are not protocol admin.");
             //find target user protocol relation

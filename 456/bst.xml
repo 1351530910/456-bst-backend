@@ -13,6 +13,20 @@
             
             </summary>
         </member>
+        <member name="T:bst.Controllers.PLockFilter">
+            <summary>
+            attribute to check if an user has the lock of a protocol
+            </summary>
+        </member>
+        <member name="M:bst.Controllers.FunctionalFileController.mapFile(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="firstLayer"> protocolID</param>
+            <param name="SecondLayer"> studyID</param>
+            <param name="filename"> fileID</param>
+            <returns></returns>
+        </member>
         <member name="M:bst.Controllers.StudyController.GetSubject(System.Guid)">
             <summary>
             get a study

@@ -12,53 +12,42 @@ namespace bst.Controllers
     [Route("FunctionalFile")]
     public class FunctionalFileController : BaseController
     {
-        public static Dictionary<Guid, string> UploadQueue = new Dictionary<Guid, string>();
-
-        [HttpPost,Route("upload/{itemid}"),AuthFilter]
-        public async Task<object> upload(Guid itemid)
+        
+        [HttpPost,Route("createChannel"),AuthFilter,PLockFilter]
+        public async Task<object> createChannel([FromBody]ChannelData data)
         {
-            var user = (User)HttpContext.Items["user"];
-            var session = (Session)HttpContext.Items["session"];
-
-            if (HttpContext.Request.Form.Files.Count!=1)
-            {
-                return BadRequest("unsupported number of files");
-            } 
-
-            if (!UploadQueue.ContainsKey(itemid))
-            {
-                return BadRequest("upload request not found");
-            }
-
-            var file = HttpContext.Request.Form.Files[0];
-
-            await file.CopyToAsync(new FileStream(UploadQueue[itemid], FileMode.CreateNew));
-
-            UploadQueue.Remove(itemid);
-
-            return Ok();
+            var protocol = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(Request.Headers["protocolid"]));
+            if (protocol == null) return Unauthorized("no participation found");
+            var study = protocol.Protocol.Studies.FirstOrDefault(x => x.Id == data.studyID);
+            var channel = data.toChannel(mapFile(protocol.Protocol.Id.ToString(),study.Id.ToString(),Guid.NewGuid().ToString()));
+            context.Channels.Add(channel);
+            context.FunctionalFiles.Add(channel.Parent);
+            await context.SaveChangesAsync();
+            FileStream fs = new FileStream(channel.Parent.FileName, FileMode.CreateNew);
+            Guid uploadid = Guid.NewGuid();
+            FileController.queue[uploadid] = fs;
+            return uploadid;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="firstLayer"> protocolID</param>
+        /// <param name="SecondLayer"> studyID</param>
+        /// <param name="filename"> fileID</param>
+        /// <returns></returns>
+        public static string mapFile(string firstLayer,string SecondLayer,string filename)
+        {
+            if (string.IsNullOrEmpty(SecondLayer))
+            {
+                return $"./{firstLayer}/{filename}";
+            }
+            else
+            {
+                return $"./{firstLayer}/{SecondLayer}/{filename}";
+            }
+        }
+        
     }
-
-    #region filetypes
-    /*
-    [HttpPost,Route("Channel"),AuthFilter]
-    public Task<object> Channel([FromBody]ChannelData data)
-    {
-        var user = (User)HttpContext.Items["user"];
-
-
-
-
-
-        throw new NotImplementedException();
-    }
-    */
-
-
-
-
-
-    #endregion
 
 }

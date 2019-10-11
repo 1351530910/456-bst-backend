@@ -35,7 +35,7 @@ namespace bst.Controllers
                 HttpContext.Response.StatusCode = 401;
                 return "login failed";
             }
-            var session = AuthFilter.AddSession(user.Id, data.Deviceid);
+            var session = AuthFilter.AddSession(user.Id, data.Deviceid,user.Email);
             await context.SaveChangesAsync();
             return new LoginOut
             {
@@ -71,7 +71,7 @@ namespace bst.Controllers
             
             context.Users.Add(u);
             await context.SaveChangesAsync();
-            var sessionid = AuthFilter.AddSession(u.Id, user.Deviceid);
+            var sessionid = AuthFilter.AddSession(u.Id, user.Deviceid,user.Email);
 
             return new CreateUserOut
             {
@@ -97,14 +97,14 @@ namespace bst.Controllers
         [HttpPost, Route("logout")]       
         public object Logout()
         {
-            AuthFilter.sessions.Remove((Session)HttpContext.Items["session"]);
+            AuthFilter.sessions.Remove(session);
             return Ok();
         }
 
         [HttpPost, Route("listprotocols"), ProducesResponseType(typeof(IEnumerable<ProtocolData>), 200),AuthFilter]
         public IEnumerable<ProtocolData> ListProjects([FromBody]ListCount data)
         {
-            var user = (User)HttpContext.Items["user"];
+            
             if (user.ProtocolUsers != null)
             {
                 return user.ProtocolUsers.Skip(data.Start).Take(data.Count).Select(x => new ProtocolData(x.Protocol, x.Privilege));
@@ -118,7 +118,7 @@ namespace bst.Controllers
         [HttpPost, Route("listgroups"), ProducesResponseType(typeof(IEnumerable<GroupPreview>), 200),AuthFilter]
         public async Task<object> ListGroup([FromBody]ListCount data)
         {
-            var user = (User)HttpContext.Items["user"];
+            
             var result = user.GroupUsers.Select(r => new GroupPreview(r.Group));
             if (data.Order == 0)
                 result = result.OrderBy(r => r.Name);

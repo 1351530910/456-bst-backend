@@ -18,7 +18,7 @@ namespace bst.Controllers
         [HttpGet, Route("get/{studyid}"), ProducesResponseType(typeof(StudyData), 200)]
         public async Task<object> GetSubject(Guid studyid)
         {
-            var user = (User)HttpContext.Items["user"];
+            
 
             var study = await context.Studies.FindAsync(studyid);
             if (study == null) return NotFound("Study doesn't exist.");
@@ -37,8 +37,8 @@ namespace bst.Controllers
         [HttpPost, Route("create"), ProducesResponseType(typeof(Guid), 200)]
         public async Task<object> CreateStudy([FromBody]StudyData data)
         {
-            var user = (User)HttpContext.Items["user"];
-            var session = (Session)HttpContext.Items["session"];
+            
+            
             var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.ProtocolId));
 
             if (participation == null) return Unauthorized("You don't have access to this protocol.");

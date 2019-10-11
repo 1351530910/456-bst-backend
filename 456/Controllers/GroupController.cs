@@ -15,7 +15,7 @@ namespace bst.Controllers
         [HttpPost,Route("create"),ProducesResponseType(typeof(GroupPreview),200)]
         public async Task<object> CreateGroup([FromBody]CreateGroupIn data)
         {
-            var user = (User)HttpContext.Items["user"];
+            
             // group name should be unique and is not allowed to be empty 
             if (data.Name == null
                 //|| data.Name.IndexOf(' ') >= 0                
@@ -43,8 +43,7 @@ namespace bst.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public object Detail([FromBody]GroupName groupname)
         {
-            var u = (User)HttpContext.Items["user"];
-            var group = u.GroupUsers.FirstOrDefault(x => x.Group.Name.Equals(groupname.Name.Trim()));
+            var group = user.GroupUsers.FirstOrDefault(x => x.Group.Name.Equals(groupname.Name.Trim()));
             if (group == null)
                 return NotFound($"You do not have a group named {groupname.Name}.");
 
@@ -56,7 +55,7 @@ namespace bst.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<object> ChangePrivilege([FromBody]EditGroupMemberIn data)
         {
-            var user = (User)HttpContext.Items["user"];
+            
             var group = user.GroupUsers.FirstOrDefault(x => x.Group.Name.Equals(data.GroupName));
             if (group == null)
                 return NotFound($"You do not have a group named {data.GroupName}.");
@@ -81,7 +80,7 @@ namespace bst.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<object> AddUser([FromBody]AddGroupUserIn data)
         {
-            var user = (User)HttpContext.Items["user"];
+            
             var group = user.GroupUsers.FirstOrDefault(x => x.Group.Name.Equals(data.GroupName));
             if (group == null)
                 return NotFound($"You do not have a group named {data.GroupName}.");
@@ -111,7 +110,7 @@ namespace bst.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<object> RemoveUser([FromBody]RemoveGroupUserIn data)
         {
-            var user = (User)HttpContext.Items["user"];
+            
             var group = user.GroupUsers.FirstOrDefault(x=>x.Group.Name.Equals(data.GroupName));
             if (group == null)
                 return NotFound($"You do not have a group named {data.GroupName}.");

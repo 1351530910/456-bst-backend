@@ -10,12 +10,12 @@ using System.Net;
 
 namespace bst.Controllers
 {
-    
     public class Session
     {
         public Guid Sessionid { get; set; }
         public string Deviceid { get; set; }
         public Guid Userid { get; set; }
+        public string email { get; set; }
         public Guid Protocol = Guid.Empty;
         public DateTime LastActive { get; set; }
     }
@@ -33,14 +33,15 @@ namespace bst.Controllers
         public const int EXPIRETIME = 30;
 
         public static List<Session> sessions = new List<Session>();
-
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var dbcontext = (UserDB)context.HttpContext.Items["context"];
+            var controller = (BaseController)context.HttpContext.Items["context"];
+            var dbcontext = controller.context;
             
             if (!context.ModelState.IsValid)
             {
                 context.Result = new BadRequestResult();
+                return;
             }
             if ((string)context.HttpContext.Request.Headers["deviceid"] != null)
             {
@@ -55,37 +56,68 @@ namespace bst.Controllers
                         context.Result = new UnauthorizedResult();
                     }
                     session.LastActive = System.DateTime.Now;
-                    var user = dbcontext.Users.Find(session.Userid);
+                    var task = dbcontext.Users.FindAsync(session.Userid);
+                    task.Wait();
+                    var user = task.Result;
                     if(user == null) context.Result = new UnauthorizedResult();
-                    context.HttpContext.Items["user"] = user;
-                    context.HttpContext.Items["session"] = session;
-
+                    controller.user = user;
+                    controller.session = session;
                 }
                 else
                 {
                     context.Result = new UnauthorizedResult();
+                    return;
                 }
             }
             else
             {
                 context.Result = new UnauthorizedResult();
+                return;
             }
 
             base.OnActionExecuting(context);
         }
 
-        public static Guid AddSession(Guid userid,string deviceid)
+        public static Guid AddSession(Guid userid,string deviceid,string email)
         {
             var session = new Session
             {
                 Sessionid = Guid.NewGuid(),
                 Deviceid = deviceid,
                 Userid = userid,
-                LastActive = DateTime.Now
+                LastActive = DateTime.Now,
+                email = email
             };
             sessions.Add(session);
             return session.Sessionid;
         }
+    }
+    /// <summary>
+    /// attribute to check if an user has the lock of a protocol
+    /// </summary>
+    public class PLockFilter : ActionFilterAttribute
+    {
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            string pid;
+            if ((pid = context.HttpContext.Request.Headers["protocolid"])==null)
+            {
+                context.Result = new BadRequestObjectResult("protocolid not found");
+                return;
+            }
+            var controller = (BaseController)context.HttpContext.Items["context"];
+            var protocolid = Guid.Parse(pid);
+            if (controller.session.Protocol != protocolid)
+            {
+                Session s;
+                if ((s = AuthFilter.sessions.FirstOrDefault(x => x.Protocol == protocolid)) != null)
+                {
 
+                    context.Result = new UnauthorizedObjectResult("locked by " + s.email);
+                    
+                }
+            }
+            base.OnActionExecuting(context);
+        }
     }
 }
