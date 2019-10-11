@@ -313,6 +313,7 @@ namespace bst.Model
         //metadata
         public string Comment { get; set; }
         public string FileName { get; set; }
+        public string url { get; set; }
         public FunctionalFileType FileType { get; set; }
         [Required]
         public virtual Study Study { get; set; }

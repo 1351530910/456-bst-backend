@@ -19,6 +19,7 @@ namespace bst.Controllers
             var study = protocol.Studies.FirstOrDefault(x => x.Id == data.studyID);
             var channel = data.toChannel();
             channel.Parent.Study = study;
+            channel.Parent.url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), channel.Parent.Id.ToString());
             context.Channels.Add(channel);
             context.FunctionalFiles.Add(channel.Parent);
             await context.SaveChangesAsync();
@@ -40,14 +41,25 @@ namespace bst.Controllers
         {
             if (string.IsNullOrEmpty(SecondLayer))
             {
-                return $"./files/{firstLayer}/ffiles/{filename}";
+                return $"./wwwroot/files/{firstLayer}/ffiles/{filename}";
             }
             else
             {
-                return $"./files/{firstLayer}/ffiles/{SecondLayer}/{filename}";
+                return $"./wwwroot/files/{firstLayer}/ffiles/{SecondLayer}/{filename}";
             }
         }
-        
+        private static string mapUrl(string firstLayer, string SecondLayer, string filename)
+        {
+            if (string.IsNullOrEmpty(SecondLayer))
+            {
+                return $"/files/{firstLayer}/ffiles/{filename}";
+            }
+            else
+            {
+                return $"/files/{firstLayer}/ffiles/{SecondLayer}/{filename}";
+            }
+        }
+
     }
 
 }
