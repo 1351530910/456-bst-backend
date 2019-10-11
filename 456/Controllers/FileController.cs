@@ -17,14 +17,14 @@ namespace bst.Controllers
         UserDB context = new UserDB();
         const int expireTime = 30;
         public static Dictionary<Guid, FileStream> queue = new Dictionary<Guid, FileStream>();
-        
 
-        [HttpPost,Route("upload/{uploadid}/{last}")]
-        public async Task<object> upload(Guid uploadid,bool last)
+
+        [HttpPost, Route("upload/{uploadid}/{last}")]
+        public async Task<object> upload(Guid uploadid, bool last)
         {
 
             if (HttpContext.Request.Form.Files.Count != 1) return BadRequest("number of file wrong");
-            if (queue[uploadid]!=null)
+            if (queue[uploadid] != null)
             {
                 await HttpContext.Request.Form.Files.First().CopyToAsync(queue[uploadid]);
                 if (last)

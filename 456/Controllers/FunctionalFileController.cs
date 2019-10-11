@@ -36,7 +36,7 @@ namespace bst.Controllers
         /// <param name="SecondLayer"> studyID</param>
         /// <param name="filename"> fileID</param>
         /// <returns></returns>
-        public static string mapFile(string firstLayer,string SecondLayer,string filename)
+        private static string mapFile(string firstLayer,string SecondLayer,string filename)
         {
             if (string.IsNullOrEmpty(SecondLayer))
             {
