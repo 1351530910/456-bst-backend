@@ -19,8 +19,8 @@ namespace bst.Controllers
         public static Dictionary<Guid, FileStream> queue = new Dictionary<Guid, FileStream>();
         
 
-        [HttpPost,Route("test/{uploadid}/{last}")]
-        public async Task<object> test(Guid uploadid,bool last)
+        [HttpPost,Route("upload/{uploadid}/{last}")]
+        public async Task<object> upload(Guid uploadid,bool last)
         {
 
             if (HttpContext.Request.Form.Files.Count != 1) return BadRequest("number of file wrong");
@@ -34,8 +34,6 @@ namespace bst.Controllers
                     queue.Remove(uploadid);
                 }
             }
-            
-            
             return Ok();
         }
 

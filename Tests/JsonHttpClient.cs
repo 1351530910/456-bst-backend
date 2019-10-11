@@ -24,18 +24,24 @@ namespace Tests
         }
         public async Task PostAsJsonAsync(string url, object data)
         {
-            var response = await PostAsync(url, new StringContent(JsonSerializer.Serialize(data)));
+            var response = await PostAsync(url, new StringContent(JsonSerializer.Serialize(data), System.Text.Encoding.UTF8, "application/json"));
             if (!response.IsSuccessStatusCode)
-                throw new HttpRequestException();
+                throw new Exception();
 
         }
         public async Task<T> PostAsJsonAsync<T>(string url,object data)
         {
-            var response = await PostAsync(url, new StringContent(JsonSerializer.Serialize(data)));
+            var response = await PostAsync(url, new StringContent(JsonSerializer.Serialize(data),System.Text.Encoding.UTF8,"application/json"));
             if (response.IsSuccessStatusCode)
-                return JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync());
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                
+                
+                T d = JsonSerializer.Deserialize<T>(content);
+                return d;
+            }
             else
-                throw new HttpRequestException();
+                throw new Exception(response.StatusCode+"  " +await response.Content.ReadAsStringAsync());
                
         }
     }

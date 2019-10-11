@@ -54,7 +54,28 @@ namespace Tests
             UseDefaultAnat = true,
             UseDefaultChannel = true
         };
-
+        static bst.Model.Study study = new bst.Model.Study
+        {
+            Filename = randomstr(),
+            Name = randomstr(),
+            Condition = randomstr(),
+            DateOfStudy = System.DateTime.Now,
+            IChannel = 5,
+            IHeadModel = 1,
+            Protocol = protocol
+        };
+        static bst.Model.Channel channel = new bst.Model.Channel
+        {
+            NbChannels = 5,
+            TransfMegLabels = randomstr(),
+            TransfEegLabels = randomstr()
+        };
+        static bst.Model.FunctionalFile ff = new bst.Model.FunctionalFile
+        {
+            Comment = randomstr(),
+            Study = study,
+            FileType = bst.Model.FunctionalFileType.Channel
+        };
         #endregion
         static void Main(string[] args)
         {
@@ -82,7 +103,7 @@ namespace Tests
                 LastName = u.LastName,
                 Deviceid = deviceid
             };
-            
+
             var userdata = await client.PostAsJsonAsync<CreateUserOut>("user/createuser", p);
             sessionid = userdata.Sessionid.ToString();
 
@@ -234,11 +255,41 @@ namespace Tests
             Assert.AreEqual(data.UseDefaultChannel, protocol.UseDefaultChannel);
             Assert.AreEqual(data.Comment, protocol.Comment);
         }
-        public static async Task checkProtocolGroup()
+        public static async Task createStudy()
         {
-
+            var studyid= await client.PostAsJsonAsync<string>("study/create", new bst.Model.StudyData
+            {
+                Filename = study.Filename,
+                Name = study.Name,
+                Condition = study.Condition,
+                DateOfStudy = study.DateOfStudy,
+                IChannel = study.IChannel,
+                IHeadModel = study.IHeadModel,
+                ProtocolId = study.Protocol.Id
+            });
+            study.Id = Guid.Parse(studyid);
         }
+        public static async Task createChannel()
+        {
+            var uploadid = await client.PostAsJsonAsync<string>("functionalfile/createchannel", new bst.Model.ChannelData
+            {
+                Comment = ff.Comment,
+                studyID = ff.Study.Id,
+                type = ff.FileType,
+                NbChannels = channel.NbChannels,
+                TransfEegLabels = channel.TransfEegLabels,
+                TransfMegLabels = channel.TransfMegLabels
+            });
+            using (HttpClient tempclient = new HttpClient())
+            {
+                byte[] data = new byte[5000000];
+                MultipartFormDataContent form = new MultipartFormDataContent();
+                form.Add(new ByteArrayContent(data));
+                var response = await tempclient.PostAsync($"localhost/file/upload/{protocol.Id}/true", form);
+                if (!response.IsSuccessStatusCode) Console.WriteLine("upload failed");
 
+            }
+        }
         public static string randomstr()
         {
             return Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10);
@@ -247,8 +298,17 @@ namespace Tests
         public static void call(MethodInfo f)
         {
             lasttime = System.DateTime.Now;
-            f.Invoke(null, null);
-            Console.WriteLine($"{f.Name} passed using {(System.DateTime.Now-lasttime).TotalMilliseconds}ms");
+            try
+            {
+                Task t = (Task)f.Invoke(null, null);
+                t.Wait();
+                Console.WriteLine($"{f.Name} passed using {(System.DateTime.Now - lasttime).TotalMilliseconds}ms");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(f.Name + " "+ex.Message);
+            }
+            
         }
     }
 }

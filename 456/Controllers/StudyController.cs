@@ -37,8 +37,6 @@ namespace bst.Controllers
         [HttpPost, Route("create"), ProducesResponseType(typeof(Guid), 200)]
         public async Task<object> CreateStudy([FromBody]StudyData data)
         {
-            
-            
             var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.ProtocolId));
 
             if (participation == null) return Unauthorized("You don't have access to this protocol.");
