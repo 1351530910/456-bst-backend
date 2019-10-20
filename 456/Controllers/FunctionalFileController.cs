@@ -29,6 +29,16 @@ namespace bst.Controllers
             return uploadid;
         }
 
+
+        [HttpPost, Route("test/{filename}"), AuthFilter, WriteLock]
+        public async Task<object> test(string filename)
+        {
+            FileStream fs = new FileStream(filename, FileMode.CreateNew);
+            Guid uploadid = Guid.NewGuid();
+            FileController.queue[uploadid] = fs;
+            return uploadid;
+        }
+
         /// <summary>
         /// 
         /// </summary>

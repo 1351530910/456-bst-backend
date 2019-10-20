@@ -31,13 +31,13 @@ namespace bst.Controllers
         [HttpPost, Route("lock/{protocolid}"), ProducesResponseType(typeof(string), 200), AuthFilter]
         public object LockProtocol(Guid protocolid)
         {
-            session.Protocol = protocolid;
+            session.Protocolid = protocolid;
             return Ok();
         }
         [HttpPost, Route("unlock/{protocolid}"), ProducesResponseType(typeof(string), 200), AuthFilter]
         public object UnlockProtocol(Guid protocolid)
         {
-            session.Protocol = Guid.Empty;
+            session.Protocolid = Guid.Empty;
             return Ok();
         }
 
@@ -98,7 +98,7 @@ namespace bst.Controllers
                 context.ProtocolUsers.Add(protocoluser);
                 await context.SaveChangesAsync();
             }
-            session.Protocol = protocol.Id;
+            session.Protocolid = protocol.Id;
             return new Protocolid
             {
                 Id = protocol.Id

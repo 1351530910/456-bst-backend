@@ -16,7 +16,7 @@ namespace bst.Controllers
         public string Deviceid { get; set; }
         public Guid Userid { get; set; }
         public string email { get; set; }
-        public Guid Protocol = Guid.Empty;
+        public Guid Protocolid = Guid.Empty;
         public DateTime LastActive { get; set; }
     }
 
@@ -109,20 +109,23 @@ namespace bst.Controllers
 
             var controller = (BaseController)context.HttpContext.Items["context"];
             var protocolid = Guid.Parse(pid);
-            var protocol = controller.user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(protocolid));
-            if (protocol==null)
+            var protocoluser = controller.user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(protocolid));
+            if (protocoluser==null)
             {
                 context.Result = new UnauthorizedObjectResult("protocol participation not found " + controller.user.ProtocolUsers.Count);
             }
-            controller.protocol = protocol.Protocol;
-            if (controller.session.Protocol != protocolid)
+            controller.protocol = protocoluser.Protocol;
+            if (controller.session.Protocolid != protocolid)
             {
                 Session s;
-                if ((s = AuthFilter.sessions.FirstOrDefault(x => x.Protocol == protocolid)) != null)
+                if ((s = AuthFilter.sessions.FirstOrDefault(x => x.Protocolid.Equals(protocolid))) != null)
                 {
                     context.Result = new UnauthorizedObjectResult("locked by " + s.email);
                 }
-                s.Protocol = protocol.Protocol.Id;
+                var sessionid = Guid.Parse((string)context.HttpContext.Request.Headers["sessionid"]);
+                var deviceid = (string)context.HttpContext.Request.Headers["deviceid"];
+                s = AuthFilter.sessions.FirstOrDefault(x => x.Deviceid.Equals(deviceid) && x.Sessionid.Equals(sessionid));
+                s.Protocolid = protocoluser.Protocol.Id;
             }
             
             base.OnActionExecuting(context);
@@ -151,10 +154,10 @@ namespace bst.Controllers
                 context.Result = new UnauthorizedObjectResult("protocol participation not found " + controller.user.ProtocolUsers.Count);
             }
             controller.protocol = protocol.Protocol;
-            if (controller.session.Protocol != protocolid)
+            if (controller.session.Protocolid != protocolid)
             {
                 Session s;
-                if ((s = AuthFilter.sessions.FirstOrDefault(x => x.Protocol == protocolid)) != null)
+                if ((s = AuthFilter.sessions.FirstOrDefault(x => x.Protocolid == protocolid)) != null)
                 {
                     context.Result = new UnauthorizedObjectResult("locked by " + s.email);
                 }
