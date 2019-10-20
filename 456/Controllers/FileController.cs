@@ -45,7 +45,7 @@ namespace bst.Controllers
             if (HttpContext.Request.ContentLength > 0)
             {
                 byte[] buffer = new byte[(int)HttpContext.Request.ContentLength];
-                HttpContext.Request.Body.Read(buffer, 0, buffer.Length);
+                await HttpContext.Request.Body.ReadAsync(buffer, 0, buffer.Length);
                 if (queue.ContainsKey(uploadid))
                 {
                     queue[uploadid].Write(buffer);
