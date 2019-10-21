@@ -7,6 +7,7 @@ using bst.Model;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using System.Collections.Generic;
+using System.Timers;
 
 namespace bst.Controllers
 {
@@ -14,9 +15,32 @@ namespace bst.Controllers
     [ApiController]
     public class FileController : BaseController
     {
+        public struct QueueItem
+        {
+            public Guid uploadid { get; set; }
+            public FileStream fs { get; set; }
+            public Guid sessionid { get; set; }
+        }
+
         UserDB context = new UserDB();
-        const int expireTime = 30;
-        public static Dictionary<Guid, FileStream> queue = new Dictionary<Guid, FileStream>();
+
+        public static List<QueueItem> q = new List<QueueItem>();
+        private static Timer timer;
+
+        static FileController()
+        {
+            timer = new Timer();
+            timer.AutoReset = true;
+            timer.Interval = 1800000;
+            timer.Elapsed += clearQueue;
+        }
+
+        private static void clearQueue(object sender, ElapsedEventArgs e)
+        {
+            var t = System.DateTime.Now.AddMinutes(-AuthFilter.EXPIRETIME);
+            var expired = AuthFilter.sessions.Where(x => x.LastActive < t);
+            
+        }
 
 
         [HttpPost, Route("upload/{uploadid}/{last}")]

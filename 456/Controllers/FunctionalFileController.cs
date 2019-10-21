@@ -24,7 +24,7 @@ namespace bst.Controllers
             context.FunctionalFiles.Add(channel.Parent);
             await context.SaveChangesAsync();
             Directory.CreateDirectory(mapFile(protocol.Id.ToString(),study.Id.ToString(),""));
-            FileStream fs = new FileStream(mapFile(protocol.Id.ToString(), study.Id.ToString(), channel.Parent.FileName), FileMode.CreateNew);
+            FileStream fs = new FileStream(mapFile(protocol.Id.ToString(), study.Id.ToString(), channel.Parent.Id.ToString()), FileMode.CreateNew);
             Guid uploadid = Guid.NewGuid();
             FileController.queue[uploadid] = fs;
             return uploadid;
@@ -41,11 +41,11 @@ namespace bst.Controllers
         {
             if (string.IsNullOrEmpty(SecondLayer))
             {
-                return $"./wwwroot/files/{firstLayer}/ffiles/{filename}";
+                return $"./wwwroot/files/{firstLayer}/ffiles/{filename}.dat";
             }
             else
             {
-                return $"./wwwroot/files/{firstLayer}/ffiles/{SecondLayer}/{filename}";
+                return $"./wwwroot/files/{firstLayer}/ffiles/{SecondLayer}/{filename}.dat";
             }
         }
         private static string mapUrl(string firstLayer, string SecondLayer, string filename)
