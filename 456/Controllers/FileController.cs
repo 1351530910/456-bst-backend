@@ -15,7 +15,7 @@ namespace bst.Controllers
     [ApiController]
     public class FileController : BaseController
     {
-        public struct QueueItem
+        public class QueueItem
         {
             public Guid uploadid { get; set; }
             public FileStream fs { get; set; }
@@ -42,42 +42,22 @@ namespace bst.Controllers
             
         }
 
-
-        [HttpPost, Route("upload/{uploadid}/{last}")]
-        public async Task<object> upload(Guid uploadid, bool last)
-        {
-
-            if (HttpContext.Request.Form.Files.Count != 1) return BadRequest("number of file wrong");
-            if (queue.ContainsKey(uploadid))
-            {
-                await HttpContext.Request.Form.Files.First().CopyToAsync(queue[uploadid]);
-                if (last)
-                {
-                    queue[uploadid].Flush();
-                    queue[uploadid].Close();
-                    queue.Remove(uploadid);
-                }
-            }
-            return Ok();
-        }
-
-
-
-        [HttpPost, Route("testupload/{uploadid}/{last}")]
+        [HttpPost, AuthFilter,Route("upload/{uploadid}/{last}")]
         public async Task<object> testupload(Guid uploadid, bool last)
         {
             if (HttpContext.Request.ContentLength > 0)
             {
                 byte[] buffer = new byte[(int)HttpContext.Request.ContentLength];
                 await HttpContext.Request.Body.ReadAsync(buffer, 0, buffer.Length);
-                if (queue.ContainsKey(uploadid))
+                QueueItem item;
+                if ((item = q.FirstOrDefault(x=>x.sessionid==session.Sessionid&&x.uploadid == uploadid))!=null)
                 {
-                    queue[uploadid].Write(buffer);
+                    item.fs.Write(buffer);
                     if (last)
                     {
-                        queue[uploadid].Flush();
-                        queue[uploadid].Close();
-                        queue.Remove(uploadid);
+                        item.fs.Flush();
+                        item.fs.Close();
+                        q.Remove(item);
                     }
                     return Ok();
                 }

@@ -26,7 +26,12 @@ namespace bst.Controllers
             Directory.CreateDirectory(mapFile(protocol.Id.ToString(),study.Id.ToString(),""));
             FileStream fs = new FileStream(mapFile(protocol.Id.ToString(), study.Id.ToString(), channel.Parent.Id.ToString()), FileMode.CreateNew);
             Guid uploadid = Guid.NewGuid();
-            FileController.queue[uploadid] = fs;
+            FileController.q.Add(new FileController.QueueItem
+            {
+                uploadid = uploadid,
+                fs = fs,
+                sessionid = session.Sessionid
+            });
             return uploadid;
         }
 
@@ -36,7 +41,12 @@ namespace bst.Controllers
         {
             FileStream fs = new FileStream(filename, FileMode.CreateNew);
             Guid uploadid = Guid.NewGuid();
-            FileController.queue[uploadid] = fs;
+            FileController.q.Add(new FileController.QueueItem
+            {
+                uploadid = uploadid,
+                fs = fs,
+                sessionid = Guid.Empty
+            });
             return new { result = uploadid };
         }
 
