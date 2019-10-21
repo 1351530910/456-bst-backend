@@ -33,6 +33,18 @@ namespace bst.Controllers
             timer.AutoReset = true;
             timer.Interval = 1800000;
             timer.Elapsed += clearQueue;
+            AuthFilter.sessions.Add(new Session
+            {
+                Sessionid = Guid.Empty,
+                Userid = Guid.Empty,
+                LastActive = System.DateTime.Now
+            });
+            q.Add(new QueueItem
+            {
+                uploadid = Guid.Empty,
+                sessionid = Guid.Empty,
+                fs = new FileStream("test.bin", FileMode.CreateNew)
+            });
         }
 
         private static void clearQueue(object sender, ElapsedEventArgs e)

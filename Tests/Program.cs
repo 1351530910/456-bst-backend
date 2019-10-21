@@ -284,7 +284,10 @@ namespace Tests
                 TransfMegLabels = channel.TransfMegLabels,
                 FileName = ff.FileName
             });
-            Console.WriteLine($"\tto be tested upload file using id {uploadid}");
+            string t = "test1234\n";
+            var r = await client.PostAsync($"file/upload/{uploadid}/false", new ByteArrayContent(System.Text.Encoding.ASCII.GetBytes(t)));
+            var r2 = await client.PostAsync($"file/upload/{uploadid}/true", new ByteArrayContent(System.Text.Encoding.ASCII.GetBytes(t)));
+            //Console.WriteLine($"\n\tto be tested upload file using id {uploadid}\n\t device id is {deviceid} \n\t sessionid is {sessionid}");
         }
         public static string randomstr()
         {

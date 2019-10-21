@@ -37,11 +37,13 @@ namespace bst.Controllers
         {
             var controller = (BaseController)context.HttpContext.Items["context"];
             var dbcontext = controller.context;
-            
-            if (!context.ModelState.IsValid)
+            if (context.HttpContext.Request.ContentType != "application/octet-stream")
             {
-                context.Result = new BadRequestResult();
-                return;
+                if (!context.ModelState.IsValid)
+                {
+                    context.Result = new BadRequestResult();
+                    return;
+                }
             }
             if ((string)context.HttpContext.Request.Headers["deviceid"] != null)
             {
