@@ -61,5 +61,31 @@ namespace bst.Controllers
             return Ok();
         }
 
+
+
+        [HttpPost, Route("testupload/{uploadid}/{last}")]
+        public async Task<object> testupload(Guid uploadid, bool last)
+        {
+            if (HttpContext.Request.ContentLength > 0)
+            {
+                byte[] buffer = new byte[(int)HttpContext.Request.ContentLength];
+                await HttpContext.Request.Body.ReadAsync(buffer, 0, buffer.Length);
+                if (queue.ContainsKey(uploadid))
+                {
+                    queue[uploadid].Write(buffer);
+                    if (last)
+                    {
+                        queue[uploadid].Flush();
+                        queue[uploadid].Close();
+                        queue.Remove(uploadid);
+                    }
+                    return Ok();
+                }
+                return NotFound("Upload ID not valid.");
+            }
+            return NoContent();
+           
+        }
+
     }
 }
