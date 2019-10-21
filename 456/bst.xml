@@ -34,6 +34,15 @@
             <param name="filename"> fileID</param>
             <returns></returns>
         </member>
+        <member name="M:bst.Controllers.FunctionalFileController.mapUrl(System.String,System.String,System.String)">
+            <summary>
+             "./files/{firstLayer}/ffiles/{SecondLayer}/{filename}";
+            </summary>
+            <param name="firstLayer"> protocolID</param>
+            <param name="SecondLayer"> studyID</param>
+            <param name="filename"> fileID</param>
+            <returns></returns>
+        </member>
         <member name="M:bst.Controllers.StudyController.GetSubject(System.Guid)">
             <summary>
             get a study

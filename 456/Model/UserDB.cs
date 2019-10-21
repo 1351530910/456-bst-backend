@@ -315,8 +315,7 @@ namespace bst.Model
         public string FileName { get; set; }
         public string url { get; set; }
         public FunctionalFileType FileType { get; set; }
-        [Required]
-        public virtual Study Study { get; set; }
+        
         public virtual ICollection<History> Histories { get; set; }
     }
 
@@ -336,6 +335,8 @@ namespace bst.Model
         public int DbTransfEeg { get; set; }
         public int DbIntraElectrodes { get; set; }
         [Required]
+        public virtual Study Study { get; set; }
+        [Required]
         public virtual FunctionalFile Parent { get; set; }
     }
 
@@ -349,6 +350,8 @@ namespace bst.Model
         public int NAvg { get; set; }
         public string ColormapType { get; set; }
         public string DisplayUnits { get; set; }
+        [Required]
+        public virtual Study Study { get; set; }
         //summary info 
         [Required]
         public virtual FunctionalFile Parent { get; set; }
@@ -365,6 +368,8 @@ namespace bst.Model
         //summary info
         public int DbChannelFlag { get; set; }
         [Required]
+        public virtual Study Study { get; set; }
+        [Required]
         public virtual FunctionalFile Parent { get; set; }
     }
 
@@ -378,6 +383,8 @@ namespace bst.Model
         public string EEGMethod { get; set; }
         public string ECOGMethod { get; set; }
         public string SEEGMethod { get; set; }
+        [Required]
+        public virtual Study Study { get; set; }
         [Required]
         //summary info
         public virtual FunctionalFile Parent { get; set; }
@@ -399,6 +406,8 @@ namespace bst.Model
         public bool DbImagingKernel { get; set; }
         public int DbChannelFlag { get; set; }
         public int DbAtlas { get; set; }
+        [Required]
+        public virtual Study Study { get; set; }
         [Required]
         public virtual FunctionalFile Parent { get; set; }
     }
@@ -428,7 +437,10 @@ namespace bst.Model
         //summary info
         public int DbEvents { get; set; }
         public int DbEpoch { get; set; }
+        [Required]
+        public virtual Study Study { get; set; }
         public int DbChannelFlag { get; set; }
+        [Required]
         public virtual FunctionalFile Parent { get; set; }
     }
 
@@ -443,6 +455,9 @@ namespace bst.Model
         public int DbChannelFlag { get; set; }
         public int DbEvents { get; set; }
         public int DbAtlas { get; set; }
+        [Required]
+        public virtual Study Study { get; set; }
+        [Required]
         public virtual FunctionalFile Parent { get; set; }
     }
 
@@ -452,6 +467,8 @@ namespace bst.Model
         public Guid Id { get; set; }
         //summary info 
         public int DbDipole { get; set; }
+        [Required]
+        public virtual Study Study { get; set; }
         public virtual FunctionalFile Parent { get; set; }
     }
 
@@ -459,6 +476,8 @@ namespace bst.Model
     {
         [Key]
         public Guid Id { get; set; }
+        [Required]
+        public virtual Study Study { get; set; }
         public virtual FunctionalFile Parent { get; set; }
     }
 
@@ -466,6 +485,8 @@ namespace bst.Model
     {
         [Key]
         public Guid Id { get; set; }
+        [Required]
+        public virtual Study Study { get; set; }
         public virtual FunctionalFile Parent { get; set; }
     }
 
@@ -489,7 +510,7 @@ namespace bst.Model
         public string FileName { get; set; }
         public AnatomicalFileType FileType { get; set; }
         
-        public virtual Subject Subject { get; set; }
+        
         public virtual ICollection<History> Histories { get; set; }
     }
 
@@ -497,6 +518,7 @@ namespace bst.Model
     {
         [Key]
         public Guid Id { get; set; }
+        public virtual Subject Subject { get; set; }
 
         public virtual AnatomicalFile Parent { get; set; }
     }
@@ -514,6 +536,7 @@ namespace bst.Model
         public double DbVoxsizeZ { get; set; }
         public bool DbSCS { get; set; }
         public bool DbNCS { get; set; }
+        public virtual Subject Subject { get; set; }
 
         public virtual AnatomicalFile Parent { get; set; }
     }
@@ -528,7 +551,7 @@ namespace bst.Model
         public int DbVertices { get; set; }
         public int DbFaces { get; set; }
         public int DbAtlas { get; set; }
-
+        public virtual Subject Subject { get; set; }
         public virtual AnatomicalFile Parent { get; set; }
     }
     #endregion

@@ -13,7 +13,7 @@ namespace bst.Controllers
 {
     [Route("file")]
     [ApiController]
-    public class FileController : BaseController
+    public class FileController : FunctionalFileController
     {
         public class QueueItem
         {
@@ -33,29 +33,16 @@ namespace bst.Controllers
             timer.AutoReset = true;
             timer.Interval = 1800000;
             timer.Elapsed += clearQueue;
-            AuthFilter.sessions.Add(new Session
-            {
-                Sessionid = Guid.Empty,
-                Userid = Guid.Empty,
-                LastActive = System.DateTime.Now
-            });
-            q.Add(new QueueItem
-            {
-                uploadid = Guid.Empty,
-                sessionid = Guid.Empty,
-                fs = new FileStream("test.bin", FileMode.CreateNew)
-            });
         }
 
         private static void clearQueue(object sender, ElapsedEventArgs e)
         {
             var t = System.DateTime.Now.AddMinutes(-AuthFilter.EXPIRETIME);
             var expired = AuthFilter.sessions.Where(x => x.LastActive < t);
-            
         }
 
         [HttpPost, AuthFilter,Route("upload/{uploadid}/{last}")]
-        public async Task<object> testupload(Guid uploadid, bool last)
+        public async Task<object> upload(Guid uploadid, bool last)
         {
             if (HttpContext.Request.ContentLength > 0)
             {
@@ -76,8 +63,12 @@ namespace bst.Controllers
                 return NotFound("Upload ID not valid.");
             }
             return NoContent();
-           
         }
-
+        [HttpGet,AuthFilter,ReadLock,Route("download/{studyID}/{fileID}")]
+        public async Task<object> download(string studyID,string fileID)
+        {
+            var path = mapFile(protocol.Id.ToString(), studyID, fileID);
+            return new FileStreamResult(new FileStream(path,FileMode.Open),"application/octet-stream");
+        }
     }
 }

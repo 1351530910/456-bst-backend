@@ -12,44 +12,6 @@ namespace bst.Controllers
     [Route("FunctionalFile")]
     public class FunctionalFileController : BaseController
     {
-        
-        [HttpPost,Route("createChannel"),AuthFilter,WriteLock]
-        public async Task<object> createChannel([FromBody]ChannelData data)
-        {
-            var study = protocol.Studies.FirstOrDefault(x => x.Id == data.studyID);
-            var channel = data.toChannel();
-            channel.Parent.Study = study;
-            channel.Parent.url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), channel.Parent.Id.ToString());
-            context.Channels.Add(channel);
-            context.FunctionalFiles.Add(channel.Parent);
-            await context.SaveChangesAsync();
-            Directory.CreateDirectory(mapFile(protocol.Id.ToString(),study.Id.ToString(),""));
-            FileStream fs = new FileStream(mapFile(protocol.Id.ToString(), study.Id.ToString(), channel.Parent.Id.ToString()), FileMode.CreateNew);
-            Guid uploadid = Guid.NewGuid();
-            FileController.q.Add(new FileController.QueueItem
-            {
-                uploadid = uploadid,
-                fs = fs,
-                sessionid = session.Sessionid
-            });
-            return uploadid;
-        }
-
-
-        [HttpPost, Route("test/{filename}")]
-        public async Task<object> test(string filename)
-        {
-            FileStream fs = new FileStream(filename, FileMode.CreateNew);
-            Guid uploadid = Guid.NewGuid();
-            FileController.q.Add(new FileController.QueueItem
-            {
-                uploadid = uploadid,
-                fs = fs,
-                sessionid = Guid.Empty
-            });
-            return new { result = uploadid };
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -57,7 +19,7 @@ namespace bst.Controllers
         /// <param name="SecondLayer"> studyID</param>
         /// <param name="filename"> fileID</param>
         /// <returns></returns>
-        private static string mapFile(string firstLayer,string SecondLayer,string filename)
+        public static string mapFile(string firstLayer,string SecondLayer,string filename)
         {
             if (string.IsNullOrEmpty(SecondLayer))
             {
@@ -68,7 +30,14 @@ namespace bst.Controllers
                 return $"./wwwroot/files/{firstLayer}/ffiles/{SecondLayer}/{filename}.dat";
             }
         }
-        private static string mapUrl(string firstLayer, string SecondLayer, string filename)
+        /// <summary>
+        ///  "./files/{firstLayer}/ffiles/{SecondLayer}/{filename}";
+        /// </summary>
+        /// <param name="firstLayer"> protocolID</param>
+        /// <param name="SecondLayer"> studyID</param>
+        /// <param name="filename"> fileID</param>
+        /// <returns></returns>
+        public static string mapUrl(string firstLayer, string SecondLayer, string filename)
         {
             if (string.IsNullOrEmpty(SecondLayer))
             {

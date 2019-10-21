@@ -92,12 +92,12 @@ namespace bst.Model
         public Guid SubjectId { get; set; }
 
         public IEnumerable<ChannelData> Channels { get; set; }
-        public IEnumerable<TimeFreqData> TimeFreqs { get; set; }
-        public IEnumerable<StatData> Stats { get; set; }
-        public IEnumerable<HeadModelData> HeadModels { get; set; }
-        public IEnumerable<ResultData> Results { get; set; }
-        public IEnumerable<RecordingData> Recordings { get; set; }
-        public IEnumerable<MatrixData> Matrixs { get; set; }
+        //public IEnumerable<TimeFreqData> TimeFreqs { get; set; }
+        //public IEnumerable<StatData> Stats { get; set; }
+        //public IEnumerable<HeadModelData> HeadModels { get; set; }
+        //public IEnumerable<ResultData> Results { get; set; }
+        //public IEnumerable<RecordingData> Recordings { get; set; }
+        //public IEnumerable<MatrixData> Matrixs { get; set; }
         //public IEnumerable<DipoleData> Dipoles { get; set; }
         //public IEnumerable<CovarianceData> Covariances { get; set; }
         //public IEnumerable<ImageData> Images { get; set; }
@@ -113,17 +113,21 @@ namespace bst.Model
             DateOfStudy = study.DateOfStudy;
             IChannel = study.IChannel;
             IHeadModel = study.IHeadModel;
-            ProtocolId = study.Subject.Protocol.Id;
+            ProtocolId = study.Protocol.Id;
             Condition = study.Condition;
-            SubjectId = study.Subject.Id;
+            if (study.Subject!=null)
+            {
+                SubjectId = study.Subject.Id;
+            }
 
             Channels = study.Channels.Select(x => new ChannelData(x));
-            TimeFreqs = study.TimeFreqs.Select(x => new TimeFreqData(x));
-            Stats = study.Stats.Select(x => new StatData(x));
-            HeadModels = study.HeadModels.Select(x => new HeadModelData(x));
-            Results = study.Results.Select(x => new ResultData(x));
-            Recordings = study.Recordings.Select(x => new RecordingData(x));
-            Matrixs = study.Matrixs.Select(x => new MatrixData(x));
+#warning other filetypes
+            //TimeFreqs = study.TimeFreqs.Select(x => new TimeFreqData(x));
+            //Stats = study.Stats.Select(x => new StatData(x));
+            //HeadModels = study.HeadModels.Select(x => new HeadModelData(x));
+            //Results = study.Results.Select(x => new ResultData(x));
+            //Recordings = study.Recordings.Select(x => new RecordingData(x));
+            //Matrixs = study.Matrixs.Select(x => new MatrixData(x));
 
         }
 
@@ -153,7 +157,6 @@ namespace bst.Model
         public Guid Id { get; set; }
         public string Comment { get; set; }
         public string FileName { get; set; }
-        public Guid studyID { get; set; }
         public FunctionalFileType type { get; set; }
         public IEnumerable<HistoryData> Histories { get; set; }
         public FunctionalFileData()
@@ -166,7 +169,6 @@ namespace bst.Model
             Comment = f.Comment;
             FileName = f.FileName;
             type = f.FileType;
-            studyID = f.Study.Id;
             Histories = f.Histories.Select(x => new HistoryData(x));
         }
         public FunctionalFile toFunctionalFile()
@@ -187,6 +189,7 @@ namespace bst.Model
         public int NbChannels { get; set; }
         public string TransfMegLabels { get; set; }
         public string TransfEegLabels { get; set; }
+        public Guid studyID { get; set; }
         /*
         //summary info
         public bool DbMegRefCoef { get; set; }
@@ -250,7 +253,7 @@ namespace bst.Model
         //metadata 
         public int Df { get; set; }
         public bool Correction { get; set; }
-        public string Type { get; set; }
+        public string StatType { get; set; }
         /*
         //summary info
         public int DbChannelFlag { get; set; }  
@@ -263,7 +266,7 @@ namespace bst.Model
         {
             Df = f.Df;
             Correction = f.Correction;
-            Type = f.Type;
+            StatType = f.Type;
         }
     }
 

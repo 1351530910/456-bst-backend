@@ -18,14 +18,13 @@ namespace bst.Controllers
         [HttpGet, Route("get/{studyid}"), ProducesResponseType(typeof(StudyData), 200)]
         public async Task<object> GetSubject(Guid studyid)
         {
-            
-
             var study = await context.Studies.FindAsync(studyid);
             if (study == null) return NotFound("Study doesn't exist.");
 
-            var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(study.Subject.Protocol.Id));
-            if (participation == null) return NotFound("You don't have access to this study.");
-
+            var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(study.Protocol.Id));
+            if (participation == null) 
+                return NotFound("You don't have access to this study.");
+            var data = new StudyData(study);
             return new StudyData(study);
         }
 
