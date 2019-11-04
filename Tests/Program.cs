@@ -98,6 +98,7 @@ namespace Tests
             Console.WriteLine($"sessionid {sessionid}\ndeviceid {deviceid}\nprotocolid {protocol.Id}\nstudyid {study.Id}");
         }
 
+        #region test methods
         public static async Task createuser()
         {
             var p = new CreateUserIn
@@ -303,7 +304,10 @@ namespace Tests
             var stream = await client.GetStreamAsync($"http://localhost/file/download/{study.Id}/{channel.Parent.Id}");
             StreamReader sr = new StreamReader(stream);
             var str = await sr.ReadToEndAsync();
+            Assert.AreEqual("test1234\ntest1234\n", str);
         }
+        #endregion
+        #region util
         public static string randomstr()
         {
             return Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10);
@@ -324,5 +328,6 @@ namespace Tests
             }
             
         }
+        #endregion
     }
 }

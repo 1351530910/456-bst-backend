@@ -64,11 +64,15 @@ namespace bst.Controllers
             }
             return NoContent();
         }
-        [HttpGet,AuthFilter,ReadLock,Route("download/{studyID}/{fileID}")]
-        public async Task<object> download(string studyID,string fileID)
+        [HttpGet,AuthFilter,ReadLock,Route("download/{studyID}/{fileID}/{start}/{count}")]
+        public async Task<object> download(string studyID,string fileID,long start,int count)
         {
             var path = mapFile(protocol.Id.ToString(), studyID, fileID);
-            return new FileStreamResult(new FileStream(path,FileMode.Open),"application/octet-stream");
+            var fs = new FileStream(path, FileMode.Open);
+            var bytes = new byte[count];
+            fs.Position = start;
+            await fs.ReadAsync(bytes, 0, count);
+            return new FileContentResult(bytes,"application/octet-stream");
         }
     }
 }
