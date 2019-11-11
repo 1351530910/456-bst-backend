@@ -144,6 +144,14 @@ namespace bst.Controllers
                 context.Result = new UnauthorizedObjectResult("locked by " + s.email);
             }
 
+            controller.history = new History
+            {
+                Id = Guid.NewGuid(),
+                TimeStamp = System.DateTime.Now,
+                protocol = controller.protocol
+            };
+            controller.context.Histories.Add(controller.history);
+
             //if not locked then lock the protocol
             var sessionid = Guid.Parse((string)context.HttpContext.Request.Headers["sessionid"]);
             var deviceid = (string)context.HttpContext.Request.Headers["deviceid"];

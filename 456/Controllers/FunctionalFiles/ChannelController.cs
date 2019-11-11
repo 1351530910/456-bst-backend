@@ -31,6 +31,9 @@ namespace bst.Controllers.FunctionalFiles
             Directory.CreateDirectory(mapFile(protocol.Id.ToString(), study.Id.ToString(), ""));
             FileStream fs = new FileStream(mapFile(protocol.Id.ToString(), study.Id.ToString(), channel.Parent.Id.ToString()), FileMode.CreateNew);
 
+            
+            history.HistoryEvent += $"create Channel {study.Id} {channel.Id}";
+
             //create upload task
             Guid uploadid = Guid.NewGuid();
             FileController.q.Add(new FileController.QueueItem

@@ -69,7 +69,7 @@ namespace bst.Model
         public DbSet<Matrix> Matrices { get; set; }
         public DbSet<Dipole> Dipoles { get; set; }
         public DbSet<Covariance> Covariances { get; set; }
-        public DbSet<Fiber> Fibers { get; set; }
+        //public DbSet<Fiber> Fibers { get; set; }
         public DbSet<Volume> Volumes { get; set; }
         public DbSet<Surface> Surfaces { get; set; }
         public DbSet<AnatomicalFile> AnatomicalFiles { get; set; }
@@ -514,14 +514,14 @@ namespace bst.Model
         public virtual ICollection<History> Histories { get; set; }
     }
 
-    public class Fiber 
-    {
-        [Key]
-        public Guid Id { get; set; }
-        public virtual Subject Subject { get; set; }
+    //public class Fiber 
+    //{
+    //    [Key]
+    //    public Guid Id { get; set; }
+    //    public virtual Subject Subject { get; set; }
 
-        public virtual AnatomicalFile Parent { get; set; }
-    }
+    //    public virtual AnatomicalFile Parent { get; set; }
+    //}
 
     public class Volume
     {

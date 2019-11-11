@@ -15,6 +15,7 @@ namespace bst.Controllers
         public User user;
         public Session session;
         public Protocol protocol;
+        public History history;
         /// <summary>
         /// this happens before any controller call
         /// </summary>

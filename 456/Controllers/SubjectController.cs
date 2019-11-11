@@ -65,6 +65,7 @@ namespace bst.Controllers
                 LastUpdate = System.DateTime.Now
             };
             context.Subjects.Add(subject);
+            history.HistoryEvent += $"create Subject {subject.Id}";
             await context.SaveChangesAsync();
             return subject.Id;
         }

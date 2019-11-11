@@ -54,6 +54,7 @@ namespace bst.Controllers
                 Protocol = protocol
             };
             context.Studies.Add(study);
+            history.HistoryEvent += $"create study {study.Id}";
             await context.SaveChangesAsync();
             return study.Id;
         }
