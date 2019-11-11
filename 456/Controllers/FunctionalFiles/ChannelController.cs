@@ -29,7 +29,8 @@ namespace bst.Controllers.FunctionalFiles
             {
                 uploadid = uploadid,
                 fs = fs,
-                sessionid = session.Sessionid
+                sessionid = session.Sessionid,
+                md5 = System.Text.Encoding.ASCII.GetBytes(data.md5)
             });
             return uploadid;
         }

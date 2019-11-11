@@ -159,6 +159,7 @@ namespace bst.Model
         public string FileName { get; set; }
         public FunctionalFileType type { get; set; }
         public IEnumerable<HistoryData> Histories { get; set; }
+        public string md5 { get; set; }
         public FunctionalFileData()
         {
 

@@ -15,8 +15,13 @@ namespace bst.Controllers
         public User user;
         public Session session;
         public Protocol protocol;
+        /// <summary>
+        /// this happens before any controller call
+        /// </summary>
+        /// <param name="context"></param>
         public override void OnActionExecuting(ActionExecutingContext context)
         {
+            //set the dbcontext
             this.context = new UserDB();
             HttpContext.Items["context"] = this;
             base.OnActionExecuting(context);
