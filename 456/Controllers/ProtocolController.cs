@@ -19,13 +19,9 @@ namespace bst.Controllers
         {
             var userProtocolRelation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(protocolid));
             if (userProtocolRelation != null)
-            {
                 return new ProtocolData(userProtocolRelation.Protocol, userProtocolRelation.Privilege);
-            }
             else
-            {
                 return NotFound();
-            }
         }
 
         [HttpPost, Route("lock/{protocolid}"), ProducesResponseType(typeof(string), 200), AuthFilter]
@@ -41,40 +37,59 @@ namespace bst.Controllers
             return Ok();
         }
 
-
+        /// <summary>
+        /// get users participating the protocol
+        /// </summary>
+        /// <param name="protocolid"></param>
+        /// <returns></returns>
         [HttpGet, Route("detail/{protocolid}"), ProducesResponseType(typeof(ProtocolGroupManagementOut), 200), AuthFilter]
         public async Task<object> GetProtocolUsers(Guid protocolid)
         {
+            //check if protocol actually exists
             var protocol = context.Protocols.Find(protocolid);
             if (protocol == null) return NotFound($"Protocol {protocolid} doesn't exist.");
+
+            //find groups participations
             List<GroupManagement> groups = protocol.ProtocolGroups.Select(x => new GroupManagement(x.Group, x.GroupPrivilege)).ToList();
             ProtocolGroupManagementOut result = new ProtocolGroupManagementOut
             {
                 Groups = groups
             };
+
+            //find direct user participations
             List<string> internalusers = groups.SelectMany(g => g.Members.Select(m => m.Email)).ToList();
+
+
             var protocolusers = protocol.ProtocolUsers.Select(x => new ProtocolMember(x)).ToList();
             var externalusers = protocolusers.Where(u => !internalusers.Contains(u.Email)).ToList();
             result.ExternelUsers = externalusers;
-
 
             return result;
         }
 
 
-
+        /// <summary>
+        /// create a new protocol
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         [HttpPost, Route("share"), ProducesResponseType(typeof(Protocolid), 200), AuthFilter]
-        public async Task<object> ShareProtocol([FromBody]CreateProtocol data)
+        public async Task<object> CreateProtocol([FromBody]CreateProtocol data)
         {
             
             Guid procotolid;
             Protocol protocol = null;
+
+            //check if protocol already present in database
             if (Guid.TryParse(data.Id, out procotolid))
             {
                 protocol = context.Protocols.Find(procotolid);
             }
+
+            //if not present then create a new one
             if (protocol == null)
             {
+                //create the protocol
                 protocol = new Protocol
                 {
                     Id = Guid.NewGuid(),
@@ -86,6 +101,7 @@ namespace bst.Controllers
                     UseDefaultChannel = data.Usedefaultchannel ?? true,
                     LastUpdate = System.DateTime.Now
                 };
+                //give user admin priviledge
                 var protocoluser = new ProtocolUser
                 {
                     Id = Guid.NewGuid(),
@@ -94,10 +110,14 @@ namespace bst.Controllers
                     //become protocol admin by default
                     Privilege = 1
                 };
+
+                //save changes to database
                 context.Protocols.Add(protocol);
                 context.ProtocolUsers.Add(protocoluser);
                 await context.SaveChangesAsync();
             }
+
+            //lock the protocol since creation is a write action
             session.Protocolid = protocol.Id;
             return new Protocolid
             {
