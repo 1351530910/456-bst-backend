@@ -40,3 +40,4 @@ Thumbs.db
 
 # dotCover
 *.dotCover
+/456/wwwroot/files

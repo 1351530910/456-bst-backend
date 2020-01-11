@@ -9,9 +9,14 @@ using System.IO;
 
 namespace bst.Controllers.FunctionalFiles
 {
+    public class uploadinfo
+    {
+        public string uploadid { get; set; }
+        public string ffid { get; set; }
+    }
     public class ChannelController:FunctionalFileController
     {
-        [HttpPost, Route("createChannel"), AuthFilter, WriteLock]
+        [HttpPost, Route("createChannel"), AuthFilter, WriteLock,ProducesResponseType(typeof(uploadinfo),200)]
         public async Task<object> createChannel([FromBody]ChannelData data)
         {
             //create channel data
@@ -28,7 +33,12 @@ namespace bst.Controllers.FunctionalFiles
             history.HistoryEvent += $"create Channel {study.Id} {channel.Id}";
             await context.SaveChangesAsync();
 
-            return FileController.createFunctionalFileQueueItem(channel,session,data.md5);
+            return new uploadinfo
+            {
+                uploadid = FileController.createFunctionalFileQueueItem(channel, session, data.md5).ToString(),
+                ffid = channel.Parent.Id.ToString()
+            };
         }
+
     }
 }

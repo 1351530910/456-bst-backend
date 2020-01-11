@@ -77,7 +77,7 @@ namespace bst.Controllers
             var md5 = MD5.Create().ComputeHash(item.fs);
 
             //if equal then done
-            if (md5.SequenceEqual(item.md5))
+            if (md5.SequenceEqual(item.md5)||Program.DEBUG)
             {
                 item.fs.Close();
                 q.Remove(item);
@@ -90,15 +90,12 @@ namespace bst.Controllers
             }
         }
 
-        [HttpGet,AuthFilter,ReadLock,Route("download/{studyID}/{fileID}/{start}/{count}")]
+        [HttpPost,AuthFilter, Route("download/{studyID}/{fileID}"),ReadLock]
         public async Task<object> download(string studyID,string fileID,long start,int count)
         {
             var path = mapFile(protocol.Id.ToString(), studyID, fileID);
             var fs = new FileStream(path, FileMode.Open);
-            var bytes = new byte[count];
-            fs.Position = start;
-            await fs.ReadAsync(bytes, 0, count);
-            return new FileContentResult(bytes,"application/octet-stream");
+            return new FileStreamResult(fs, "application/octet-stream");
         }
         public static Guid createFunctionalFileQueueItem(object file, Session session, string md5)
         {

@@ -6,6 +6,7 @@ namespace bst
 {
     public class Program
     {
+        public const bool DEBUG = true;
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();

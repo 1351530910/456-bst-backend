@@ -17,6 +17,11 @@ namespace Tests
     class Program
     {
         #region variables
+        public class uploadinfo
+        {
+            public string uploadid { get; set; }
+            public string ffid { get; set; }
+        }
         static DateTime starttime;
         static DateTime lasttime;
         static StreamWriter fs = new StreamWriter("testdata.json");
@@ -78,6 +83,8 @@ namespace Tests
             Parent = ff,
             Study = study
         };
+
+        static uploadinfo uploadid;
         
         #endregion
         static void Main(string[] args)
@@ -279,7 +286,7 @@ namespace Tests
         }
         public static async Task createChannel()
         {
-            var uploadid = await client.PostAsJsonAsync<string>($"functionalfile/createchannel", new bst.Model.ChannelData
+            uploadid = await client.PostAsJsonAsync<uploadinfo>($"functionalfile/createchannel", new bst.Model.ChannelData
             {
                 Comment = ff.Comment,
                 studyID = channel.Study.Id,
@@ -288,26 +295,24 @@ namespace Tests
                 TransfEegLabels = channel.TransfEegLabels,
                 TransfMegLabels = channel.TransfMegLabels,
                 FileName = ff.FileName,
-                md5 = "uyguyguiy"
+                md5 = "?l?+(?k??Aq???m\t"
             });
             string t = "test1234\n";
-            var r = await client.PostAsync($"file/upload/{uploadid}/false", new ByteArrayContent(System.Text.Encoding.ASCII.GetBytes(t)));
-            var r2 = await client.PostAsync($"file/upload/{uploadid}/true", new ByteArrayContent(System.Text.Encoding.ASCII.GetBytes(t)));
-            //Console.WriteLine($"\n\tto be tested upload file using id {uploadid}\n\t device id is {deviceid} \n\t sessionid is {sessionid}");
+            var r = await client.PostAsync($"file/upload/{uploadid.uploadid}/false", new ByteArrayContent(System.Text.Encoding.ASCII.GetBytes(t)));
+            var r2 = await client.PostAsync($"file/upload/{uploadid.uploadid}/true", new ByteArrayContent(System.Text.Encoding.ASCII.GetBytes(t)));
+            Console.WriteLine($"\t\tdownload:  {client.BaseAddress}files/{protocol.Id}/ffiles/{study.Id}/{ff.Id}.dat");
         }
-
-        //public static async Task downloadfile()
-        //{
-        //    var s = await client.GetAsJsonAsync<bst.Model.StudyData>($"study/get/{study.Id}");
-        //    Assert.AreEqual(s.Channels.Count(), 1);
-        //    channel.Id = s.Channels.FirstOrDefault().Id;
-        //    ff.Id = s.Channels.FirstOrDefault().Id;
-        //    //Console.WriteLine($"http://localhost/files/{protocol.Id}/ffiles/{study.Id}/{channel.Parent.Id}.dat");
-        //    var stream = await client.GetStreamAsync($"http://localhost/file/download/{study.Id}/{channel.Parent.Id}");
-        //    StreamReader sr = new StreamReader(stream);
-        //    var str = await sr.ReadToEndAsync();
-        //    Assert.AreEqual("test1234\ntest1234\n", str);
-        //}
+        public static async Task download()
+        {
+            var response = await client.PostAsync($"file/download/{study.Id}/{uploadid.ffid}",new StringContent("download"));
+            if (!response.IsSuccessStatusCode)
+                throw new Exception();
+            Stream s = await response.Content.ReadAsStreamAsync();
+            byte[] arr = new byte[1000];
+            int length = s.Read(arr, 0, 1000);
+            string str = System.Text.Encoding.ASCII.GetString(arr);
+            str.Remove(length);
+        }
         #endregion
         #region util
         public static string randomstr()
