@@ -287,25 +287,27 @@ namespace Tests
                 NbChannels = channel.NbChannels,
                 TransfEegLabels = channel.TransfEegLabels,
                 TransfMegLabels = channel.TransfMegLabels,
-                FileName = ff.FileName
+                FileName = ff.FileName,
+                md5 = "uyguyguiy"
             });
             string t = "test1234\n";
             var r = await client.PostAsync($"file/upload/{uploadid}/false", new ByteArrayContent(System.Text.Encoding.ASCII.GetBytes(t)));
             var r2 = await client.PostAsync($"file/upload/{uploadid}/true", new ByteArrayContent(System.Text.Encoding.ASCII.GetBytes(t)));
             //Console.WriteLine($"\n\tto be tested upload file using id {uploadid}\n\t device id is {deviceid} \n\t sessionid is {sessionid}");
         }
-        public static async Task downloadfile()
-        {
-            var s = await client.GetAsJsonAsync<bst.Model.StudyData>($"study/get/{study.Id}");
-            Assert.AreEqual(s.Channels.Count(), 1);
-            channel.Id = s.Channels.FirstOrDefault().Id;
-            ff.Id = s.Channels.FirstOrDefault().Id;
-            Console.WriteLine($"http://localhost/files/{protocol.Id}/ffiles/{study.Id}/{channel.Parent.Id}.dat");
-            var stream = await client.GetStreamAsync($"http://localhost/file/download/{study.Id}/{channel.Parent.Id}");
-            StreamReader sr = new StreamReader(stream);
-            var str = await sr.ReadToEndAsync();
-            Assert.AreEqual("test1234\ntest1234\n", str);
-        }
+
+        //public static async Task downloadfile()
+        //{
+        //    var s = await client.GetAsJsonAsync<bst.Model.StudyData>($"study/get/{study.Id}");
+        //    Assert.AreEqual(s.Channels.Count(), 1);
+        //    channel.Id = s.Channels.FirstOrDefault().Id;
+        //    ff.Id = s.Channels.FirstOrDefault().Id;
+        //    //Console.WriteLine($"http://localhost/files/{protocol.Id}/ffiles/{study.Id}/{channel.Parent.Id}.dat");
+        //    var stream = await client.GetStreamAsync($"http://localhost/file/download/{study.Id}/{channel.Parent.Id}");
+        //    StreamReader sr = new StreamReader(stream);
+        //    var str = await sr.ReadToEndAsync();
+        //    Assert.AreEqual("test1234\ntest1234\n", str);
+        //}
         #endregion
         #region util
         public static string randomstr()

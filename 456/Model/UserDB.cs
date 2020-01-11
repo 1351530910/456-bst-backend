@@ -299,10 +299,6 @@ namespace bst.Model
         Image
     }
 
-
-
-
-
 #warning raw files.
 
 
@@ -317,6 +313,17 @@ namespace bst.Model
         public FunctionalFileType FileType { get; set; }
         
         public virtual ICollection<History> Histories { get; set; }
+        public FunctionalFile()
+        {
+
+        }
+        public FunctionalFile(FunctionalFileData data)
+        {
+            Id = Guid.NewGuid();
+            Comment = data.Comment;
+            FileName = data.FileName;
+            FileType = data.type;
+        }
     }
 
     public class Channel
@@ -338,6 +345,18 @@ namespace bst.Model
         public virtual Study Study { get; set; }
         [Required]
         public virtual FunctionalFile Parent { get; set; }
+        public Channel()
+        {
+
+        }
+        public Channel(ChannelData data)
+        {
+            Id = Guid.NewGuid();
+            NbChannels = data.NbChannels;
+            TransfEegLabels = data.TransfEegLabels;
+            TransfMegLabels = data.TransfMegLabels;
+            Parent = new FunctionalFile(data);
+        }
     }
 
     public class TimeFreq 
@@ -355,6 +374,19 @@ namespace bst.Model
         //summary info 
         [Required]
         public virtual FunctionalFile Parent { get; set; }
+        public TimeFreq()
+        {
+
+        }
+        public TimeFreq(TimeFreqData data)
+        {
+            Id = Id = Guid.NewGuid();
+            Measure = data.Measure;
+            NAvg = data.NAvg;
+            ColormapType = data.ColormapType;
+            DisplayUnits = data.DisplayUnits;
+            Parent = new FunctionalFile(data);
+        }
     }
 
     public class Stat
@@ -371,6 +403,18 @@ namespace bst.Model
         public virtual Study Study { get; set; }
         [Required]
         public virtual FunctionalFile Parent { get; set; }
+        public Stat()
+        {
+
+        }
+        public Stat(StatData data,FunctionalFileData ff)
+        {
+            Id = Guid.NewGuid();
+            Df = data.Df;
+            Correction = data.Correction;
+            Type = data.Type;
+            Parent = new FunctionalFile(data);
+        }
     }
 
     public class HeadModel
@@ -388,6 +432,20 @@ namespace bst.Model
         [Required]
         //summary info
         public virtual FunctionalFile Parent { get; set; }
+        public HeadModel()
+        {
+
+        }
+        public HeadModel(HeadModelData data)
+        {
+            Id = Guid.NewGuid();
+            Type = data.Type;
+            MEGMethod = data.MEGMethod;
+            EEGMethod = data.EEGMethod;
+            ECOGMethod = data.ECOGMethod;
+            SEEGMethod = data.SEEGMethod;
+            Parent = new FunctionalFile(data);
+        }
     }
 
     public class Result
@@ -410,6 +468,22 @@ namespace bst.Model
         public virtual Study Study { get; set; }
         [Required]
         public virtual FunctionalFile Parent { get; set; }
+        public Result()
+        {
+
+        }
+        public Result(ResultData data)
+        {
+            Id = Guid.NewGuid();
+            Parent = new FunctionalFile(data);
+            IsLink = data.IsLink;
+            NComponents = data.NComponents;
+            Function = data.Function;
+            NAvg = data.NAvg;
+            ColormapType = data.ColormapType;
+            DisplayUnits = data.DisplayUnits;
+
+        }
     }
 
     public class Recording
@@ -442,6 +516,32 @@ namespace bst.Model
         public int DbChannelFlag { get; set; }
         [Required]
         public virtual FunctionalFile Parent { get; set; }
+        public Recording()
+        {
+
+        }
+        public Recording(RecordingData data)
+        {
+            Id = Guid.NewGuid();
+            Parent = new FunctionalFile(data);
+            Format = data.Format;
+            Device = data.Device;
+            Byteorder = data.Byteorder;
+            DataType = data.DataType;
+            NAvg = data.NAvg;
+            SFreq = data.SFreq;
+            TimeStart = data.TimeStart;
+            TimeEnd = data.TimeEnd;
+            SamplesStart = data.SamplesStart;
+            SamplesEnd = data.SamplesEnd;
+            CurrCrfComp = data.CurrCrfComp;
+            DestCtfComp = data.DestCtfComp;
+            Acq_Date = data.Acq_Date;
+            ColormapType = data.ColormapType;
+            DisplayUnits = data.DisplayUnits;
+            IsBids = data.IsBids;
+
+        }
     }
 
     public class Matrix
@@ -459,6 +559,17 @@ namespace bst.Model
         public virtual Study Study { get; set; }
         [Required]
         public virtual FunctionalFile Parent { get; set; }
+        public Matrix()
+        {
+
+        }
+        public Matrix(MatrixData data)
+        {
+            Id = Guid.NewGuid();
+            Parent = new FunctionalFile(data);
+            NAvg = data.NAvg;
+            DisplayUnits = data.DisplayUnits;
+        }
     }
 
     public class Dipole 

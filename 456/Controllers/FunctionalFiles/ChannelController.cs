@@ -16,7 +16,7 @@ namespace bst.Controllers.FunctionalFiles
         {
             //create channel data
             var study = protocol.Studies.FirstOrDefault(x => x.Id == data.studyID);
-            var channel = data.toChannel();
+            var channel = new Channel(data);
             channel.Study = study;
             
             //set parent url
@@ -25,27 +25,10 @@ namespace bst.Controllers.FunctionalFiles
             //add channel and ff to database
             context.Channels.Add(channel);
             context.FunctionalFiles.Add(channel.Parent);
+            history.HistoryEvent += $"create Channel {study.Id} {channel.Id}";
             await context.SaveChangesAsync();
 
-            //create the actual file
-            Directory.CreateDirectory(mapFile(protocol.Id.ToString(), study.Id.ToString(), ""));
-            FileStream fs = new FileStream(mapFile(protocol.Id.ToString(), study.Id.ToString(), channel.Parent.Id.ToString()), FileMode.CreateNew);
-
-            
-            history.HistoryEvent += $"create Channel {study.Id} {channel.Id}";
-
-            //create upload task
-            Guid uploadid = Guid.NewGuid();
-            FileController.q.Add(new FileController.QueueItem
-            {
-                uploadid = uploadid,
-                fs = fs,
-                sessionid = session.Sessionid,
-                md5 = System.Text.Encoding.ASCII.GetBytes(data.md5)
-            });
-
-            
-            return uploadid;
+            return FileController.createFunctionalFileQueueItem(channel,session,data.md5);
         }
     }
 }

@@ -89,6 +89,7 @@ namespace bst.Controllers
                 return Ok("checksum failed");
             }
         }
+
         [HttpGet,AuthFilter,ReadLock,Route("download/{studyID}/{fileID}/{start}/{count}")]
         public async Task<object> download(string studyID,string fileID,long start,int count)
         {
@@ -99,7 +100,33 @@ namespace bst.Controllers
             await fs.ReadAsync(bytes, 0, count);
             return new FileContentResult(bytes,"application/octet-stream");
         }
+        public static Guid createFunctionalFileQueueItem(object file, Session session, string md5)
+        {
+            var ff = (FunctionalFile)(file.GetType().GetProperty("Parent").GetValue(file));
+            var study = (Study)(file.GetType().GetProperty("Study").GetValue(file));
+            return createQueueItem(
+                study.Protocol.Id.ToString(),
+                study.Id.ToString(),
+                ff.Id.ToString(),
+                session.Sessionid,
+                md5
+                );
+        }
+        public static Guid createQueueItem(string firstLayer,string secondLayer,string filename,Guid sessionid,string md5)
+        {
+            Directory.CreateDirectory(mapFile(firstLayer, secondLayer, ""));
+            FileStream fs = new FileStream(mapFile(firstLayer, secondLayer, filename), FileMode.CreateNew);
 
-
+            Guid uploadid = Guid.NewGuid();
+            var md = System.Text.Encoding.ASCII.GetBytes(md5);
+            q.Add(new QueueItem
+            {
+                uploadid = uploadid,
+                fs = fs,
+                sessionid = sessionid,
+                md5 = System.Text.Encoding.ASCII.GetBytes(md5)
+            });
+            return uploadid;
+        }
     }
 }

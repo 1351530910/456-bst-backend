@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Mvc.Filters;
 using bst.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
@@ -270,7 +268,6 @@ namespace bst.Controllers
         public async Task<object> RemoveUser([FromBody] RemoveUserProtocolRelationIn data)
         {
             //check if user is protocol admin
-            
             var userProtocolRelation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.Protocolid));
             if (userProtocolRelation == null || userProtocolRelation.Privilege > 1) Unauthorized("You are not protocol admin.");
             //find target user protocol relation

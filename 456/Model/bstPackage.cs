@@ -172,16 +172,6 @@ namespace bst.Model
             type = f.FileType;
             Histories = f.Histories.Select(x => new HistoryData(x));
         }
-        public FunctionalFile toFunctionalFile()
-        {
-            return new FunctionalFile
-            {
-                Id = Guid.NewGuid(),
-                Comment = Comment,
-                FileName = FileName,
-                FileType = type
-            };
-        }
     }
 
     public class ChannelData : FunctionalFileData
@@ -210,18 +200,6 @@ namespace bst.Model
             TransfMegLabels = f.TransfMegLabels;
             TransfEegLabels = f.TransfEegLabels;
         }
-        
-        public Channel toChannel()
-        {
-            return new Channel
-            {
-                Id = Guid.NewGuid(),
-                NbChannels = NbChannels,
-                TransfMegLabels = TransfMegLabels,
-                TransfEegLabels = TransfEegLabels,
-                Parent = base.toFunctionalFile()
-            };
-        }
     }
 
 
@@ -238,6 +216,7 @@ namespace bst.Model
         {
 
         }
+        
         public TimeFreqData(TimeFreq f) : base(f.Parent)
         {
             Measure = f.Measure;
@@ -246,7 +225,6 @@ namespace bst.Model
             ColormapType = f.ColormapType;
             DisplayUnits = f.DisplayUnits;
         }
-
     }
 
     public class StatData : FunctionalFileData
@@ -254,7 +232,7 @@ namespace bst.Model
         //metadata 
         public int Df { get; set; }
         public bool Correction { get; set; }
-        public string StatType { get; set; }
+        public string Type { get; set; }
         /*
         //summary info
         public int DbChannelFlag { get; set; }  
@@ -267,7 +245,7 @@ namespace bst.Model
         {
             Df = f.Df;
             Correction = f.Correction;
-            StatType = f.Type;
+            Type = f.Type;
         }
     }
 

@@ -133,6 +133,13 @@ namespace bst.Controllers
             //if already locked the protocol then nothing else have to be set
             if (controller.session.Protocolid == protocolid)
             {
+                controller.history = new History
+                {
+                    Id = Guid.NewGuid(),
+                    TimeStamp = System.DateTime.Now,
+                    protocol = controller.protocol
+                };
+                controller.context.Histories.Add(controller.history);
                 base.OnActionExecuting(context);
                 return;
             }
