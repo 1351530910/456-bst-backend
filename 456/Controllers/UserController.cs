@@ -88,7 +88,7 @@ namespace bst.Controllers
         {
             var session = AuthFilter.sessions
                 .FirstOrDefault(s => s.Deviceid.Equals(input.Deviceid) && s.Sessionid.Equals(input.Sessionid));
-            if (session == null) return Ok(false);
+            if (session == null||(session.LastActive.AddMinutes(AuthFilter.EXPIRETIME))<System.DateTime.Now) return Ok(false);
             else return Ok(true);
         }
 
