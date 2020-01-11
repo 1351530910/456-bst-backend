@@ -49,8 +49,6 @@ namespace bst.Model
         public int IOuterSkull { get; set; }
         public int IOther { get; set; }
         public Guid ProtocolId { get; set; }
-
-
         public IEnumerable<StudyData> Studies { get; set; }
 
         public SubjectData()
@@ -81,6 +79,7 @@ namespace bst.Model
     public class StudyData
     {
         //metadata
+        public Guid id { get; set; }
         public string Filename { get; set; }
         public string Name { get; set; }
         public string Condition { get; set; }
@@ -92,12 +91,12 @@ namespace bst.Model
         public Guid SubjectId { get; set; }
 
         public IEnumerable<ChannelData> Channels { get; set; }
-        //public IEnumerable<TimeFreqData> TimeFreqs { get; set; }
-        //public IEnumerable<StatData> Stats { get; set; }
-        //public IEnumerable<HeadModelData> HeadModels { get; set; }
-        //public IEnumerable<ResultData> Results { get; set; }
-        //public IEnumerable<RecordingData> Recordings { get; set; }
-        //public IEnumerable<MatrixData> Matrixs { get; set; }
+        public IEnumerable<TimeFreqData> TimeFreqs { get; set; }
+        public IEnumerable<StatData> Stats { get; set; }
+        public IEnumerable<HeadModelData> HeadModels { get; set; }
+        public IEnumerable<ResultData> Results { get; set; }
+        public IEnumerable<RecordingData> Recordings { get; set; }
+        public IEnumerable<MatrixData> Matrixs { get; set; }
         //public IEnumerable<DipoleData> Dipoles { get; set; }
         //public IEnumerable<CovarianceData> Covariances { get; set; }
         //public IEnumerable<ImageData> Images { get; set; }
@@ -108,6 +107,7 @@ namespace bst.Model
         }
         public StudyData(Study study)
         {
+            id = study.Id;
             Filename = study.Filename;
             Name = study.Name;
             DateOfStudy = study.DateOfStudy;
@@ -121,14 +121,12 @@ namespace bst.Model
             }
 
             Channels = study.Channels.Select(x => new ChannelData(x));
-#warning other filetypes
-            //TimeFreqs = study.TimeFreqs.Select(x => new TimeFreqData(x));
-            //Stats = study.Stats.Select(x => new StatData(x));
-            //HeadModels = study.HeadModels.Select(x => new HeadModelData(x));
-            //Results = study.Results.Select(x => new ResultData(x));
-            //Recordings = study.Recordings.Select(x => new RecordingData(x));
-            //Matrixs = study.Matrixs.Select(x => new MatrixData(x));
-
+            TimeFreqs = study.TimeFreqs.Select(x => new TimeFreqData(x));
+            Stats = study.Stats.Select(x => new StatData(x));
+            HeadModels = study.HeadModels.Select(x => new HeadModelData(x));
+            Results = study.Results.Select(x => new ResultData(x));
+            Recordings = study.Recordings.Select(x => new RecordingData(x));
+            Matrixs = study.Matrixs.Select(x => new MatrixData(x));
         }
 
     }
@@ -160,6 +158,7 @@ namespace bst.Model
         public FunctionalFileType type { get; set; }
         public IEnumerable<HistoryData> Histories { get; set; }
         public string md5 { get; set; }
+        public Guid studyID { get; set; }
         public FunctionalFileData()
         {
 
@@ -180,7 +179,6 @@ namespace bst.Model
         public int NbChannels { get; set; }
         public string TransfMegLabels { get; set; }
         public string TransfEegLabels { get; set; }
-        public Guid studyID { get; set; }
         /*
         //summary info
         public bool DbMegRefCoef { get; set; }

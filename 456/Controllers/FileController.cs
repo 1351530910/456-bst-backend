@@ -12,6 +12,11 @@ using System.Security.Cryptography;
 
 namespace bst.Controllers
 {
+    public class uploadinfo
+    {
+        public string uploadid { get; set; }
+        public string ffid { get; set; }
+    }
     [Route("file")]
     [ApiController]
     public class FileController : FunctionalFileController

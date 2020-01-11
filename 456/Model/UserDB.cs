@@ -351,11 +351,11 @@ namespace bst.Model
         }
         public Channel(ChannelData data)
         {
-            Id = Guid.NewGuid();
+            Parent = new FunctionalFile(data);
+            Id = Parent.Id;
             NbChannels = data.NbChannels;
             TransfEegLabels = data.TransfEegLabels;
             TransfMegLabels = data.TransfMegLabels;
-            Parent = new FunctionalFile(data);
         }
     }
 
@@ -380,12 +380,12 @@ namespace bst.Model
         }
         public TimeFreq(TimeFreqData data)
         {
-            Id = Id = Guid.NewGuid();
+            Parent = new FunctionalFile(data);
+            Id = Parent.Id;
             Measure = data.Measure;
             NAvg = data.NAvg;
             ColormapType = data.ColormapType;
             DisplayUnits = data.DisplayUnits;
-            Parent = new FunctionalFile(data);
         }
     }
 
@@ -407,13 +407,13 @@ namespace bst.Model
         {
 
         }
-        public Stat(StatData data,FunctionalFileData ff)
+        public Stat(StatData data)
         {
-            Id = Guid.NewGuid();
+            Parent = new FunctionalFile(data);
+            Id = Parent.Id;
             Df = data.Df;
             Correction = data.Correction;
             Type = data.Type;
-            Parent = new FunctionalFile(data);
         }
     }
 
@@ -438,13 +438,13 @@ namespace bst.Model
         }
         public HeadModel(HeadModelData data)
         {
-            Id = Guid.NewGuid();
+            Parent = new FunctionalFile(data);
+            Id = Parent.Id;
             Type = data.Type;
             MEGMethod = data.MEGMethod;
             EEGMethod = data.EEGMethod;
             ECOGMethod = data.ECOGMethod;
             SEEGMethod = data.SEEGMethod;
-            Parent = new FunctionalFile(data);
         }
     }
 
@@ -474,8 +474,8 @@ namespace bst.Model
         }
         public Result(ResultData data)
         {
-            Id = Guid.NewGuid();
             Parent = new FunctionalFile(data);
+            Id = Parent.Id;
             IsLink = data.IsLink;
             NComponents = data.NComponents;
             Function = data.Function;
@@ -522,8 +522,8 @@ namespace bst.Model
         }
         public Recording(RecordingData data)
         {
-            Id = Guid.NewGuid();
             Parent = new FunctionalFile(data);
+            Id = Parent.Id;
             Format = data.Format;
             Device = data.Device;
             Byteorder = data.Byteorder;
@@ -565,8 +565,8 @@ namespace bst.Model
         }
         public Matrix(MatrixData data)
         {
-            Id = Guid.NewGuid();
             Parent = new FunctionalFile(data);
+            Id = Parent.Id;
             NAvg = data.NAvg;
             DisplayUnits = data.DisplayUnits;
         }
