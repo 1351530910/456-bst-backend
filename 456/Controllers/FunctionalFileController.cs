@@ -13,7 +13,7 @@ namespace bst.Controllers
     {
         #region ffiles
 
-        [HttpPost, Route("createChannel"), AuthFilter, WriteLock, ProducesResponseType(typeof(uploadinfo), 200)]
+        [HttpPost, Route("createChannel"), AuthFilter, WriteLock, ProducesResponseType(typeof(Uploadinfo), 200)]
         public async Task<object> createChannel([FromBody]ChannelData data)
         {
             //create channel data
@@ -32,13 +32,13 @@ namespace bst.Controllers
             history.HistoryEvent += $"create Channel {study.Id} {channel.Id}";
             await context.SaveChangesAsync();
 
-            return new uploadinfo
+            return new Uploadinfo
             {
-                uploadid = FileController.createFunctionalFileQueueItem(channel, session, data.Md5).ToString(),
-                ffid = channel.Parent.Id.ToString()
+                Uploadid = FileController.createFunctionalFileQueueItem(channel, session, data.Md5).ToString(),
+                Ffid = channel.Parent.Id.ToString()
             };
         }
-        [HttpPost, Route("createTimeFreq"), AuthFilter, WriteLock, ProducesResponseType(typeof(uploadinfo), 200)]
+        [HttpPost, Route("createTimeFreq"), AuthFilter, WriteLock, ProducesResponseType(typeof(Uploadinfo), 200)]
         public async Task<object> createTimeFreq([FromBody]TimeFreqData data)
         {
             //create channel data
@@ -57,13 +57,13 @@ namespace bst.Controllers
             history.HistoryEvent += $"create {obj.GetType().Name} {study.Id} {obj.Id}";
             await context.SaveChangesAsync();
 
-            return new uploadinfo
+            return new Uploadinfo
             {
-                uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
-                ffid = obj.Parent.Id.ToString()
+                Uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
+                Ffid = obj.Parent.Id.ToString()
             };
         }
-        [HttpPost, Route("createStat"), AuthFilter, WriteLock, ProducesResponseType(typeof(uploadinfo), 200)]
+        [HttpPost, Route("createStat"), AuthFilter, WriteLock, ProducesResponseType(typeof(Uploadinfo), 200)]
         public async Task<object> createStat([FromBody]StatData data)
         {
             //create channel data
@@ -82,13 +82,13 @@ namespace bst.Controllers
             history.HistoryEvent += $"create {obj.GetType().Name} {study.Id} {obj.Id}";
             await context.SaveChangesAsync();
 
-            return new uploadinfo
+            return new Uploadinfo
             {
-                uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
-                ffid = obj.Parent.Id.ToString()
+                Uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
+                Ffid = obj.Parent.Id.ToString()
             };
         }
-        [HttpPost, Route("createHeadModel"), AuthFilter, WriteLock, ProducesResponseType(typeof(uploadinfo), 200)]
+        [HttpPost, Route("createHeadModel"), AuthFilter, WriteLock, ProducesResponseType(typeof(Uploadinfo), 200)]
         public async Task<object> createHeadModel([FromBody]HeadModelData data)
         {
             //create channel data
@@ -107,13 +107,13 @@ namespace bst.Controllers
             history.HistoryEvent += $"create {obj.GetType().Name} {study.Id} {obj.Id}";
             await context.SaveChangesAsync();
 
-            return new uploadinfo
+            return new Uploadinfo
             {
-                uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
-                ffid = obj.Parent.Id.ToString()
+                Uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
+                Ffid = obj.Parent.Id.ToString()
             };
         }
-        [HttpPost, Route("createResult"), AuthFilter, WriteLock, ProducesResponseType(typeof(uploadinfo), 200)]
+        [HttpPost, Route("createResult"), AuthFilter, WriteLock, ProducesResponseType(typeof(Uploadinfo), 200)]
         public async Task<object> createResult([FromBody]ResultData data)
         {
             //create channel data
@@ -132,10 +132,10 @@ namespace bst.Controllers
             history.HistoryEvent += $"create {obj.GetType().Name} {study.Id} {obj.Id}";
             await context.SaveChangesAsync();
 
-            return new uploadinfo
+            return new Uploadinfo
             {
-                uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
-                ffid = obj.Parent.Id.ToString()
+                Uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
+                Ffid = obj.Parent.Id.ToString()
             };
         }
         /*
@@ -163,7 +163,7 @@ namespace bst.Controllers
             };
         }
         */
-        [HttpPost, Route("createMatrix"), AuthFilter, WriteLock, ProducesResponseType(typeof(uploadinfo), 200)]
+        [HttpPost, Route("createMatrix"), AuthFilter, WriteLock, ProducesResponseType(typeof(Uploadinfo), 200)]
         public async Task<object> createMatrix([FromBody]MatrixData data)
         {
             //create channel data
@@ -182,10 +182,10 @@ namespace bst.Controllers
             history.HistoryEvent += $"create {obj.GetType().Name} {study.Id} {obj.Id}";
             await context.SaveChangesAsync();
 
-            return new uploadinfo
+            return new Uploadinfo
             {
-                uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
-                ffid = obj.Parent.Id.ToString()
+                Uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
+                Ffid = obj.Parent.Id.ToString()
             };
         }
         #endregion

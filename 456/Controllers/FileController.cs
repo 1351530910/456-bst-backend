@@ -12,10 +12,10 @@ using System.Security.Cryptography;
 
 namespace bst.Controllers
 {
-    public class uploadinfo
+    public class Uploadinfo
     {
-        public string uploadid { get; set; }
-        public string ffid { get; set; }
+        public string Uploadid { get; set; }
+        public string Ffid { get; set; }
     }
     [Route("file")]
     [ApiController]
@@ -23,10 +23,10 @@ namespace bst.Controllers
     {
         public class QueueItem
         {
-            public Guid uploadid { get; set; }
-            public FileStream fs { get; set; }
-            public Guid sessionid { get; set; }
-            public byte[] md5 { get; set; }
+            public Guid Uploadid { get; set; }
+            public FileStream Fs { get; set; }
+            public Guid Sessionid { get; set; }
+            public byte[] Md5 { get; set; }
         }
 
         UserDB context = new UserDB();
@@ -64,13 +64,13 @@ namespace bst.Controllers
 
             //check if upload item still available
             QueueItem item;
-            if ((item = q.FirstOrDefault(x => x.sessionid == session.Sessionid && x.uploadid == uploadid)) == null)
+            if ((item = q.FirstOrDefault(x => x.Sessionid == session.Sessionid && x.Uploadid == uploadid)) == null)
             {
                 return NotFound("Upload ID not valid.");
             }
 
             //copy to file
-            item.fs.Write(buffer); 
+            item.Fs.Write(buffer); 
 
             //if not last then done
             if (!last)
@@ -79,20 +79,20 @@ namespace bst.Controllers
             }
 
             //if last compute md5 of the file
-            item.fs.Flush();
-            item.fs.Position = 0;
-            var md5 = MD5.Create().ComputeHash(item.fs);
+            item.Fs.Flush();
+            item.Fs.Position = 0;
+            var md5 = MD5.Create().ComputeHash(item.Fs);
 
             //if equal then done
-            if (md5.SequenceEqual(item.md5)||Program.DEBUG)
+            if (md5.SequenceEqual(item.Md5)||Program.DEBUG)
             {
-                item.fs.Close();
+                item.Fs.Close();
                 q.Remove(item);
                 return Ok("success");
             }
             else    //else reset the fs pointer 
             {
-                item.fs.Position = 0;
+                item.Fs.Position = 0;
                 return Ok("checksum failed");
             }
         }
@@ -125,10 +125,10 @@ namespace bst.Controllers
             var md = System.Text.Encoding.ASCII.GetBytes(md5);
             q.Add(new QueueItem
             {
-                uploadid = uploadid,
-                fs = fs,
-                sessionid = sessionid,
-                md5 = System.Text.Encoding.ASCII.GetBytes(md5)
+                Uploadid = uploadid,
+                Fs = fs,
+                Sessionid = sessionid,
+                Md5 = System.Text.Encoding.ASCII.GetBytes(md5)
             });
             return uploadid;
         }

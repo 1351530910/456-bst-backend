@@ -15,7 +15,7 @@ namespace bst.Controllers
         public Guid Sessionid { get; set; }
         public string Deviceid { get; set; }
         public Guid Userid { get; set; }
-        public string email { get; set; }
+        public string Email { get; set; }
         public Guid Protocolid = Guid.Empty;    //current lock protocol
         public DateTime LastActive { get; set; }    //time of the last activity
     }
@@ -91,7 +91,7 @@ namespace bst.Controllers
                 Deviceid = deviceid,
                 Userid = userid,
                 LastActive = DateTime.Now,
-                email = email
+                Email = email
             };
             sessions.Add(session);
             return session.Sessionid;
@@ -137,7 +137,7 @@ namespace bst.Controllers
                 {
                     Id = Guid.NewGuid(),
                     TimeStamp = System.DateTime.Now,
-                    protocol = controller.protocol
+                    Protocol = controller.protocol
                 };
                 controller.context.Histories.Add(controller.history);
                 base.OnActionExecuting(context);
@@ -148,14 +148,14 @@ namespace bst.Controllers
             Session s;
             if ((s = AuthFilter.sessions.FirstOrDefault(x => x.Protocolid.Equals(protocolid))) != null)
             {
-                context.Result = new UnauthorizedObjectResult("locked by " + s.email);
+                context.Result = new UnauthorizedObjectResult("locked by " + s.Email);
             }
 
             controller.history = new History
             {
                 Id = Guid.NewGuid(),
                 TimeStamp = System.DateTime.Now,
-                protocol = controller.protocol
+                Protocol = controller.protocol
             };
             controller.context.Histories.Add(controller.history);
 
@@ -212,7 +212,7 @@ namespace bst.Controllers
             Session s;
             if ((s = AuthFilter.sessions.FirstOrDefault(x => x.Protocolid.Equals(protocolid))) != null)
             {
-                context.Result = new UnauthorizedObjectResult("locked by " + s.email);
+                context.Result = new UnauthorizedObjectResult("locked by " + s.Email);
             }
 
 

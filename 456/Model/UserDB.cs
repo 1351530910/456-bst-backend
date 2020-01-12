@@ -280,7 +280,7 @@ namespace bst.Model
         public virtual FunctionalFile FunctionalFile { get; set; }
 
         public virtual AnatomicalFile AnatomicalFile { get; set; }
-        public virtual Protocol protocol { get; set; }
+        public virtual Protocol Protocol { get; set; }
     }
 
     #region Functional File and its subclasses 
