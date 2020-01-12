@@ -39,12 +39,9 @@ namespace bst.Controllers
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        [HttpPost, Route("create"), ProducesResponseType(typeof(Guid), 200)]
+        [HttpPost, Route("create"), ProducesResponseType(typeof(Guid), 200),WriteLock]
         public async Task<object> CreateSubject([FromBody]SubjectData data)
         {
-            
-            
-
             var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.ProtocolId));
             if (participation == null) return NotFound("You don't have access to this protocol.");
             Subject subject = new Subject
