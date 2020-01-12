@@ -39,7 +39,7 @@ namespace bst.Controllers
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        [HttpPost, Route("create"), ProducesResponseType(typeof(Guid), 200),WriteLock]
+        [HttpPost, Route("create"), ProducesResponseType(typeof(ID), 200),WriteLock]
         public async Task<object> CreateSubject([FromBody]SubjectData data)
         {
             var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.ProtocolId));
@@ -49,7 +49,7 @@ namespace bst.Controllers
                 Id = Guid.NewGuid(),
                 Comment = data.Comment,
                 Filename = data.Filename,
-                Name = data.Filename,
+                Name = data.Name,
                 UseDefaultAnat = data.UseDefaultAnat,
                 UseDefaultChannel = data.UseDefaultChannel,
                 IAnatomy = data.IAnatomy,
@@ -64,7 +64,7 @@ namespace bst.Controllers
             context.Subjects.Add(subject);
             history.HistoryEvent += $"create Subject {subject.Id}";
             await context.SaveChangesAsync();
-            return subject.Id;
+            return new ID { Id = subject.Id };
         }
 
 

@@ -250,7 +250,7 @@ namespace bst.Model
         public string Filename { get; set; }
         public string Name { get; set; }
         public string Condition { get; set; }
-        public DateTime DateOfStudy { get; set; }
+        public string DateOfStudy { get; set; }
         public int IChannel { get; set; }
         public int IHeadModel { get; set; }
 

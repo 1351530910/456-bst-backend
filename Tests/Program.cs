@@ -85,7 +85,7 @@ namespace Tests
         };
 
         static uploadinfo uploadid;
-        
+
         #endregion
         static void Main(string[] args)
         {
@@ -96,7 +96,7 @@ namespace Tests
             starttime = System.DateTime.Now;
 
             Console.WriteLine("test started");
-            foreach (var f in typeof(Program).GetMethods().Where(x => x.IsStatic&&x.ReturnType.Equals(typeof(Task))).ToArray())
+            foreach (var f in typeof(Program).GetMethods().Where(x => x.IsStatic && x.ReturnType.Equals(typeof(Task))).ToArray())
             {
                 call(f);
             }
@@ -249,7 +249,7 @@ namespace Tests
         }
         public static async Task createProtocol()
         {
-            var r = await client.PostAsJsonAsync<Protocolid>("protocol/share", new CreateProtocol
+            var r = await client.PostAsJsonAsync<ID>("protocol/share", new CreateProtocol
             {
                 Name = protocol.Name,
                 Isprivate = protocol.Isprivate,
@@ -271,7 +271,7 @@ namespace Tests
         }
         public static async Task createStudy()
         {
-            var studyid= await client.PostAsJsonAsync<string>("study/create", new bst.Model.StudyData
+            var studyid = await client.PostAsJsonAsync<string>("study/create", new bst.Model.StudyData
             {
                 Filename = study.Filename,
                 Name = study.Name,
@@ -280,7 +280,7 @@ namespace Tests
                 IChannel = study.IChannel,
                 IHeadModel = study.IHeadModel,
                 ProtocolId = study.Protocol.Id,
-                
+
             });
             study.Id = Guid.Parse(studyid);
         }
@@ -304,7 +304,7 @@ namespace Tests
         }
         public static async Task download()
         {
-            var response = await client.PostAsync($"file/download/{study.Id}/{uploadid.ffid}",new StringContent("download"));
+            var response = await client.PostAsync($"file/download/{study.Id}/{uploadid.ffid}", new StringContent("download"));
             if (!response.IsSuccessStatusCode)
                 throw new Exception();
             Stream s = await response.Content.ReadAsStreamAsync();
@@ -331,9 +331,9 @@ namespace Tests
             }
             catch (Exception ex)
             {
-                Console.WriteLine(f.Name + "\t"+ex.Message);
+                Console.WriteLine(f.Name + "\t" + ex.Message);
             }
-            
+
         }
         #endregion
     }

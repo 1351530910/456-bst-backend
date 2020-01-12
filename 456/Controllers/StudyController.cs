@@ -33,12 +33,13 @@ namespace bst.Controllers
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        [HttpPost, Route("create"), ProducesResponseType(typeof(Guid), 200),WriteLock]
+        [HttpPost, Route("create"), ProducesResponseType(typeof(ID), 200), WriteLock]
         public async Task<object> CreateStudy([FromBody]StudyData data)
         {
             var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.ProtocolId));
-
             if (participation == null) return Unauthorized("You don't have access to this protocol.");
+            var subject = participation.Protocol.Subjects.FirstOrDefault(x => x.Id.Equals(data.SubjectId));
+            if (subject == null) return NotFound("The subject ID you provide is not found.");
 
             Study study = new Study
             {
@@ -49,14 +50,14 @@ namespace bst.Controllers
                 DateOfStudy = data.DateOfStudy,
                 IChannel = data.IChannel,
                 IHeadModel = data.IHeadModel,
-                Subject = context.Subjects.Find(data.SubjectId),
+                Subject = subject,
                 LastUpdate = System.DateTime.Now,
                 Protocol = protocol
             };
             context.Studies.Add(study);
             history.HistoryEvent += $"create study {study.Id}";
             await context.SaveChangesAsync();
-            return study.Id;
+            return new ID { Id = study.Id };
         }
     }
 }

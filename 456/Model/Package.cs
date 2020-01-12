@@ -104,8 +104,8 @@ namespace bst.Controllers
         public bool UseDefaultAnat { get; set; }
         public bool UseDefaultChannel { get; set; }
         public int Privilege { get; set; }
-        public IEnumerable<SubjectData> Subjects { get; set; }
-        public IEnumerable<StudyData> Studies { get; set; }
+        public IEnumerable<Guid> Subjects { get; set; }
+        public IEnumerable<Guid> Studies { get; set; }
         public ProtocolData()
         {
 
@@ -120,8 +120,8 @@ namespace bst.Controllers
             UseDefaultAnat = protocol.UseDefaultAnat;
             UseDefaultChannel = protocol.UseDefaultChannel;
             Privilege = privilege;
-            Subjects = protocol.Subjects.Select(x => new SubjectData(x));
-            Studies = protocol.Studies.Select(x => new StudyData(x));
+            Subjects = protocol.Subjects.Select(x => x.Id);
+            Studies = protocol.Studies.Select(x => x.Id);
         }
     }
     public class EditGroupMemberIn
@@ -275,10 +275,6 @@ namespace bst.Controllers
     }
 
 
-
-
-
-
     public class ShareProtocolGroup
     {
         [Required]
@@ -295,7 +291,7 @@ namespace bst.Controllers
         public string Access { get; set; }
     }
 
-    public class Protocolid
+    public class ID
     {
         public Guid Id { get; set; }
     }

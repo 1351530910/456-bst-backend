@@ -71,10 +71,10 @@ namespace bst.Controllers
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        [HttpPost, Route("share"), ProducesResponseType(typeof(Protocolid), 200), AuthFilter]
+        [HttpPost, Route("share"), ProducesResponseType(typeof(ID), 200), AuthFilter]
         public async Task<object> CreateProtocol([FromBody]CreateProtocol data)
         {
-            
+
             Guid procotolid;
             Protocol protocol = null;
 
@@ -117,7 +117,7 @@ namespace bst.Controllers
 
             //lock the protocol since creation is a write action
             session.Protocolid = protocol.Id;
-            return new Protocolid
+            return new ID
             {
                 Id = protocol.Id
             };
@@ -181,7 +181,7 @@ namespace bst.Controllers
             var protocol = await context.Protocols.FindAsync(data.Protocolid);
             if (protocol == null) return NotFound("Protocol not found.");
             //check if user is protocol admin
-            
+
             var userProtocolRelation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.Protocolid));
             if (userProtocolRelation == null || userProtocolRelation.Privilege > 1) Unauthorized("You are not protocol admin.");
 
@@ -217,7 +217,7 @@ namespace bst.Controllers
                 .FirstOrDefaultAsync(p => p.Group.Name.Equals(data.Groupname) && p.Protocol.Id.Equals(data.Protocolid));
             if (protocolgroup == null) NotFound("There's no relation between the protocol and the group");
             //check if user is protocol admin
-            
+
             var userProtocolRelation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.Protocolid));
             if (userProtocolRelation == null || userProtocolRelation.Privilege > 1) Unauthorized("You are not protocol admin.");
             //remove group
@@ -230,7 +230,7 @@ namespace bst.Controllers
         public async Task<object> AddOrEditUser([FromBody]EditUserProtocolRelationIn data)
         {
             //check if user is protocol admin
-            
+
             var userProtocolRelation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.Protocolid));
             if (userProtocolRelation == null || userProtocolRelation.Privilege > 1) Unauthorized("You are not protocol admin.");
             //find target user protocol relation
@@ -242,7 +242,7 @@ namespace bst.Controllers
             {
                 var targetuser = context.Users.FirstOrDefault(u => u.Email.Equals(data.Useremail));
                 if (targetuser == null) return NotFound("The user you want to edit doesn't exist.");
-               
+
                 //create relation 
                 var newTargetUserProtocolRelation = new ProtocolUser
                 {
@@ -263,7 +263,7 @@ namespace bst.Controllers
                 return targetUserProtocolRelation.Id;
             }
         }
-       
+
         [HttpPost, Route("removeuser"), ProducesResponseType(200), AuthFilter]
         public async Task<object> RemoveUser([FromBody] RemoveUserProtocolRelationIn data)
         {

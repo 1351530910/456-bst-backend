@@ -79,11 +79,10 @@ namespace bst.Model
     public class StudyData
     {
         //metadata
-        public Guid id { get; set; }
         public string Filename { get; set; }
         public string Name { get; set; }
         public string Condition { get; set; }
-        public DateTime DateOfStudy { get; set; }
+        public string DateOfStudy { get; set; }
         public int IChannel { get; set; }
         public int IHeadModel { get; set; }
 
@@ -107,7 +106,6 @@ namespace bst.Model
         }
         public StudyData(Study study)
         {
-            id = study.Id;
             Filename = study.Filename;
             Name = study.Name;
             DateOfStudy = study.DateOfStudy;
