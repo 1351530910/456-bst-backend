@@ -94,7 +94,7 @@ namespace bst.Model
         public IEnumerable<StatData> Stats { get; set; }
         public IEnumerable<HeadModelData> HeadModels { get; set; }
         public IEnumerable<ResultData> Results { get; set; }
-        public IEnumerable<RecordingData> Recordings { get; set; }
+        //public IEnumerable<RecordingData> Recordings { get; set; }
         public IEnumerable<MatrixData> Matrixs { get; set; }
         //public IEnumerable<DipoleData> Dipoles { get; set; }
         //public IEnumerable<CovarianceData> Covariances { get; set; }
@@ -123,7 +123,7 @@ namespace bst.Model
             Stats = study.Stats.Select(x => new StatData(x));
             HeadModels = study.HeadModels.Select(x => new HeadModelData(x));
             Results = study.Results.Select(x => new ResultData(x));
-            Recordings = study.Recordings.Select(x => new RecordingData(x));
+            //Recordings = study.Recordings.Select(x => new RecordingData(x));
             Matrixs = study.Matrixs.Select(x => new MatrixData(x));
         }
 
@@ -153,10 +153,10 @@ namespace bst.Model
         public Guid Id { get; set; }
         public string Comment { get; set; }
         public string FileName { get; set; }
-        public FunctionalFileType type { get; set; }
+        public FunctionalFileType FileType { get; set; }
         public IEnumerable<HistoryData> Histories { get; set; }
-        public string md5 { get; set; }
-        public Guid studyID { get; set; }
+        public string Md5 { get; set; }
+        public Guid StudyID { get; set; }
         public FunctionalFileData()
         {
 
@@ -166,7 +166,7 @@ namespace bst.Model
             Id = f.Id;
             Comment = f.Comment;
             FileName = f.FileName;
-            type = f.FileType;
+            FileType = f.FileType;
             Histories = f.Histories.Select(x => new HistoryData(x));
         }
     }
@@ -298,56 +298,58 @@ namespace bst.Model
         }
     }
 
-    public class RecordingData : FunctionalFileData
-    {
-        //metadata 
-        public string Format { get; set; }
-        public string Device { get; set; }
-        public char Byteorder { get; set; }
-        public string DataType { get; set; }
-        public int NAvg { get; set; }
-        public int SFreq { get; set; }
-        public double TimeStart { get; set; }
-        public double TimeEnd { get; set; }
-        public int SamplesStart { get; set; }
-        public int SamplesEnd { get; set; }
-        public int CurrCrfComp { get; set; }
-        public int DestCtfComp { get; set; }
-        public DateTime Acq_Date { get; set; }
-        public string ColormapType { get; set; }
-        public string DisplayUnits { get; set; }
-        public bool IsBids { get; set; }
+    
+    //public class RecordingData : FunctionalFileData
+    //{
+    //    //metadata 
+    //    public string Format { get; set; }
+    //    public string Device { get; set; }
+    //    public char Byteorder { get; set; }
+    //    public string DataType { get; set; }
+    //    public int NAvg { get; set; }
+    //    public int SFreq { get; set; }
+    //    public double TimeStart { get; set; }
+    //    public double TimeEnd { get; set; }
+    //    public int SamplesStart { get; set; }
+    //    public int SamplesEnd { get; set; }
+    //    public int CurrCrfComp { get; set; }
+    //    public int DestCtfComp { get; set; }
+    //    public DateTime Acq_Date { get; set; }
+    //    public string ColormapType { get; set; }
+    //    public string DisplayUnits { get; set; }
+    //    public bool IsBids { get; set; }
 
-        /*
-        //summary info
-        public int DbEvents { get; set; }
-        public int DbEpoch { get; set; }
-        public int DbChannelFlag { get; set; }
-        */
-        public RecordingData()
-        {
+    //    /*
+    //    //summary info
+    //    public int DbEvents { get; set; }
+    //    public int DbEpoch { get; set; }
+    //    public int DbChannelFlag { get; set; }
+    //    */
+    //    public RecordingData()
+    //    {
 
-        }
-        public RecordingData(Recording f) : base(f.Parent)
-        {
-            Format = f.Format;
-            Device = f.Device;
-            Byteorder = f.Byteorder;
-            DataType = f.DataType;
-            NAvg = f.NAvg;
-            SFreq = f.SFreq;
-            TimeStart = f.TimeStart;
-            TimeEnd = f.TimeEnd;
-            SamplesStart = f.SamplesStart;
-            SamplesEnd = f.SamplesEnd;
-            CurrCrfComp = f.CurrCrfComp;
-            DestCtfComp = f.DestCtfComp;
-            Acq_Date = f.Acq_Date;
-            ColormapType = f.ColormapType;
-            DisplayUnits = f.DisplayUnits;
-            IsBids = f.IsBids;
-        }
-    }
+    //    }
+    //    public RecordingData(Recording f) : base(f.Parent)
+    //    {
+    //        Format = f.Format;
+    //        Device = f.Device;
+    //        Byteorder = f.Byteorder;
+    //        DataType = f.DataType;
+    //        NAvg = f.NAvg;
+    //        SFreq = f.SFreq;
+    //        TimeStart = f.TimeStart;
+    //        TimeEnd = f.TimeEnd;
+    //        SamplesStart = f.SamplesStart;
+    //        SamplesEnd = f.SamplesEnd;
+    //        CurrCrfComp = f.CurrCrfComp;
+    //        DestCtfComp = f.DestCtfComp;
+    //        Acq_Date = f.Acq_Date;
+    //        ColormapType = f.ColormapType;
+    //        DisplayUnits = f.DisplayUnits;
+    //        IsBids = f.IsBids;
+    //    }
+    //}
+    
 
     public class MatrixData : FunctionalFileData
     {

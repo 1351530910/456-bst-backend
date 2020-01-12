@@ -17,13 +17,14 @@ namespace bst.Controllers
         public async Task<object> createChannel([FromBody]ChannelData data)
         {
             //create channel data
-            var study = protocol.Studies.FirstOrDefault(x => x.Id == data.studyID);
-            var channel = new Channel(data);
-            
-            channel.Study = study;
+            var study = protocol.Studies.FirstOrDefault(x => x.Id == data.StudyID);
+            var channel = new Channel(data)
+            {
+                Study = study
+            };
 
             //set parent url
-            channel.Parent.url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), channel.Parent.Id.ToString());
+            channel.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), channel.Parent.Id.ToString());
 
             //add channel and ff to database
             context.Channels.Add(channel);
@@ -33,7 +34,7 @@ namespace bst.Controllers
 
             return new uploadinfo
             {
-                uploadid = FileController.createFunctionalFileQueueItem(channel, session, data.md5).ToString(),
+                uploadid = FileController.createFunctionalFileQueueItem(channel, session, data.Md5).ToString(),
                 ffid = channel.Parent.Id.ToString()
             };
         }
@@ -41,12 +42,14 @@ namespace bst.Controllers
         public async Task<object> createTimeFreq([FromBody]TimeFreqData data)
         {
             //create channel data
-            var study = protocol.Studies.FirstOrDefault(x => x.Id == data.studyID);
-            var obj = new TimeFreq(data);
-            obj.Study = study;
+            var study = protocol.Studies.FirstOrDefault(x => x.Id == data.StudyID);
+            var obj = new TimeFreq(data)
+            {
+                Study = study
+            };
 
             //set parent url
-            obj.Parent.url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
+            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
 
             //add channel and ff to database
             context.TimeFreqs.Add(obj);
@@ -56,7 +59,7 @@ namespace bst.Controllers
 
             return new uploadinfo
             {
-                uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.md5).ToString(),
+                uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
                 ffid = obj.Parent.Id.ToString()
             };
         }
@@ -64,12 +67,14 @@ namespace bst.Controllers
         public async Task<object> createStat([FromBody]StatData data)
         {
             //create channel data
-            var study = protocol.Studies.FirstOrDefault(x => x.Id == data.studyID);
-            var obj = new Stat(data);
-            obj.Study = study;
+            var study = protocol.Studies.FirstOrDefault(x => x.Id == data.StudyID);
+            var obj = new Stat(data)
+            {
+                Study = study
+            };
 
             //set parent url
-            obj.Parent.url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
+            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
 
             //add channel and ff to database
             context.Stats.Add(obj);
@@ -79,7 +84,7 @@ namespace bst.Controllers
 
             return new uploadinfo
             {
-                uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.md5).ToString(),
+                uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
                 ffid = obj.Parent.Id.ToString()
             };
         }
@@ -87,12 +92,14 @@ namespace bst.Controllers
         public async Task<object> createHeadModel([FromBody]HeadModelData data)
         {
             //create channel data
-            var study = protocol.Studies.FirstOrDefault(x => x.Id == data.studyID);
-            var obj = new HeadModel(data);
-            obj.Study = study;
+            var study = protocol.Studies.FirstOrDefault(x => x.Id == data.StudyID);
+            var obj = new HeadModel(data)
+            {
+                Study = study
+            };
 
             //set parent url
-            obj.Parent.url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
+            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
 
             //add channel and ff to database
             context.HeadModels.Add(obj);
@@ -102,7 +109,7 @@ namespace bst.Controllers
 
             return new uploadinfo
             {
-                uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.md5).ToString(),
+                uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
                 ffid = obj.Parent.Id.ToString()
             };
         }
@@ -110,12 +117,14 @@ namespace bst.Controllers
         public async Task<object> createResult([FromBody]ResultData data)
         {
             //create channel data
-            var study = protocol.Studies.FirstOrDefault(x => x.Id == data.studyID);
-            var obj = new Result(data);
-            obj.Study = study;
+            var study = protocol.Studies.FirstOrDefault(x => x.Id == data.StudyID);
+            var obj = new Result(data)
+            {
+                Study = study
+            };
 
             //set parent url
-            obj.Parent.url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
+            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
 
             //add channel and ff to database
             context.Results.Add(obj);
@@ -125,10 +134,11 @@ namespace bst.Controllers
 
             return new uploadinfo
             {
-                uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.md5).ToString(),
+                uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
                 ffid = obj.Parent.Id.ToString()
             };
         }
+        /*
         [HttpPost, Route("createRecording"), AuthFilter, WriteLock, ProducesResponseType(typeof(uploadinfo), 200)]
         public async Task<object> createRecording([FromBody]RecordingData data)
         {
@@ -138,7 +148,7 @@ namespace bst.Controllers
             obj.Study = study;
 
             //set parent url
-            obj.Parent.url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
+            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
 
             //add channel and ff to database
             context.Recordings.Add(obj);
@@ -152,16 +162,19 @@ namespace bst.Controllers
                 ffid = obj.Parent.Id.ToString()
             };
         }
+        */
         [HttpPost, Route("createMatrix"), AuthFilter, WriteLock, ProducesResponseType(typeof(uploadinfo), 200)]
         public async Task<object> createMatrix([FromBody]MatrixData data)
         {
             //create channel data
-            var study = protocol.Studies.FirstOrDefault(x => x.Id == data.studyID);
-            var obj = new Matrix(data);
-            obj.Study = study;
+            var study = protocol.Studies.FirstOrDefault(x => x.Id == data.StudyID);
+            var obj = new Matrix(data)
+            {
+                Study = study
+            };
 
             //set parent url
-            obj.Parent.url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
+            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
 
             //add channel and ff to database
             context.Matrices.Add(obj);
@@ -171,7 +184,7 @@ namespace bst.Controllers
 
             return new uploadinfo
             {
-                uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.md5).ToString(),
+                uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
                 ffid = obj.Parent.Id.ToString()
             };
         }

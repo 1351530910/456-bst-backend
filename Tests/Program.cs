@@ -289,13 +289,13 @@ namespace Tests
             uploadid = await client.PostAsJsonAsync<uploadinfo>($"functionalfile/createchannel", new bst.Model.ChannelData
             {
                 Comment = ff.Comment,
-                studyID = channel.Study.Id,
-                type = ff.FileType,
+                StudyID = channel.Study.Id,
+                FileType = ff.FileType,
                 NbChannels = channel.NbChannels,
                 TransfEegLabels = channel.TransfEegLabels,
                 TransfMegLabels = channel.TransfMegLabels,
                 FileName = ff.FileName,
-                md5 = "?l?+(?k??Aq???m\t"
+                Md5 = "?l?+(?k??Aq???m\t"
             });
             string t = "test1234\n";
             var r = await client.PostAsync($"file/upload/{uploadid.uploadid}/false", new ByteArrayContent(System.Text.Encoding.ASCII.GetBytes(t)));

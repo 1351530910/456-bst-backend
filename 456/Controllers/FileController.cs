@@ -36,9 +36,11 @@ namespace bst.Controllers
 
         static FileController()
         {
-            timer = new Timer();
-            timer.AutoReset = true;
-            timer.Interval = 1800000;
+            timer = new Timer
+            {
+                AutoReset = true,
+                Interval = 1800000
+            };
             timer.Elapsed += clearQueue;
         }
 

@@ -65,12 +65,12 @@ namespace bst.Model
         public DbSet<Stat> Stats { get; set; }
         public DbSet<HeadModel> HeadModels { get; set; }
         public DbSet<Result> Results { get; set; }
-        public DbSet<Recording> Recordings { get; set; }
+        //public DbSet<Recording> Recordings { get; set; }
         public DbSet<Matrix> Matrices { get; set; }
         public DbSet<Dipole> Dipoles { get; set; }
-        public DbSet<Covariance> Covariances { get; set; }
+        //public DbSet<Covariance> Covariances { get; set; }
         //public DbSet<Fiber> Fibers { get; set; }
-        public DbSet<Volume> Volumes { get; set; }
+        //public DbSet<Volume> Volumes { get; set; }
         public DbSet<Surface> Surfaces { get; set; }
         public DbSet<AnatomicalFile> AnatomicalFiles { get; set; }
     }
@@ -262,10 +262,10 @@ namespace bst.Model
         public virtual ICollection<Stat> Stats { get; set; }
         public virtual ICollection<HeadModel> HeadModels { get; set; }
         public virtual ICollection<Result> Results { get; set; }
-        public virtual ICollection<Recording> Recordings { get; set; }
+        //public virtual ICollection<Recording> Recordings { get; set; }
         public virtual ICollection<Matrix> Matrixs { get; set; }
         public virtual ICollection<Dipole> Dipoles { get; set; }
-        public virtual ICollection<Covariance> Covariances { get; set; }
+        //public virtual ICollection<Covariance> Covariances { get; set; }
         public virtual ICollection<Image> Images { get; set; }
     }
 
@@ -287,16 +287,16 @@ namespace bst.Model
 
     public enum FunctionalFileType
     {
-        Channel,
-        TimeFreq,
-        Stat,
-        HeadModel,
-        Result,
-        Recording,
-        Matrix,
-        Dipole,
-        Covariance,
-        Image
+        Channel = 1,
+        TimeFreq = 2,
+        Stat = 3,
+        HeadModel = 4,
+        Result = 5,
+        //Recording,
+        Matrix = 6,
+        Dipole = 7,
+        //Covariance,
+        Image = 8
     }
 
 #warning raw files.
@@ -309,7 +309,7 @@ namespace bst.Model
         //metadata
         public string Comment { get; set; }
         public string FileName { get; set; }
-        public string url { get; set; }
+        public string Url { get; set; }
         public FunctionalFileType FileType { get; set; }
         
         public virtual ICollection<History> Histories { get; set; }
@@ -322,7 +322,7 @@ namespace bst.Model
             Id = Guid.NewGuid();
             Comment = data.Comment;
             FileName = data.FileName;
-            FileType = data.type;
+            FileType = data.FileType;
         }
     }
 
@@ -486,6 +486,7 @@ namespace bst.Model
         }
     }
 
+    /*
     public class Recording
     {
         [Key]
@@ -543,6 +544,7 @@ namespace bst.Model
 
         }
     }
+    */
 
     public class Matrix
     {
@@ -583,6 +585,7 @@ namespace bst.Model
         public virtual FunctionalFile Parent { get; set; }
     }
 
+    /*
     public class Covariance 
     {
         [Key]
@@ -591,6 +594,7 @@ namespace bst.Model
         public virtual Study Study { get; set; }
         public virtual FunctionalFile Parent { get; set; }
     }
+    */
 
     public class Image
     {
@@ -607,9 +611,9 @@ namespace bst.Model
 
     public enum AnatomicalFileType
     {
-        Fiber,
-        Volume,
-        Surface
+        //Fiber,
+        //Volume,
+        Surface = 1
     }
 
     public class AnatomicalFile:Tracked
@@ -634,6 +638,7 @@ namespace bst.Model
     //    public virtual AnatomicalFile Parent { get; set; }
     //}
 
+    /*
     public class Volume
     {
         [Key]
@@ -651,6 +656,7 @@ namespace bst.Model
 
         public virtual AnatomicalFile Parent { get; set; }
     }
+    */
 
     public class Surface
     {
