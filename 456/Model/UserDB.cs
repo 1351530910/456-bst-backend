@@ -67,6 +67,8 @@ namespace bst.Model
         public DbSet<Result> Results { get; set; }
         //public DbSet<Recording> Recordings { get; set; }
         public DbSet<Matrix> Matrices { get; set; }
+        public DbSet<Other> Others { get; set; }
+
         public DbSet<Dipole> Dipoles { get; set; }
         //public DbSet<Covariance> Covariances { get; set; }
         //public DbSet<Fiber> Fibers { get; set; }
@@ -573,6 +575,27 @@ namespace bst.Model
             DisplayUnits = data.DisplayUnits;
         }
     }
+
+
+    public class Other
+    {
+        [Key]
+        public Guid Id { get; set; }
+        [Required]
+        public virtual Study Study { get; set; }
+        [Required]
+        public virtual FunctionalFile Parent { get; set; }
+        public Other()
+        {
+
+        }
+        public Other(OtherData data)
+        {
+            Parent = new FunctionalFile(data);
+            Id = Parent.Id;
+        }
+    }
+
 
     public class Dipole 
     {

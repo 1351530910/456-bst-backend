@@ -373,6 +373,19 @@ namespace bst.Model
         }
     }
 
+    public class OtherData : FunctionalFileData
+    {
+      
+        public OtherData()
+        {
+
+        }
+        public OtherData(Other f) : base(f.Parent)
+        {
+            
+        }
+    }
+
 
     /*
 
