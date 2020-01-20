@@ -37,22 +37,22 @@
             </summary>
             <param name="context"></param>
         </member>
-        <member name="M:bst.Controllers.FunctionalFileController.mapFile(System.String,System.String,System.String)">
+        <member name="M:bst.Controllers.FunctionalFileController.mapFile(System.String,System.String,System.String,System.String)">
             <summary>
             
             </summary>
-            <param name="firstLayer"> protocolID</param>
-            <param name="SecondLayer"> studyID</param>
-            <param name="filename"> fileID</param>
+            <param name="protocolid"> protocolID</param>
+            <param name="subjectOrStudyId"> studyID</param>
+            <param name="fileid"> fileID</param>
             <returns></returns>
         </member>
-        <member name="M:bst.Controllers.FunctionalFileController.mapUrl(System.String,System.String,System.String)">
+        <member name="M:bst.Controllers.FunctionalFileController.mapUrl(System.String,System.String,System.String,System.String)">
             <summary>
              "./files/{firstLayer}/ffiles/{SecondLayer}/{filename}";
             </summary>
-            <param name="firstLayer"> protocolID</param>
-            <param name="SecondLayer"> studyID</param>
-            <param name="filename"> fileID</param>
+            <param name="protocolid"> protocolID</param>
+            <param name="subjectOrStudyId"> studyID</param>
+            <param name="fileid"> fileID</param>
             <returns></returns>
         </member>
         <member name="M:bst.Controllers.ProtocolController.GetProtocolUsers(System.Guid)">

@@ -33,7 +33,7 @@ namespace bst.Controllers
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        [HttpPost, Route("create"), ProducesResponseType(typeof(ID), 200), WriteLock]
+        [HttpPost, Route("create"), ProducesResponseType(typeof(Uploadinfo), 200), WriteLock]
         public async Task<object> CreateStudy([FromBody]StudyData data)
         {
             var participation = user.ProtocolUsers.FirstOrDefault(x => x.Protocol.Id.Equals(data.ProtocolId));
@@ -57,7 +57,11 @@ namespace bst.Controllers
             context.Studies.Add(study);
             history.HistoryEvent += $"create study {study.Id}";
             await context.SaveChangesAsync();
-            return new ID { Id = study.Id };
+            return new Uploadinfo
+            {
+                Uploadid = FileController.createStudyQueueItem(study, session, data.Md5).ToString(),
+                Fid = study.Id.ToString()
+            };
         }
     }
 }

@@ -266,6 +266,7 @@ namespace bst.Model
         public virtual ICollection<Result> Results { get; set; }
         //public virtual ICollection<Recording> Recordings { get; set; }
         public virtual ICollection<Matrix> Matrixs { get; set; }
+        public virtual ICollection<Other> Others { get; set; }
         public virtual ICollection<Dipole> Dipoles { get; set; }
         //public virtual ICollection<Covariance> Covariances { get; set; }
         public virtual ICollection<Image> Images { get; set; }
@@ -296,9 +297,10 @@ namespace bst.Model
         Result = 5,
         //Recording,
         Matrix = 6,
-        Dipole = 7,
+        Other = 7
+        //Dipole = 7,
         //Covariance,
-        Image = 8
+        //Image = 8
     }
 
 #warning raw files.

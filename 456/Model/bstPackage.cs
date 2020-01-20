@@ -50,6 +50,7 @@ namespace bst.Model
         public int IOther { get; set; }
         public Guid ProtocolId { get; set; }
         public IEnumerable<StudyData> Studies { get; set; }
+        public string Md5 { get; set; }
 
         public SubjectData()
         {
@@ -88,7 +89,7 @@ namespace bst.Model
 
         public Guid ProtocolId { get; set; }
         public Guid SubjectId { get; set; }
-
+        public string Md5 { get; set; }
         public IEnumerable<ChannelData> Channels { get; set; }
         public IEnumerable<TimeFreqData> TimeFreqs { get; set; }
         public IEnumerable<StatData> Stats { get; set; }
@@ -96,6 +97,7 @@ namespace bst.Model
         public IEnumerable<ResultData> Results { get; set; }
         //public IEnumerable<RecordingData> Recordings { get; set; }
         public IEnumerable<MatrixData> Matrixs { get; set; }
+        public IEnumerable<OtherData> Others { get; set; }
         //public IEnumerable<DipoleData> Dipoles { get; set; }
         //public IEnumerable<CovarianceData> Covariances { get; set; }
         //public IEnumerable<ImageData> Images { get; set; }
@@ -125,6 +127,7 @@ namespace bst.Model
             Results = study.Results.Select(x => new ResultData(x));
             //Recordings = study.Recordings.Select(x => new RecordingData(x));
             Matrixs = study.Matrixs.Select(x => new MatrixData(x));
+            Others = study.Others.Select(x => new OtherData(x));
         }
 
     }

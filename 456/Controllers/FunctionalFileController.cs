@@ -24,7 +24,7 @@ namespace bst.Controllers
             };
 
             //set parent url
-            channel.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), channel.Parent.Id.ToString());
+            channel.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), channel.Parent.Id.ToString(), "data");
 
             //add channel and ff to database
             context.Channels.Add(channel);
@@ -34,14 +34,13 @@ namespace bst.Controllers
 
             return new Uploadinfo
             {
-                Uploadid = FileController.createFunctionalFileQueueItem(channel, session, data.Md5).ToString(),
-                Ffid = channel.Parent.Id.ToString()
+                Uploadid = FileController.createFunctionalFileQueueItem(channel, session, data.Md5, data.FileName).ToString(),
+                Fid = channel.Parent.Id.ToString()
             };
         }
         [HttpPost, Route("createTimeFreq"), AuthFilter, WriteLock, ProducesResponseType(typeof(Uploadinfo), 200)]
         public async Task<object> createTimeFreq([FromBody]TimeFreqData data)
         {
-            //create channel data
             var study = protocol.Studies.FirstOrDefault(x => x.Id == data.StudyID);
             var obj = new TimeFreq(data)
             {
@@ -49,9 +48,8 @@ namespace bst.Controllers
             };
 
             //set parent url
-            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
+            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString(), "data");
 
-            //add channel and ff to database
             context.TimeFreqs.Add(obj);
             context.FunctionalFiles.Add(obj.Parent);
             history.HistoryEvent += $"create {obj.GetType().Name} {study.Id} {obj.Id}";
@@ -59,14 +57,13 @@ namespace bst.Controllers
 
             return new Uploadinfo
             {
-                Uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
-                Ffid = obj.Parent.Id.ToString()
+                Uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5, data.FileName).ToString(),
+                Fid = obj.Parent.Id.ToString()
             };
         }
         [HttpPost, Route("createStat"), AuthFilter, WriteLock, ProducesResponseType(typeof(Uploadinfo), 200)]
         public async Task<object> createStat([FromBody]StatData data)
         {
-            //create channel data
             var study = protocol.Studies.FirstOrDefault(x => x.Id == data.StudyID);
             var obj = new Stat(data)
             {
@@ -74,9 +71,8 @@ namespace bst.Controllers
             };
 
             //set parent url
-            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
+            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString(), "data");
 
-            //add channel and ff to database
             context.Stats.Add(obj);
             context.FunctionalFiles.Add(obj.Parent);
             history.HistoryEvent += $"create {obj.GetType().Name} {study.Id} {obj.Id}";
@@ -84,14 +80,13 @@ namespace bst.Controllers
 
             return new Uploadinfo
             {
-                Uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
-                Ffid = obj.Parent.Id.ToString()
+                Uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5, data.FileName).ToString(),
+                Fid = obj.Parent.Id.ToString()
             };
         }
         [HttpPost, Route("createHeadModel"), AuthFilter, WriteLock, ProducesResponseType(typeof(Uploadinfo), 200)]
         public async Task<object> createHeadModel([FromBody]HeadModelData data)
         {
-            //create channel data
             var study = protocol.Studies.FirstOrDefault(x => x.Id == data.StudyID);
             var obj = new HeadModel(data)
             {
@@ -99,9 +94,8 @@ namespace bst.Controllers
             };
 
             //set parent url
-            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
+            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString(), "data");
 
-            //add channel and ff to database
             context.HeadModels.Add(obj);
             context.FunctionalFiles.Add(obj.Parent);
             history.HistoryEvent += $"create {obj.GetType().Name} {study.Id} {obj.Id}";
@@ -109,14 +103,13 @@ namespace bst.Controllers
 
             return new Uploadinfo
             {
-                Uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
-                Ffid = obj.Parent.Id.ToString()
+                Uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5, data.FileName).ToString(),
+                Fid = obj.Parent.Id.ToString()
             };
         }
         [HttpPost, Route("createResult"), AuthFilter, WriteLock, ProducesResponseType(typeof(Uploadinfo), 200)]
         public async Task<object> createResult([FromBody]ResultData data)
         {
-            //create channel data
             var study = protocol.Studies.FirstOrDefault(x => x.Id == data.StudyID);
             var obj = new Result(data)
             {
@@ -124,9 +117,8 @@ namespace bst.Controllers
             };
 
             //set parent url
-            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
+            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString(), "data");
 
-            //add channel and ff to database
             context.Results.Add(obj);
             context.FunctionalFiles.Add(obj.Parent);
             history.HistoryEvent += $"create {obj.GetType().Name} {study.Id} {obj.Id}";
@@ -134,8 +126,8 @@ namespace bst.Controllers
 
             return new Uploadinfo
             {
-                Uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
-                Ffid = obj.Parent.Id.ToString()
+                Uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5, data.FileName).ToString(),
+                Fid = obj.Parent.Id.ToString()
             };
         }
         /*
@@ -166,7 +158,6 @@ namespace bst.Controllers
         [HttpPost, Route("createMatrix"), AuthFilter, WriteLock, ProducesResponseType(typeof(Uploadinfo), 200)]
         public async Task<object> createMatrix([FromBody]MatrixData data)
         {
-            //create channel data
             var study = protocol.Studies.FirstOrDefault(x => x.Id == data.StudyID);
             var obj = new Matrix(data)
             {
@@ -174,7 +165,7 @@ namespace bst.Controllers
             };
 
             //set parent url
-            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString());
+            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString(),"data");
 
             //add channel and ff to database
             context.Matrices.Add(obj);
@@ -184,47 +175,81 @@ namespace bst.Controllers
 
             return new Uploadinfo
             {
-                Uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5).ToString(),
-                Ffid = obj.Parent.Id.ToString()
+                Uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5, data.FileName).ToString(),
+                Fid = obj.Parent.Id.ToString()
             };
         }
+
+        [HttpPost, Route("createOther"), AuthFilter, WriteLock, ProducesResponseType(typeof(Uploadinfo), 200)]
+        public async Task<object> createOtherFunctionalFile([FromBody]OtherData data)
+        {
+            //create channel data
+            var study = protocol.Studies.FirstOrDefault(x => x.Id == data.StudyID);
+            var obj = new Other(data)
+            {
+                Study = study
+            };
+
+            //set parent url
+            obj.Parent.Url = mapUrl(protocol.Id.ToString(), study.Id.ToString(), obj.Parent.Id.ToString(), "data");
+
+            //add channel and ff to database
+            context.Others.Add(obj);
+            context.FunctionalFiles.Add(obj.Parent);
+            history.HistoryEvent += $"create {obj.GetType().Name} {study.Id} {obj.Id}";
+            await context.SaveChangesAsync();
+
+            return new Uploadinfo
+            {
+                Uploadid = FileController.createFunctionalFileQueueItem(obj, session, data.Md5,data.FileName).ToString(),
+                Fid = obj.Parent.Id.ToString()
+            };
+        }
+
         #endregion
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="firstLayer"> protocolID</param>
-        /// <param name="SecondLayer"> studyID</param>
-        /// <param name="filename"> fileID</param>
+        /// <param name="protocolid"> protocolID</param>
+        /// <param name="subjectOrStudyId"> studyID</param>
+        /// <param name="fileid"> fileID</param>
         /// <returns></returns>
-        public static string mapFile(string firstLayer,string SecondLayer,string filename)
+        public static string mapFile(string protocolid,string subjectOrStudyId,string fileid,string type)
         {
-            if (string.IsNullOrEmpty(SecondLayer))
+            if (string.IsNullOrEmpty(subjectOrStudyId))
             {
-                return $"./wwwroot/files/{firstLayer}/ffiles/{filename}.dat";
+                return $"./wwwroot/protocols/{protocolid}/{type}/{fileid}.bin";
             }
             else
             {
-                return $"./wwwroot/files/{firstLayer}/ffiles/{SecondLayer}/{filename}.dat";
+                return $"./wwwroot/protocols/{protocolid}/{type}/{subjectOrStudyId}/{fileid}.bin";
             }
         }
         /// <summary>
         ///  "./files/{firstLayer}/ffiles/{SecondLayer}/{filename}";
         /// </summary>
-        /// <param name="firstLayer"> protocolID</param>
-        /// <param name="SecondLayer"> studyID</param>
-        /// <param name="filename"> fileID</param>
+        /// <param name="protocolid"> protocolID</param>
+        /// <param name="subjectOrStudyId"> studyID</param>
+        /// <param name="fileid"> fileID</param>
         /// <returns></returns>
-        public static string mapUrl(string firstLayer, string SecondLayer, string filename)
+        public static string mapUrl(string protocolid, string subjectOrStudyId, string fileid, string type)
         {
-            if (string.IsNullOrEmpty(SecondLayer))
+            if (string.IsNullOrEmpty(subjectOrStudyId))
             {
-                return $"/files/{firstLayer}/ffiles/{filename}";
+                return $"/protocols/{protocolid}/{type}/{fileid}";
+            }
+            else if (subjectOrStudyId.Equals(fileid))
+            {
+                return $"/protocols/{protocolid}/{type}/{subjectOrStudyId}/{subjectOrStudyId}";
             }
             else
             {
-                return $"/files/{firstLayer}/ffiles/{SecondLayer}/{filename}";
+                return $"/protocols/{protocolid}/{type}/{subjectOrStudyId}/{fileid}";
             }
         }
+
+
+
 
     }
 

@@ -15,7 +15,7 @@ namespace bst.Controllers
     public class Uploadinfo
     {
         public string Uploadid { get; set; }
-        public string Ffid { get; set; }
+        public string Fid { get; set; }
     }
     [Route("file")]
     [ApiController]
@@ -69,12 +69,10 @@ namespace bst.Controllers
                 return NotFound("Upload ID not valid.");
             }
 
-            //copy to file
-            item.Fs.Write(buffer); 
-
-            //if not last then done
+            //if not last then copy to file and done
             if (!last)
             {
+                item.Fs.Write(buffer);
                 return Ok("success");
             }
 
@@ -97,14 +95,24 @@ namespace bst.Controllers
             }
         }
 
-        [HttpPost,AuthFilter, Route("download/{studyID}/{fileID}"),ReadLock]
-        public async Task<object> download(string studyID,string fileID,long start,int count)
+        [HttpPost,AuthFilter, Route("download/ffile/{studyID}/{fileID}/"),ReadLock]
+        public async Task<object> DownloadFunctionalFile(string studyID,string fileID)
         {
-            var path = mapFile(protocol.Id.ToString(), studyID, fileID);
+            var path = mapFile(protocol.Id.ToString(), studyID, fileID,"data");
             var fs = new FileStream(path, FileMode.Open);
             return new FileStreamResult(fs, "application/octet-stream");
         }
-        public static Guid createFunctionalFileQueueItem(object file, Session session, string md5)
+
+        [HttpPost, AuthFilter, Route("download/afile/{subjectID}/{fileID}/"), ReadLock]
+        public async Task<object> downloadAnatomicalFile(string subjectID, string fileID)
+        {
+            var path = mapFile(protocol.Id.ToString(), subjectID, fileID, "anat");
+            var fs = new FileStream(path, FileMode.Open);
+            return new FileStreamResult(fs, "application/octet-stream");
+        }
+
+
+        public static Guid createFunctionalFileQueueItem(object file, Session session, string md5, string filename)
         {
             var ff = (FunctionalFile)(file.GetType().GetProperty("Parent").GetValue(file));
             var study = (Study)(file.GetType().GetProperty("Study").GetValue(file));
@@ -113,16 +121,43 @@ namespace bst.Controllers
                 study.Id.ToString(),
                 ff.Id.ToString(),
                 session.Sessionid,
-                md5
+                md5,
+                "data"
                 );
         }
-        public static Guid createQueueItem(string firstLayer,string secondLayer,string filename,Guid sessionid,string md5)
+
+        public static Guid createStudyQueueItem(Study study, Session session, string md5)
         {
-            Directory.CreateDirectory(mapFile(firstLayer, secondLayer, ""));
-            FileStream fs = new FileStream(mapFile(firstLayer, secondLayer, filename), FileMode.CreateNew);
+            return createQueueItem(
+                study.Protocol.Id.ToString(),
+                study.Id.ToString(),
+                study.Id.ToString(),
+                session.Sessionid,
+                md5,
+                "data"
+                );
+        }
+
+        public static Guid createSubjectQueueItem(Subject subject, Session session, string md5)
+        {
+            return createQueueItem(
+                subject.Protocol.Id.ToString(),
+                subject.Id.ToString(),
+                subject.Id.ToString(),
+                session.Sessionid,
+                md5,
+                "anat"
+                );
+        }
+
+
+
+        public static Guid createQueueItem(string protocolid,string subjectOrStudyId, string fileid, Guid sessionid, string md5, string type)
+        {
+            Directory.CreateDirectory(mapFile(protocolid, subjectOrStudyId, "", type));
+            FileStream fs = new FileStream(mapFile(protocolid, subjectOrStudyId, fileid, type), FileMode.CreateNew);
 
             Guid uploadid = Guid.NewGuid();
-            var md = System.Text.Encoding.ASCII.GetBytes(md5);
             q.Add(new QueueItem
             {
                 Uploadid = uploadid,
