@@ -125,6 +125,7 @@ namespace bst.Controllers
             if (protocoluser==null)
             {
                 context.Result = new UnauthorizedObjectResult("protocol participation not found " + controller.user.ProtocolUsers.Count);
+                return;
             }
 
             //set controller's protocol
@@ -143,12 +144,13 @@ namespace bst.Controllers
                 base.OnActionExecuting(context);
                 return;
             }
-
+            
             //otherwise check if locked by someone else
             Session s;
             if ((s = AuthFilter.sessions.FirstOrDefault(x => x.Protocolid.Equals(protocolid))) != null)
             {
                 context.Result = new UnauthorizedObjectResult("locked by " + s.Email);
+                return;
             }
 
             controller.history = new History
