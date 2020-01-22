@@ -13,7 +13,7 @@ https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/?view=aspnetcore-3.
 
 development setup steps:
 
-0. unstall the prerequisites and configure them to work in the environment
+0. install the prerequisites and configure them to work in the environment
 1. clone the repository
 2. open '456.sln' file using visual studio
 3. under Project-> bst Properties->Build , check 'Define DEBUG constant' if building for developement environment, uncheck for production environment
