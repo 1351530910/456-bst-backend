@@ -104,15 +104,22 @@ namespace bst.Controllers
         [HttpPost, Route("listprotocols"), ProducesResponseType(typeof(IEnumerable<ProtocolData>), 200),AuthFilter]
         public IEnumerable<ProtocolData> ListProjects([FromBody]ListCount data)
         {
-            
-            if (user.ProtocolUsers != null)
+            var groups = user.GroupUsers.Select(x => x.Group).ToList();
+            var protocols = new List<ProtocolData>();
+            foreach(var group in groups)
             {
-                return user.ProtocolUsers.Skip(data.Start).Take(data.Count).Select(x => new ProtocolData(x.Protocol, x.Privilege));
+                protocols.AddRange(group.GroupProtocols.Select(p => new ProtocolData(p.Protocol, p.GroupPrivilege+1)));
             }
-            else
+            protocols.AddRange(user.ProtocolUsers.Select(x => new ProtocolData(x.Protocol, x.Privilege)).ToList());
+            var groupbyID = protocols.GroupBy(p => p.Id).ToList();
+            var result = new List<ProtocolData>();
+            foreach (var samegroup in groupbyID)
             {
-                return new List<ProtocolData>();
+                var highestpermission = samegroup.OrderByDescending(x => x.Privilege).Take(1);
+                result.AddRange(highestpermission);
             }
+            return result.Skip(data.Start).Take(data.Count);
+           
         }
 
         [HttpPost, Route("listgroups"), ProducesResponseType(typeof(IEnumerable<GroupPreview>), 200),AuthFilter]

@@ -78,13 +78,15 @@ namespace bst.Controllers
             Guid procotolid;
             Protocol protocol = null;
 
-            //check if protocol already present in database
+            //check if this protocol has already been uploaded
             if (Guid.TryParse(data.Id, out procotolid))
             {
-                protocol = context.Protocols.Find(procotolid);
+                protocol = user.ProtocolUsers.Select(x => x.Protocol).FirstOrDefault(p => p.Id.Equals(procotolid));
+                protocol = user.GroupUsers.Select(x => x.Group).SelectMany(g => g.GroupProtocols)
+                            .Select(x => x.Protocol).FirstOrDefault(p => p.Id.Equals(procotolid));
             }
 
-            //if not present then create a new one
+            //if not present in user visible range then create a new one
             if (protocol == null)
             {
                 //create the protocol
